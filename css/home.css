@@ -141,6 +141,7 @@
   margin: 0 auto;
 }
 
+/* Outer spinning dashed ring */
 .hero-circle::before {
   content: '';
   position: absolute;
@@ -150,6 +151,7 @@
   animation: spin 20s linear infinite;
 }
 
+/* Middle spinning ring */
 .hero-circle::after {
   content: '';
   position: absolute;
@@ -157,6 +159,19 @@
   border-radius: 50%;
   border: 1px dashed rgba(0,82,204,0.2);
   animation: spin 30s linear infinite reverse;
+}
+
+/* Gradient glow ring behind the logo */
+.hero-logo-glow {
+  position: absolute;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, var(--blue), var(--green), var(--yellow), var(--blue));
+  opacity: 0.15;
+  filter: blur(25px);
+  animation: spin 10s linear infinite;
+  z-index: 1;
 }
 
 .hero-icon-float {
@@ -181,10 +196,29 @@
 .hero-icon-float:nth-child(4) { bottom: 10%; right: 10%; animation-delay: 0.5s; color: var(--blue-light); }
 .hero-icon-float:nth-child(5) { top: 45%; right: 0; animation-delay: 1.5s; color: var(--green-light); }
 
-.hero-center-icon {
-  font-size: 4rem;
-  color: var(--white);
-  opacity: 0.15;
+.hero-center-logo {
+  width: 140px;
+  height: 140px;
+  object-fit: contain;
+  border-radius: 28px;
+  filter: drop-shadow(0 0 30px rgba(0, 82, 204, 0.35))
+          drop-shadow(0 0 60px rgba(0, 166, 81, 0.2));
+  animation: logoBreath 4s ease-in-out infinite;
+  position: relative;
+  z-index: 2;
+}
+
+@keyframes logoBreath {
+  0%, 100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 30px rgba(0, 82, 204, 0.35))
+            drop-shadow(0 0 60px rgba(0, 166, 81, 0.2));
+  }
+  50% {
+    transform: scale(1.06);
+    filter: drop-shadow(0 0 45px rgba(0, 82, 204, 0.5))
+            drop-shadow(0 0 80px rgba(0, 166, 81, 0.3));
+  }
 }
 
 /* ---- About Snapshot ---- */
