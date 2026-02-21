@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Book a consultation with TREEZ AFRICA SYSTEMS — tell us about your project and get a free quote.">
+  <title>Book a Consultation — TREEZ AFRICA SYSTEMS</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/global.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/header.css">
+  <link rel="stylesheet" href="css/footer.css">
+  <link rel="stylesheet" href="css/about.css">
+  <link rel="stylesheet" href="css/booking.css">
+</head>
+<body>
+
+  <div class="preloader"><div class="preloader-inner"><div class="preloader-logo">TREEZ <span>AFRICA</span></div><div class="preloader-bar"></div></div></div>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="container">
+      <a href="index.html" class="logo"><div class="logo-icon">T</div><div class="logo-text">TREEZ AFRICA<span>Systems</span></div></a>
+      <nav class="nav">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="about.html" class="nav-link">About</a>
+        <a href="services.html" class="nav-link">Services</a>
+        <a href="portfolio.html" class="nav-link">Portfolio</a>
+        <a href="blog.html" class="nav-link">Blog</a>
+        <a href="contact.html" class="nav-link">Contact</a>
+        <a href="booking.html" class="btn btn-primary btn-sm nav-cta active">Book Us <i class='bx bx-right-arrow-alt'></i></a>
+      </nav>
+      <div class="hamburger"><span></span><span></span><span></span></div>
+    </div>
+  </header>
+  <div class="mobile-nav">
+    <a href="index.html" class="nav-link">Home</a><a href="about.html" class="nav-link">About</a><a href="services.html" class="nav-link">Services</a><a href="portfolio.html" class="nav-link">Portfolio</a><a href="blog.html" class="nav-link">Blog</a><a href="contact.html" class="nav-link">Contact</a><a href="booking.html" class="btn btn-primary">Book a Consultation</a>
+  </div>
+
+  <!-- Page Hero -->
+  <section class="page-hero">
+    <div class="page-hero-content">
+      <div class="breadcrumb"><a href="index.html">Home</a><i class='bx bx-chevron-right'></i><span>Book a Consultation</span></div>
+      <h1 class="reveal">Book a Consultation</h1>
+      <p class="reveal">Tell us about your project and we'll get back to you with a tailored solution and free quote.</p>
+    </div>
+  </section>
+
+  <!-- Booking Section -->
+  <section class="section">
+    <div class="container">
+      <div class="booking-layout">
+
+        <!-- Main Form -->
+        <div>
+          <!-- Progress -->
+          <div class="form-progress">
+            <div class="progress-fill" style="width: 0%;"></div>
+            <div class="progress-step active">
+              <div class="progress-number">1</div>
+              <div class="progress-label">Your Details</div>
+            </div>
+            <div class="progress-step">
+              <div class="progress-number">2</div>
+              <div class="progress-label">Services</div>
+            </div>
+            <div class="progress-step">
+              <div class="progress-number">3</div>
+              <div class="progress-label">Project Info</div>
+            </div>
+            <div class="progress-step">
+              <div class="progress-number">4</div>
+              <div class="progress-label">Review</div>
+            </div>
+          </div>
+
+          <form id="bookingForm">
+            <!-- Step 1: Contact Details -->
+            <div class="form-step active">
+              <h3>Your Contact Details</h3>
+              <p>Let's start with your basic information so we can get back to you.</p>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label>First Name <span class="required">*</span></label>
+                  <input type="text" name="firstName" class="form-input" placeholder="Enter your first name" required>
+                </div>
+                <div class="form-group">
+                  <label>Last Name <span class="required">*</span></label>
+                  <input type="text" name="lastName" class="form-input" placeholder="Enter your last name" required>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Email Address <span class="required">*</span></label>
+                  <input type="email" name="email" class="form-input" placeholder="your@email.com" required>
+                </div>
+                <div class="form-group">
+                  <label>Phone Number <span class="required">*</span></label>
+                  <input type="tel" name="phone" class="form-input" placeholder="+256 7XX XXX XXX" required>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>Company / Organization</label>
+                <input type="text" name="company" class="form-input" placeholder="Your company name (optional)">
+              </div>
+
+              <div class="form-nav">
+                <div></div>
+                <button type="button" class="btn btn-primary btn-next">Next Step <i class='bx bx-right-arrow-alt'></i></button>
+              </div>
+            </div>
+
+            <!-- Step 2: Select Services -->
+            <div class="form-step">
+              <h3>What Services Do You Need?</h3>
+              <p>Select all the services that apply to your project.</p>
+
+              <div class="form-group">
+                <label>Select Services <span class="required">*</span></label>
+                <div class="checkbox-group">
+                  <div class="checkbox-item">
+                    <input type="checkbox" name="services" value="web">
+                    <span class="checkbox-check"><i class='bx bx-check'></i></span>
+                    <span class="checkbox-label">Web Application Development</span>
+                  </div>
+                  <div class="checkbox-item">
+                    <input type="checkbox" name="services" value="mobile">
+                    <span class="checkbox-check"><i class='bx bx-check'></i></span>
+                    <span class="checkbox-label">Mobile App Development</span>
+                  </div>
+                  <div class="checkbox-item">
+                    <input type="checkbox" name="services" value="banking">
+                    <span class="checkbox-check"><i class='bx bx-check'></i></span>
+                    <span class="checkbox-label">Enterprise Banking Systems</span>
+                  </div>
+                  <div class="checkbox-item">
+                    <input type="checkbox" name="services" value="maintenance">
+                    <span class="checkbox-check"><i class='bx bx-check'></i></span>
+                    <span class="checkbox-label">System Maintenance & Support</span>
+                  </div>
+                  <div class="checkbox-item">
+                    <input type="checkbox" name="services" value="consulting">
+                    <span class="checkbox-check"><i class='bx bx-check'></i></span>
+                    <span class="checkbox-label">IT Consulting & Planning</span>
+                  </div>
+                  <div class="checkbox-item">
+                    <input type="checkbox" name="services" value="uiux">
+                    <span class="checkbox-check"><i class='bx bx-check'></i></span>
+                    <span class="checkbox-label">UI/UX Design</span>
+                  </div>
+                  <div class="checkbox-item">
+                    <input type="checkbox" name="services" value="cloud">
+                    <span class="checkbox-check"><i class='bx bx-check'></i></span>
+                    <span class="checkbox-label">Cloud & DevOps</span>
+                  </div>
+                  <div class="checkbox-item">
+                    <input type="checkbox" name="services" value="other">
+                    <span class="checkbox-check"><i class='bx bx-check'></i></span>
+                    <span class="checkbox-label">Other / Not Sure</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-nav">
+                <button type="button" class="btn-back"><i class='bx bx-left-arrow-alt'></i> Back</button>
+                <button type="button" class="btn btn-primary btn-next">Next Step <i class='bx bx-right-arrow-alt'></i></button>
+              </div>
+            </div>
+
+            <!-- Step 3: Project Details -->
+            <div class="form-step">
+              <h3>Project Details</h3>
+              <p>Help us understand your project scope and requirements.</p>
+
+              <div class="form-group">
+                <label>Project Description <span class="required">*</span></label>
+                <textarea name="description" class="form-input" placeholder="Describe your project, goals, and any specific requirements..." required></textarea>
+              </div>
+
+              <div class="form-group">
+                <label>Budget Range</label>
+                <div class="budget-options">
+                  <div class="budget-option">
+                    <input type="radio" name="budget" value="under-5k">
+                    <span class="amount">Under $5K</span>
+                    <span class="desc">Small project</span>
+                  </div>
+                  <div class="budget-option">
+                    <input type="radio" name="budget" value="5k-15k">
+                    <span class="amount">$5K – $15K</span>
+                    <span class="desc">Medium project</span>
+                  </div>
+                  <div class="budget-option">
+                    <input type="radio" name="budget" value="15k-50k">
+                    <span class="amount">$15K – $50K</span>
+                    <span class="desc">Large project</span>
+                  </div>
+                  <div class="budget-option">
+                    <input type="radio" name="budget" value="50k-100k">
+                    <span class="amount">$50K – $100K</span>
+                    <span class="desc">Enterprise</span>
+                  </div>
+                  <div class="budget-option">
+                    <input type="radio" name="budget" value="100k-plus">
+                    <span class="amount">$100K+</span>
+                    <span class="desc">Large enterprise</span>
+                  </div>
+                  <div class="budget-option">
+                    <input type="radio" name="budget" value="not-sure">
+                    <span class="amount">Not Sure</span>
+                    <span class="desc">Need guidance</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>Expected Timeline</label>
+                <select name="timeline" class="form-input">
+                  <option value="">Select a timeline</option>
+                  <option value="ASAP">As soon as possible</option>
+                  <option value="1-3 months">1 – 3 months</option>
+                  <option value="3-6 months">3 – 6 months</option>
+                  <option value="6-12 months">6 – 12 months</option>
+                  <option value="Not sure">Not sure yet</option>
+                </select>
+              </div>
+
+              <div class="form-nav">
+                <button type="button" class="btn-back"><i class='bx bx-left-arrow-alt'></i> Back</button>
+                <button type="button" class="btn btn-primary btn-next">Review <i class='bx bx-right-arrow-alt'></i></button>
+              </div>
+            </div>
+
+            <!-- Step 4: Review -->
+            <div class="form-step">
+              <h3>Review Your Booking</h3>
+              <p>Please review the details below before submitting.</p>
+
+              <div class="review-section">
+                <h4><i class='bx bx-user'></i> Contact Details</h4>
+                <div class="review-row"><span class="review-label">Name</span><span class="review-value" id="reviewName"></span></div>
+                <div class="review-row"><span class="review-label">Email</span><span class="review-value" id="reviewEmail"></span></div>
+                <div class="review-row"><span class="review-label">Phone</span><span class="review-value" id="reviewPhone"></span></div>
+                <div class="review-row"><span class="review-label">Company</span><span class="review-value" id="reviewCompany"></span></div>
+              </div>
+
+              <div class="review-section">
+                <h4><i class='bx bx-briefcase'></i> Services Selected</h4>
+                <div class="review-row"><span class="review-label">Services</span><span class="review-value" id="reviewServices"></span></div>
+              </div>
+
+              <div class="review-section">
+                <h4><i class='bx bx-file'></i> Project Details</h4>
+                <div class="review-row"><span class="review-label">Budget</span><span class="review-value" id="reviewBudget"></span></div>
+                <div class="review-row"><span class="review-label">Timeline</span><span class="review-value" id="reviewTimeline"></span></div>
+                <div class="review-row"><span class="review-label">Description</span><span class="review-value" id="reviewDescription"></span></div>
+              </div>
+
+              <div class="form-nav">
+                <button type="button" class="btn-back"><i class='bx bx-left-arrow-alt'></i> Back</button>
+                <button type="button" class="btn btn-green btn-lg btn-submit"><i class='bx bx-check-circle'></i> Submit Booking</button>
+              </div>
+            </div>
+          </form>
+
+          <!-- Success State -->
+          <div class="booking-success">
+            <div class="success-icon"><i class='bx bx-check'></i></div>
+            <h2>Booking Submitted!</h2>
+            <p>Thank you for your interest in TREEZ AFRICA SYSTEMS. Our team will review your request and get back to you within 24 hours with a tailored proposal.</p>
+            <a href="index.html" class="btn btn-primary">Back to Home <i class='bx bx-right-arrow-alt'></i></a>
+          </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="booking-sidebar">
+          <div class="sidebar-card">
+            <h4>Contact Information</h4>
+            <div class="sidebar-info-item">
+              <i class='bx bx-phone'></i>
+              <div><p>Phone</p><p>+256 700 000 000</p></div>
+            </div>
+            <div class="sidebar-info-item">
+              <i class='bx bx-envelope'></i>
+              <div><p>Email</p><p>info@treezafrica.systems</p></div>
+            </div>
+            <div class="sidebar-info-item">
+              <i class='bx bx-map'></i>
+              <div><p>Location</p><p>Kampala, Uganda</p></div>
+            </div>
+            <div class="sidebar-info-item">
+              <i class='bx bx-time-five'></i>
+              <div><p>Working Hours</p><p>Mon – Fri: 8AM – 6PM</p></div>
+            </div>
+          </div>
+
+          <div class="sidebar-card">
+            <h4>Why Book With Us?</h4>
+            <div class="sidebar-trust">
+              <div class="sidebar-trust-item"><i class='bx bx-check-circle'></i> Free initial consultation</div>
+              <div class="sidebar-trust-item"><i class='bx bx-check-circle'></i> Response within 24 hours</div>
+              <div class="sidebar-trust-item"><i class='bx bx-check-circle'></i> No obligation quote</div>
+              <div class="sidebar-trust-item"><i class='bx bx-check-circle'></i> 150+ projects delivered</div>
+              <div class="sidebar-trust-item"><i class='bx bx-check-circle'></i> Expert team consultation</div>
+              <div class="sidebar-trust-item"><i class='bx bx-check-circle'></i> NDA available on request</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-top">
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-brand"><a href="index.html" class="logo"><div class="logo-icon">T</div><div class="logo-text">TREEZ AFRICA<span>Systems</span></div></a><p>Building innovative software solutions that power Africa's digital transformation.</p><div class="footer-socials"><a href="#"><i class='bx bxl-linkedin'></i></a><a href="#"><i class='bx bxl-twitter'></i></a><a href="#"><i class='bx bxl-github'></i></a><a href="#"><i class='bx bxl-facebook'></i></a></div></div>
+          <div class="footer-col"><h4>Quick Links</h4><ul class="footer-links"><li><a href="about.html">About Us</a></li><li><a href="services.html">Services</a></li><li><a href="portfolio.html">Portfolio</a></li><li><a href="blog.html">Blog</a></li><li><a href="booking.html">Book Us</a></li><li><a href="contact.html">Contact</a></li></ul></div>
+          <div class="footer-col"><h4>Services</h4><ul class="footer-links"><li><a href="services.html">Web Applications</a></li><li><a href="services.html">Mobile Apps</a></li><li><a href="services.html">Enterprise Banking</a></li><li><a href="services.html">System Maintenance</a></li><li><a href="services.html">IT Consulting</a></li></ul></div>
+          <div class="footer-col footer-newsletter"><h4>Stay Updated</h4><p>Subscribe for tech insights.</p><form class="newsletter-form"><input type="email" placeholder="Your email"><button type="submit">Subscribe</button></form><div style="margin-top:24px;"><div class="footer-contact-item"><i class='bx bx-map'></i><span>Kampala, Uganda</span></div><div class="footer-contact-item"><i class='bx bx-phone'></i><span>+256 700 000 000</span></div><div class="footer-contact-item"><i class='bx bx-envelope'></i><span>info@treezafrica.systems</span></div></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="container"><div class="footer-bottom"><p>&copy; 2026 TREEZ AFRICA SYSTEMS. All rights reserved.</p><div class="footer-subsidiary"><i class='bx bx-building-house'></i> A subsidiary of <a href="#">TREEZ AFRICA HOLDINGS</a></div></div></div>
+  </footer>
+
+  <button class="back-to-top"><i class='bx bx-up-arrow-alt'></i></button>
+  <script src="js/main.js"></script>
+  <script src="js/animations.js"></script>
+  <script src="js/booking.js"></script>
+</body>
+</html>
+

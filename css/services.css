@@ -1,0 +1,248 @@
+/* ============================================
+   TREEZ AFRICA SYSTEMS — Services Page
+   ============================================ */
+
+/* ---- Service Detail Section ---- */
+.service-detail {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+  padding: 80px 0;
+  border-bottom: 1px solid var(--gray-100);
+}
+
+.service-detail:last-child {
+  border-bottom: none;
+}
+
+.service-detail:nth-child(even) {
+  direction: rtl;
+}
+
+.service-detail:nth-child(even) > * {
+  direction: ltr;
+}
+
+.service-detail-visual {
+  height: 400px;
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.service-detail-visual.bg-1 {
+  background: linear-gradient(135deg, #0052CC 0%, #003A8C 100%);
+}
+
+.service-detail-visual.bg-2 {
+  background: linear-gradient(135deg, #00A651 0%, #007A3D 100%);
+}
+
+.service-detail-visual.bg-3 {
+  background: linear-gradient(135deg, #1A1A1A 0%, #333 100%);
+}
+
+.service-detail-visual.bg-4 {
+  background: linear-gradient(135deg, #0052CC 0%, #00A651 100%);
+}
+
+.service-detail-visual.bg-5 {
+  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+}
+
+.service-detail-visual i {
+  font-size: 5rem;
+  color: rgba(255,255,255,0.3);
+}
+
+.service-detail-visual::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M20 20.5V18H0v-2h20v-2l3 3-3 3zm-4-12V0h2v8.5L15 12l-3-3 4-0.5z'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+.service-detail-content .label {
+  display: inline-block;
+  font-family: var(--font-heading);
+  font-size: var(--fs-small);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  color: var(--green);
+  margin-bottom: 12px;
+}
+
+.service-detail-content h2 {
+  margin-bottom: 16px;
+}
+
+.service-detail-content p {
+  margin-bottom: 24px;
+}
+
+.service-features-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.service-features-list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: var(--fs-small);
+  color: var(--gray-700);
+}
+
+.service-features-list li i {
+  color: var(--green);
+  font-size: 1rem;
+}
+
+/* ---- Tech Stack ---- */
+.tech-stack {
+  background: var(--black);
+}
+
+.tech-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 24px;
+}
+
+.tech-item {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  text-align: center;
+  transition: all var(--transition-base);
+}
+
+.tech-item:hover {
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(0,166,81,0.3);
+  transform: translateY(-5px);
+}
+
+.tech-item i {
+  font-size: 2.5rem;
+  margin-bottom: 12px;
+  display: block;
+}
+
+.tech-item span {
+  font-size: var(--fs-small);
+  color: var(--gray-300);
+  font-weight: 500;
+}
+
+/* ---- Process / How We Work ---- */
+.process-steps {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.process-steps::before {
+  content: '';
+  position: absolute;
+  top: 40px;
+  left: 10%;
+  right: 10%;
+  height: 3px;
+  background: var(--gray-100);
+}
+
+.process-step {
+  text-align: center;
+  flex: 1;
+  position: relative;
+  z-index: 2;
+}
+
+.process-number {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--white);
+  border: 3px solid var(--gray-100);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--gray-500);
+  transition: all var(--transition-base);
+}
+
+.process-step:hover .process-number {
+  background: var(--gradient-primary);
+  border-color: transparent;
+  color: var(--white);
+  transform: scale(1.1);
+  box-shadow: var(--shadow-glow-blue);
+}
+
+.process-step h4 {
+  font-size: 1rem;
+  margin-bottom: 8px;
+}
+
+.process-step p {
+  font-size: var(--fs-xs);
+  color: var(--gray-500);
+  max-width: 150px;
+  margin: 0 auto;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .service-detail {
+    grid-template-columns: 1fr;
+  }
+
+  .service-detail:nth-child(even) {
+    direction: ltr;
+  }
+
+  .tech-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .process-steps {
+    flex-direction: column;
+    gap: 30px;
+    align-items: center;
+  }
+
+  .process-steps::before {
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    right: auto;
+    width: 3px;
+    height: 100%;
+  }
+
+  .service-features-list {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .tech-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+

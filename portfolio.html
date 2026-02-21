@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Explore TREEZ AFRICA SYSTEMS' portfolio — web apps, mobile apps, enterprise banking systems, and more.">
+  <title>Our Portfolio — TREEZ AFRICA SYSTEMS</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/global.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/header.css">
+  <link rel="stylesheet" href="css/footer.css">
+  <link rel="stylesheet" href="css/about.css">
+  <link rel="stylesheet" href="css/portfolio.css">
+</head>
+<body>
+
+  <div class="preloader"><div class="preloader-inner"><div class="preloader-logo">TREEZ <span>AFRICA</span></div><div class="preloader-bar"></div></div></div>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="container">
+      <a href="index.html" class="logo"><div class="logo-icon">T</div><div class="logo-text">TREEZ AFRICA<span>Systems</span></div></a>
+      <nav class="nav">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="about.html" class="nav-link">About</a>
+        <a href="services.html" class="nav-link">Services</a>
+        <a href="portfolio.html" class="nav-link active">Portfolio</a>
+        <a href="blog.html" class="nav-link">Blog</a>
+        <a href="contact.html" class="nav-link">Contact</a>
+        <a href="booking.html" class="btn btn-primary btn-sm nav-cta">Book Us <i class='bx bx-right-arrow-alt'></i></a>
+      </nav>
+      <div class="hamburger"><span></span><span></span><span></span></div>
+    </div>
+  </header>
+  <div class="mobile-nav">
+    <a href="index.html" class="nav-link">Home</a><a href="about.html" class="nav-link">About</a><a href="services.html" class="nav-link">Services</a><a href="portfolio.html" class="nav-link active">Portfolio</a><a href="blog.html" class="nav-link">Blog</a><a href="contact.html" class="nav-link">Contact</a><a href="booking.html" class="btn btn-primary">Book a Consultation</a>
+  </div>
+
+  <!-- Page Hero -->
+  <section class="page-hero">
+    <div class="page-hero-content">
+      <div class="breadcrumb"><a href="index.html">Home</a><i class='bx bx-chevron-right'></i><span>Portfolio</span></div>
+      <h1 class="reveal">Our Portfolio</h1>
+      <p class="reveal">Explore the projects that showcase our capabilities and expertise</p>
+    </div>
+  </section>
+
+  <!-- Portfolio Section -->
+  <section class="section">
+    <div class="container">
+      <!-- Filter -->
+      <div class="filter-bar reveal">
+        <button class="filter-btn active" data-filter="all">All Projects</button>
+        <button class="filter-btn" data-filter="web">Web Apps</button>
+        <button class="filter-btn" data-filter="mobile">Mobile Apps</button>
+        <button class="filter-btn" data-filter="enterprise">Enterprise</button>
+        <button class="filter-btn" data-filter="fintech">FinTech</button>
+      </div>
+
+      <!-- Grid -->
+      <div class="portfolio-grid stagger">
+
+        <div class="portfolio-card reveal" data-category="enterprise" data-id="1">
+          <div class="portfolio-thumbnail">
+            <div class="portfolio-thumbnail-bg bg-enterprise"><i class='bx bx-bank'></i></div>
+            <div class="portfolio-overlay"><div class="portfolio-overlay-btn"><i class='bx bx-show'></i></div></div>
+          </div>
+          <div class="portfolio-info">
+            <span class="badge badge-blue">Enterprise Banking</span>
+            <h3>FinBank Digital Platform</h3>
+            <p>Complete digital banking transformation with mobile apps and real-time processing.</p>
+          </div>
+        </div>
+
+        <div class="portfolio-card reveal" data-category="mobile" data-id="2">
+          <div class="portfolio-thumbnail">
+            <div class="portfolio-thumbnail-bg bg-mobile"><i class='bx bx-mobile-alt'></i></div>
+            <div class="portfolio-overlay"><div class="portfolio-overlay-btn"><i class='bx bx-show'></i></div></div>
+          </div>
+          <div class="portfolio-info">
+            <span class="badge badge-green">Mobile Development</span>
+            <h3>AgriConnect Mobile App</h3>
+            <p>Cross-platform app connecting farmers to markets with offline capabilities.</p>
+          </div>
+        </div>
+
+        <div class="portfolio-card reveal" data-category="fintech" data-id="3">
+          <div class="portfolio-thumbnail">
+            <div class="portfolio-thumbnail-bg bg-fintech"><i class='bx bx-credit-card'></i></div>
+            <div class="portfolio-overlay"><div class="portfolio-overlay-btn"><i class='bx bx-show'></i></div></div>
+          </div>
+          <div class="portfolio-info">
+            <span class="badge badge-blue">FinTech Solutions</span>
+            <h3>CityPay Payment Gateway</h3>
+            <p>Secure, multi-currency payment gateway processing $2M+ daily across 5 countries.</p>
+          </div>
+        </div>
+
+        <div class="portfolio-card reveal" data-category="web" data-id="4">
+          <div class="portfolio-thumbnail">
+            <div class="portfolio-thumbnail-bg bg-web"><i class='bx bx-plus-medical'></i></div>
+            <div class="portfolio-overlay"><div class="portfolio-overlay-btn"><i class='bx bx-show'></i></div></div>
+          </div>
+          <div class="portfolio-info">
+            <span class="badge badge-green">Web Application</span>
+            <h3>HealthTrack EHR System</h3>
+            <p>Cloud-based electronic health records for a network of 12 healthcare facilities.</p>
+          </div>
+        </div>
+
+        <div class="portfolio-card reveal" data-category="enterprise" data-id="5">
+          <div class="portfolio-thumbnail">
+            <div class="portfolio-thumbnail-bg bg-enterprise"><i class='bx bx-package'></i></div>
+            <div class="portfolio-overlay"><div class="portfolio-overlay-btn"><i class='bx bx-show'></i></div></div>
+          </div>
+          <div class="portfolio-info">
+            <span class="badge badge-blue">Enterprise Solution</span>
+            <h3>LogiTrack Supply Chain</h3>
+            <p>End-to-end supply chain management with GPS tracking and predictive analytics.</p>
+          </div>
+        </div>
+
+        <div class="portfolio-card reveal" data-category="web" data-id="6">
+          <div class="portfolio-thumbnail">
+            <div class="portfolio-thumbnail-bg bg-web"><i class='bx bx-book-open'></i></div>
+            <div class="portfolio-overlay"><div class="portfolio-overlay-btn"><i class='bx bx-show'></i></div></div>
+          </div>
+          <div class="portfolio-info">
+            <span class="badge badge-green">Web Application</span>
+            <h3>EduLearn LMS Platform</h3>
+            <p>Learning management system serving 100,000+ learners with offline access.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Portfolio Modal -->
+  <div id="portfolioModal" class="portfolio-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div></div>
+        <button class="modal-close"><i class='bx bx-x'></i></button>
+      </div>
+      <div class="modal-body" id="modalBody"></div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <section class="cta-banner" style="padding:80px 0;background:var(--gradient-hero);">
+    <div class="container" style="text-align:center;">
+      <h2 class="reveal" style="color:var(--white);">Have a Project in Mind?</h2>
+      <p class="reveal" style="color:rgba(255,255,255,0.7);max-width:600px;margin:0 auto 32px;">Let us add your success story to our portfolio. Get in touch today.</p>
+      <a href="booking.html" class="btn btn-primary btn-lg reveal">Start Your Project <i class='bx bx-right-arrow-alt'></i></a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-top">
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-brand"><a href="index.html" class="logo"><div class="logo-icon">T</div><div class="logo-text">TREEZ AFRICA<span>Systems</span></div></a><p>Building innovative software solutions that power Africa's digital transformation.</p><div class="footer-socials"><a href="#"><i class='bx bxl-linkedin'></i></a><a href="#"><i class='bx bxl-twitter'></i></a><a href="#"><i class='bx bxl-github'></i></a><a href="#"><i class='bx bxl-facebook'></i></a></div></div>
+          <div class="footer-col"><h4>Quick Links</h4><ul class="footer-links"><li><a href="about.html">About Us</a></li><li><a href="services.html">Services</a></li><li><a href="portfolio.html">Portfolio</a></li><li><a href="blog.html">Blog</a></li><li><a href="booking.html">Book Us</a></li><li><a href="contact.html">Contact</a></li></ul></div>
+          <div class="footer-col"><h4>Services</h4><ul class="footer-links"><li><a href="services.html">Web Applications</a></li><li><a href="services.html">Mobile Apps</a></li><li><a href="services.html">Enterprise Banking</a></li><li><a href="services.html">System Maintenance</a></li><li><a href="services.html">IT Consulting</a></li></ul></div>
+          <div class="footer-col footer-newsletter"><h4>Stay Updated</h4><p>Subscribe for tech insights.</p><form class="newsletter-form"><input type="email" placeholder="Your email"><button type="submit">Subscribe</button></form><div style="margin-top:24px;"><div class="footer-contact-item"><i class='bx bx-map'></i><span>Kampala, Uganda</span></div><div class="footer-contact-item"><i class='bx bx-phone'></i><span>+256 700 000 000</span></div><div class="footer-contact-item"><i class='bx bx-envelope'></i><span>info@treezafrica.systems</span></div></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="container"><div class="footer-bottom"><p>&copy; 2026 TREEZ AFRICA SYSTEMS. All rights reserved.</p><div class="footer-subsidiary"><i class='bx bx-building-house'></i> A subsidiary of <a href="#">TREEZ AFRICA HOLDINGS</a></div></div></div>
+  </footer>
+
+  <button class="back-to-top"><i class='bx bx-up-arrow-alt'></i></button>
+  <script src="js/main.js"></script>
+  <script src="js/animations.js"></script>
+  <script src="js/portfolio.js"></script>
+</body>
+</html>
+

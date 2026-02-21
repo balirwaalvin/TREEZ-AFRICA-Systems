@@ -1,0 +1,245 @@
+/* ============================================
+   TREEZ AFRICA SYSTEMS — Blog Page
+   ============================================ */
+
+.blog-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+}
+
+.blog-card {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-base);
+  border: 1px solid rgba(0,0,0,0.05);
+}
+
+.blog-card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-lg);
+}
+
+.blog-thumbnail {
+  height: 200px;
+  position: relative;
+  overflow: hidden;
+}
+
+.blog-thumbnail-bg {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  color: rgba(255,255,255,0.4);
+  transition: transform var(--transition-slow);
+}
+
+.blog-card:hover .blog-thumbnail-bg {
+  transform: scale(1.05);
+}
+
+.blog-thumbnail-bg.bg-1 { background: linear-gradient(135deg, #0052CC, #4C9AFF); }
+.blog-thumbnail-bg.bg-2 { background: linear-gradient(135deg, #00A651, #33CC77); }
+.blog-thumbnail-bg.bg-3 { background: linear-gradient(135deg, #1A1A1A, #555); }
+.blog-thumbnail-bg.bg-4 { background: linear-gradient(135deg, #FFD700, #FFA500); }
+.blog-thumbnail-bg.bg-5 { background: linear-gradient(135deg, #0052CC, #00A651); }
+.blog-thumbnail-bg.bg-6 { background: linear-gradient(135deg, #2D2D2D, #0052CC); }
+
+.blog-date-badge {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  background: var(--white);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+}
+
+.blog-date-badge .day {
+  display: block;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 1.2rem;
+  color: var(--blue);
+  line-height: 1;
+}
+
+.blog-date-badge .month {
+  font-size: var(--fs-xs);
+  color: var(--gray-500);
+  text-transform: uppercase;
+}
+
+.blog-body {
+  padding: 24px;
+}
+
+.blog-body .badge {
+  margin-bottom: 12px;
+}
+
+.blog-body h3 {
+  font-size: 1.1rem;
+  margin-bottom: 8px;
+  line-height: 1.4;
+  transition: color var(--transition-base);
+}
+
+.blog-card:hover .blog-body h3 {
+  color: var(--blue);
+}
+
+.blog-body p {
+  font-size: var(--fs-small);
+  color: var(--gray-500);
+  margin-bottom: 16px;
+  line-height: 1.7;
+}
+
+.blog-meta {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--gray-100);
+  font-size: var(--fs-xs);
+  color: var(--gray-500);
+}
+
+.blog-meta span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ---- Blog Post / Article ---- */
+.blog-post-header {
+  text-align: center;
+  padding: 120px 0 60px;
+  background: var(--gradient-hero);
+}
+
+.blog-post-header .badge {
+  margin-bottom: 16px;
+}
+
+.blog-post-header h1 {
+  color: var(--white);
+  max-width: 800px;
+  margin: 0 auto 20px;
+}
+
+.blog-post-meta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  color: rgba(255,255,255,0.6);
+  font-size: var(--fs-small);
+}
+
+.blog-post-meta span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.blog-post-content {
+  max-width: 750px;
+  margin: 0 auto;
+  padding: 60px 0;
+}
+
+.blog-post-content h2 {
+  margin: 32px 0 16px;
+  font-size: 1.5rem;
+}
+
+.blog-post-content h3 {
+  margin: 24px 0 12px;
+  font-size: 1.2rem;
+}
+
+.blog-post-content p {
+  margin-bottom: 20px;
+  line-height: 1.9;
+}
+
+.blog-post-content ul,
+.blog-post-content ol {
+  margin: 16px 0;
+  padding-left: 24px;
+}
+
+.blog-post-content li {
+  list-style: disc;
+  margin-bottom: 8px;
+  color: var(--gray-700);
+}
+
+.blog-post-content blockquote {
+  border-left: 4px solid var(--blue);
+  padding: 20px 24px;
+  background: var(--gray-100);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  margin: 24px 0;
+  font-style: italic;
+  color: var(--gray-700);
+}
+
+.blog-share {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 24px 0;
+  border-top: 1px solid var(--gray-100);
+  border-bottom: 1px solid var(--gray-100);
+  margin: 40px 0;
+}
+
+.blog-share span {
+  font-weight: 600;
+  color: var(--gray-900);
+}
+
+.blog-share a {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--gray-100);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gray-700);
+  transition: all var(--transition-base);
+}
+
+.blog-share a:hover {
+  background: var(--blue);
+  color: var(--white);
+}
+
+/* Related Posts */
+.related-posts h3 {
+  margin-bottom: 24px;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .blog-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .blog-grid {
+    grid-template-columns: 1fr;
+  }
+}
+

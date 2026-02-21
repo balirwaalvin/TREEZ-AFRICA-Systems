@@ -1,0 +1,455 @@
+/* ============================================
+   TREEZ AFRICA SYSTEMS — Booking Page
+   ============================================ */
+
+/* ---- Booking Layout ---- */
+.booking-layout {
+  display: grid;
+  grid-template-columns: 1fr 350px;
+  gap: 60px;
+  align-items: flex-start;
+}
+
+/* ---- Progress Bar ---- */
+.form-progress {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 48px;
+  position: relative;
+}
+
+.form-progress::before {
+  content: '';
+  position: absolute;
+  top: 20px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--gray-100);
+}
+
+.progress-fill {
+  position: absolute;
+  top: 20px;
+  left: 0;
+  height: 3px;
+  background: var(--gradient-primary);
+  transition: width var(--transition-slow);
+  z-index: 1;
+}
+
+.progress-step {
+  text-align: center;
+  position: relative;
+  z-index: 2;
+}
+
+.progress-number {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: var(--white);
+  border: 3px solid var(--gray-300);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--gray-500);
+  margin: 0 auto 8px;
+  transition: all var(--transition-base);
+}
+
+.progress-step.active .progress-number,
+.progress-step.completed .progress-number {
+  background: var(--gradient-primary);
+  border-color: transparent;
+  color: var(--white);
+}
+
+.progress-step.completed .progress-number {
+  background: var(--green);
+}
+
+.progress-label {
+  font-size: var(--fs-xs);
+  color: var(--gray-500);
+  font-weight: 500;
+  transition: color var(--transition-base);
+}
+
+.progress-step.active .progress-label {
+  color: var(--blue);
+  font-weight: 600;
+}
+
+/* ---- Form Steps ---- */
+.form-step {
+  display: none;
+  animation: fadeIn 0.4s ease;
+}
+
+.form-step.active {
+  display: block;
+}
+
+.form-step h3 {
+  margin-bottom: 8px;
+}
+
+.form-step > p {
+  color: var(--gray-500);
+  margin-bottom: 32px;
+}
+
+/* ---- Form Elements ---- */
+.form-group {
+  margin-bottom: 24px;
+}
+
+.form-group label {
+  display: block;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: var(--fs-small);
+  color: var(--gray-900);
+  margin-bottom: 8px;
+}
+
+.form-group label .required {
+  color: #e74c3c;
+}
+
+.form-input {
+  width: 100%;
+  padding: 14px 16px;
+  border: 2px solid var(--gray-100);
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-body);
+  color: var(--gray-900);
+  background: var(--white);
+  transition: all var(--transition-base);
+}
+
+.form-input:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 4px rgba(0,82,204,0.1);
+}
+
+.form-input::placeholder {
+  color: var(--gray-500);
+}
+
+textarea.form-input {
+  min-height: 120px;
+  resize: vertical;
+}
+
+select.form-input {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%23888' stroke-width='2'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+/* Checkbox / Radio Group */
+.checkbox-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 2px solid var(--gray-100);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.checkbox-item:hover {
+  border-color: var(--blue-light);
+  background: rgba(0,82,204,0.02);
+}
+
+.checkbox-item.selected {
+  border-color: var(--blue);
+  background: rgba(0,82,204,0.05);
+}
+
+.checkbox-item input {
+  display: none;
+}
+
+.checkbox-check {
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+  border: 2px solid var(--gray-300);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  color: transparent;
+  transition: all var(--transition-base);
+  flex-shrink: 0;
+}
+
+.checkbox-item.selected .checkbox-check {
+  background: var(--blue);
+  border-color: var(--blue);
+  color: var(--white);
+}
+
+.checkbox-label {
+  font-size: var(--fs-small);
+  font-weight: 500;
+  color: var(--gray-700);
+}
+
+/* Budget range */
+.budget-options {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.budget-option {
+  padding: 16px;
+  border: 2px solid var(--gray-100);
+  border-radius: var(--radius-sm);
+  text-align: center;
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.budget-option:hover {
+  border-color: var(--blue-light);
+}
+
+.budget-option.selected {
+  border-color: var(--blue);
+  background: rgba(0,82,204,0.05);
+}
+
+.budget-option input { display: none; }
+
+.budget-option .amount {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  color: var(--black);
+  display: block;
+  margin-bottom: 4px;
+}
+
+.budget-option .desc {
+  font-size: var(--fs-xs);
+  color: var(--gray-500);
+}
+
+/* ---- Form Navigation ---- */
+.form-nav {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--gray-100);
+}
+
+.form-nav .btn-back {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  color: var(--gray-500);
+  font-weight: 600;
+  transition: all var(--transition-base);
+}
+
+.form-nav .btn-back:hover {
+  color: var(--black);
+}
+
+/* ---- Review Step ---- */
+.review-section {
+  background: var(--gray-100);
+  border-radius: var(--radius-sm);
+  padding: 24px;
+  margin-bottom: 20px;
+}
+
+.review-section h4 {
+  font-size: 0.9rem;
+  color: var(--blue);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.review-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+  font-size: var(--fs-small);
+}
+
+.review-row:last-child {
+  border-bottom: none;
+}
+
+.review-label {
+  color: var(--gray-500);
+}
+
+.review-value {
+  font-weight: 600;
+  color: var(--gray-900);
+}
+
+/* ---- Success State ---- */
+.booking-success {
+  display: none;
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.booking-success.active {
+  display: block;
+}
+
+.success-icon {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: rgba(0,166,81,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px;
+  font-size: 3rem;
+  color: var(--green);
+  animation: scaleIn 0.5s ease forwards;
+}
+
+.booking-success h2 {
+  margin-bottom: 12px;
+  color: var(--green);
+}
+
+.booking-success p {
+  max-width: 500px;
+  margin: 0 auto 24px;
+}
+
+/* ---- Sidebar ---- */
+.booking-sidebar {
+  position: sticky;
+  top: 120px;
+}
+
+.sidebar-card {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  box-shadow: var(--shadow-md);
+  margin-bottom: 24px;
+}
+
+.sidebar-card h4 {
+  margin-bottom: 20px;
+  font-size: 1rem;
+}
+
+.sidebar-info-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.sidebar-info-item i {
+  width: 40px;
+  height: 40px;
+  background: var(--gradient-card);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--blue);
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.sidebar-info-item div p {
+  margin: 0;
+  font-size: var(--fs-small);
+}
+
+.sidebar-info-item div p:first-child {
+  font-weight: 600;
+  color: var(--gray-900);
+  margin-bottom: 2px;
+}
+
+.sidebar-info-item div p:last-child {
+  color: var(--gray-500);
+}
+
+.sidebar-trust {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sidebar-trust-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: var(--fs-small);
+  color: var(--gray-700);
+}
+
+.sidebar-trust-item i {
+  color: var(--green);
+  font-size: 1.1rem;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .booking-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .booking-sidebar {
+    position: static;
+  }
+
+  .form-row,
+  .checkbox-group {
+    grid-template-columns: 1fr;
+  }
+
+  .budget-options {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .budget-options {
+    grid-template-columns: 1fr;
+  }
+}
+
