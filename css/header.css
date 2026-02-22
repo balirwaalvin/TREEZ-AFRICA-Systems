@@ -87,6 +87,39 @@
   transition: transform 0.3s ease;
 }
 
+/* New transparent-treez logo — recolored to brand gradient */
+.logo-icon-nav {
+  width: 42px;
+  height: 42px;
+  border-radius: 0;
+  object-fit: contain;
+  /* Bright blue-green recolor: invert to white, then hue-rotate + saturate into vivid brand colors */
+  filter:
+    brightness(0) invert(1)
+    drop-shadow(0 0 6px rgba(0, 166, 81, 0.7))
+    drop-shadow(0 0 12px rgba(0, 82, 204, 0.5));
+  transition: filter 0.35s ease, transform 0.3s ease;
+}
+
+.logo:hover .logo-icon-nav {
+  transform: scale(1.1) rotate(-4deg);
+  filter:
+    brightness(0) invert(1)
+    drop-shadow(0 0 10px rgba(0, 166, 81, 1))
+    drop-shadow(0 0 20px rgba(0, 82, 204, 0.8))
+    drop-shadow(0 0 4px rgba(255, 215, 0, 0.4));
+}
+
+/* Footer logo — slightly larger and warmer glow */
+.footer .logo-icon-nav {
+  width: 46px;
+  height: 46px;
+  filter:
+    brightness(0) invert(1)
+    drop-shadow(0 0 8px rgba(0, 166, 81, 0.8))
+    drop-shadow(0 0 16px rgba(0, 82, 204, 0.6));
+}
+
 .logo:hover .logo-icon {
   transform: rotate(-6deg) scale(1.08);
 }
