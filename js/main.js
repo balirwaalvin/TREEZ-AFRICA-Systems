@@ -3,6 +3,69 @@
    ============================================ */
 
 document.addEventListener('DOMContentLoaded', () => {
+
+  // ================================================================
+  // ---- IMAGE PROTECTION — Block right-click, drag, save, copy ----
+  // ================================================================
+  const protectImages = () => {
+    document.querySelectorAll('img').forEach(img => {
+      // Hard-set draggable=false attribute
+      img.setAttribute('draggable', 'false');
+      img.setAttribute('oncontextmenu', 'return false');
+
+      // Block right-click on each image
+      img.addEventListener('contextmenu', e => e.preventDefault());
+
+      // Block drag start
+      img.addEventListener('dragstart', e => e.preventDefault());
+
+      // Block middle-click (button === 1) to open in new tab
+      img.addEventListener('mousedown', e => {
+        if (e.button === 1) e.preventDefault();
+      });
+
+      // Block long-press on touch devices (mobile save dialog)
+      let touchTimer;
+      img.addEventListener('touchstart', e => {
+        touchTimer = setTimeout(() => e.preventDefault(), 500);
+      }, { passive: false });
+      img.addEventListener('touchend', () => clearTimeout(touchTimer));
+      img.addEventListener('touchmove', () => clearTimeout(touchTimer));
+    });
+  };
+
+  protectImages();
+
+  // Re-run protection on dynamically added images (e.g. portfolio lazy-load)
+  const imgObserver = new MutationObserver(() => protectImages());
+  imgObserver.observe(document.body, { childList: true, subtree: true });
+
+  // Block right-click anywhere on the page
+  document.addEventListener('contextmenu', e => e.preventDefault());
+
+  // Block keyboard save / view-source / devtools shortcuts
+  document.addEventListener('keydown', e => {
+    const ctrl = e.ctrlKey || e.metaKey;
+    if (
+      (ctrl && e.key === 's') ||          // Ctrl+S — Save page
+      (ctrl && e.key === 'u') ||          // Ctrl+U — View source
+      (ctrl && e.key === 'a') ||          // Ctrl+A — Select all
+      (ctrl && e.shiftKey && e.key === 'i') || // Ctrl+Shift+I — DevTools
+      (ctrl && e.shiftKey && e.key === 'j') || // Ctrl+Shift+J — Console
+      (ctrl && e.shiftKey && e.key === 'c') || // Ctrl+Shift+C — Inspector
+      e.key === 'F12'                     // F12 — DevTools
+    ) {
+      e.preventDefault();
+      return false;
+    }
+  });
+
+  // Block drag of any element
+  document.addEventListener('dragstart', e => {
+    if (e.target.tagName === 'IMG') e.preventDefault();
+  });
+
+  // ================================================================
   // ---- Preloader ----
   const preloader = document.querySelector('.preloader');
   window.addEventListener('load', () => {

@@ -431,6 +431,34 @@ p {
   box-shadow: var(--shadow-lg);
 }
 
+/* ---- Image Protection ---- */
+img {
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+  user-drag: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* Wrap all images with a pseudo-element shield */
+img::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  background: transparent;
+}
+
+/* Protect background images and page content from selection */
+body {
+  -webkit-touch-callout: none;
+}
+
 /* ---- Selection ---- */
 ::selection {
   background: var(--blue);

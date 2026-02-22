@@ -269,6 +269,7 @@
   display: block;
   border-radius: var(--radius-lg);
   transition: transform 0.6s ease;
+  pointer-events: none;
 }
 
 .about-image-box:hover .about-image-photo {
