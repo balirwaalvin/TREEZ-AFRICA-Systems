@@ -7,6 +7,8 @@
   color: var(--gray-300);
   position: relative;
   overflow: hidden;
+  z-index: 1100;
+  isolation: isolate;
 }
 
 .footer::before {
@@ -172,7 +174,7 @@
 
 .footer-bottom {
   border-top: 1px solid rgba(255,255,255,0.06);
-  padding: 24px 0;
+  padding: 24px 0 28px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -225,6 +227,7 @@
   .footer-bottom {
     flex-direction: column;
     text-align: center;
+    padding-bottom: 40px;
   }
 }
 

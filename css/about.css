@@ -12,7 +12,8 @@
   background: var(--gradient-hero);
   position: relative;
   overflow: hidden;
-  padding-top: 80px;
+  padding-top: 140px;
+  padding-bottom: 60px;
 }
 
 .page-hero::before {
@@ -328,9 +329,11 @@
   .timeline-spacer { display: none; }
   .mvv-grid { grid-template-columns: 1fr; }
   .team-grid { grid-template-columns: repeat(2, 1fr); }
+  .page-hero { padding-top: 120px; }
 }
 
 @media (max-width: 600px) {
   .team-grid { grid-template-columns: 1fr; }
+  .page-hero { padding-top: 100px; padding-bottom: 40px; }
 }
 
