@@ -255,6 +255,24 @@
   overflow: hidden;
 }
 
+/* Real profile photo variant */
+.team-photo-img {
+  padding: 0;
+}
+
+.team-photo-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+  transition: transform 0.5s ease;
+}
+
+.team-card:hover .team-photo-img img {
+  transform: scale(1.05);
+}
+
 .team-photo::after {
   content: '';
   position: absolute;
