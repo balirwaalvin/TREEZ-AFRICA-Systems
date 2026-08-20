@@ -126,6 +126,7 @@
 .partner-svg {
   width: 100%;
   height: 100%;
+  object-fit: contain;
 }
 
 /* ---- Center Hub ---- */
@@ -272,9 +273,10 @@
   align-items: center;
 }
 
-.psc-logo-wrap svg {
+.psc-logo-wrap img {
   height: 40px;
   width: 110px;
+  object-fit: contain;
 }
 
 .psc-badge {
@@ -402,6 +404,12 @@
 .bento-icon-wrap i {
   font-size: 1.6rem;
   color: var(--bic, var(--blue));
+}
+
+.bento-icon-wrap img {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
 }
 
 .bento-content {
