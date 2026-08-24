@@ -228,6 +228,9 @@
   color: var(--yellow);
 }
 
+.admin-access { color: rgba(255,255,255,0.16); font-size: 0.8rem; transition: color var(--transition-base); }
+.admin-access:hover, .admin-access:focus { color: var(--green-light); }
+
 /* Responsive */
 @media (max-width: 1024px) {
   .footer-grid {

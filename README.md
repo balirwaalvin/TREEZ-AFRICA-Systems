@@ -126,6 +126,16 @@ TREEZ-AFRICA-Systems/
     └── icons/              # Custom SVG icons
 ```
 
+## 🔐 Admin Workspace
+
+The private admin workspace is available at `admin.html` and is intentionally linked only by a low-contrast key icon in the footer. It uses Appwrite email/password authentication and the IDs in `js/appwrite-config.js`.
+
+Do not open `admin.html` with a `file://` URL. Start a local server from the project folder with `python3 -m http.server 8000`, then open `http://localhost:8000/admin.html`. In the Appwrite console, add `localhost` as a Web platform (or add `http://localhost:8000` if the console asks for a full hostname) before testing login.
+
+Create an Appwrite collection named `analyticscollection` in the configured database with string attributes `page` and `path`. The existing `messagescollection` needs string attributes `name`, `email`, `phone`, `subject`, and `message`. The `treez-systems` collection needs string attributes `title`, `category`, `author`, `date`, `readTime`, `excerpt`, `content`, plus a boolean `published` attribute.
+
+Allow unauthenticated users to create documents in the messages and analytics collections. Allow authenticated users to list, create, update, and delete documents in the blog collection and list documents in the messages and analytics collections. Create the admin user in Appwrite and use that account to sign in at `admin.html`.
+
 <br>
 
 ## 🎨 Brand Colors

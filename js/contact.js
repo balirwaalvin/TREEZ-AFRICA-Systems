@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (!form) return;
 
   // ---- Form Validation & Submit ----
-  form.addEventListener('submit', (e) => {
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
     // Clear previous errors
@@ -39,13 +39,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (!isValid) return;
 
-    // Simulate submission
     const submitBtn = form.querySelector('button[type="submit"]');
     const originalText = submitBtn.innerHTML;
     submitBtn.disabled = true;
     submitBtn.innerHTML = '<i class="bx bx-loader-alt bx-spin"></i> Sending...';
 
-    setTimeout(() => {
+    try {
+      const formData = new FormData(form);
+      await window.TREEZ_APPWRITE.databases.createDocument(
+        window.APPWRITE_CONFIG.databaseId,
+        window.APPWRITE_CONFIG.messagesCollectionId,
+        window.TREEZ_APPWRITE.ID.unique(),
+        Object.fromEntries(formData.entries())
+      );
       submitBtn.disabled = false;
       submitBtn.innerHTML = originalText;
 
@@ -58,11 +64,16 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       form.reset();
-
-      setTimeout(() => {
-        if (msg) msg.style.display = 'none';
-      }, 6000);
-    }, 1500);
+    } catch (error) {
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = originalText;
+      const msg = document.querySelector('.form-message');
+      if (msg) {
+        msg.className = 'form-message error';
+        msg.textContent = error.message || 'We could not send your message. Please try again.';
+        msg.style.display = 'block';
+      }
+    }
   });
 
   function showError(input, message) {

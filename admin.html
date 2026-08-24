@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Workspace | TREEZ AFRICA SYSTEMS</title>
+  <link rel="icon" type="image/png" href="assets/images/TREEZ AFRICA SYSTEMS Logo.png">
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/global.css">
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body class="admin-page">
+  <main class="admin-shell">
+    <section id="adminLogin" class="admin-login-panel">
+      <div class="admin-login-brand"><img src="assets/images/transparent-treez.png" alt="TREEZ AFRICA SYSTEMS logo"><a class="admin-mark" href="index.html">TREEZ <span>AFRICA</span></a></div>
+      <p class="admin-kicker">Private workspace</p>
+      <h1>Sign in to your workspace</h1>
+      <p class="admin-muted">Manage conversations, publish insights, and review site activity.</p>
+      <form id="adminLoginForm" class="admin-form">
+        <label>Email address<input name="email" type="email" autocomplete="username" required></label>
+        <label>Password<input name="password" type="password" autocomplete="current-password" required></label>
+        <button class="admin-button admin-button-primary" type="submit"><i class="bx bx-log-in"></i> Sign in</button>
+        <p id="loginMessage" class="admin-message" role="alert"></p>
+      </form>
+    </section>
+    <section id="adminApp" class="admin-app" hidden>
+      <header class="admin-header">
+        <div class="admin-header-brand"><img src="assets/images/transparent-treez.png" alt="TREEZ AFRICA SYSTEMS logo"><div><p class="admin-kicker">TREEZ AFRICA SYSTEMS</p><h1>Operations dashboard</h1></div></div>
+        <div class="admin-header-actions"><span id="adminIdentity" class="admin-identity"></span><button id="logoutButton" class="admin-button admin-button-quiet" type="button"><i class="bx bx-log-out"></i> Sign out</button></div>
+      </header>
+      <nav class="admin-tabs" aria-label="Admin sections">
+        <button class="admin-tab active" data-tab="overview" type="button"><i class="bx bx-grid-alt"></i> Overview</button>
+        <button class="admin-tab" data-tab="messages" type="button"><i class="bx bx-envelope"></i> Messages</button>
+        <button class="admin-tab" data-tab="blogs" type="button"><i class="bx bx-edit"></i> Blog editor</button>
+      </nav>
+      <div id="adminNotice" class="admin-message" role="status"></div>
+      <section class="admin-view active" data-view="overview">
+        <div class="admin-stat-grid"><article class="admin-stat"><span>Messages</span><strong id="messageCount">0</strong><small>All contact enquiries</small></article><article class="admin-stat"><span>Published posts</span><strong id="blogCount">0</strong><small>Live blog documents</small></article><article class="admin-stat"><span>Page views</span><strong id="viewCount">0</strong><small>Tracked in Appwrite</small></article></div>
+        <div class="admin-section-heading"><div><p class="admin-kicker">Recent activity</p><h2>Latest messages</h2></div><button class="admin-button admin-button-quiet" data-go-tab="messages" type="button">View inbox <i class="bx bx-right-arrow-alt"></i></button></div>
+        <div id="recentMessages" class="admin-list"></div>
+      </section>
+      <section class="admin-view" data-view="messages"><div class="admin-section-heading"><div><p class="admin-kicker">Inbox</p><h2>Contact messages</h2></div><button id="refreshMessages" class="admin-button admin-button-quiet" type="button"><i class="bx bx-refresh"></i> Refresh</button></div><div id="messageList" class="admin-list"></div></section>
+      <section class="admin-view" data-view="blogs">
+        <div class="admin-section-heading"><div><p class="admin-kicker">Publishing</p><h2>Blog editor</h2></div><button id="newBlogButton" class="admin-button admin-button-primary" type="button"><i class="bx bx-plus"></i> New post</button></div>
+        <div class="admin-blog-layout"><div id="blogList" class="admin-list"></div><form id="blogForm" class="admin-form admin-editor" hidden><input name="id" type="hidden"><label>Title<input name="title" required></label><div class="admin-form-row"><label>Category<input name="category" required></label><label>Author<input name="author" required></label></div><div class="admin-form-row"><label>Date<input name="date" type="date" required></label><label>Read time<input name="readTime" placeholder="6 min read" required></label></div><label>Excerpt<textarea name="excerpt" rows="3" required></textarea></label><label>Article content<textarea name="content" rows="12" required></textarea></label><label class="admin-checkbox"><input name="published" type="checkbox" checked> Published</label><div class="admin-form-actions"><button class="admin-button admin-button-primary" type="submit">Save post</button><button id="cancelBlogButton" class="admin-button admin-button-quiet" type="button">Cancel</button></div><p id="blogMessage" class="admin-message" role="alert"></p></form></div>
+      </section>
+    </section>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/appwrite@14.0.1"></script>
+  <script src="js/appwrite-config.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>
