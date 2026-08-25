@@ -10,8 +10,7 @@
   top: 20px;
   left: 50%;
   transform: translateX(-50%) translateY(0);
-  width: auto;
-  max-width: 1140px;
+  width: min(1440px, calc(100% - 48px));
   z-index: 1000;
   padding: 8px 10px;
   border-radius: 60px;
@@ -368,11 +367,23 @@
   opacity: 1;
 }
 
+@media (min-width: 1600px) {
+  .header {
+    width: min(1640px, calc(100% - 72px));
+  }
+}
+
+@media (min-width: 2000px) {
+  .header {
+    width: min(1780px, calc(100% - 88px));
+  }
+}
+
 /* ---- Responsive ---- */
 
 @media (max-width: 1200px) {
   .header {
-    max-width: 96vw;
+    width: 96vw;
   }
 
   .nav-link {
@@ -387,7 +398,7 @@
 
 @media (max-width: 1024px) {
   .header {
-    max-width: 92vw;
+    width: 92vw;
     padding: 10px 16px;
   }
 
@@ -412,7 +423,7 @@
 @media (max-width: 600px) {
   .header {
     top: 12px;
-    max-width: 94vw;
+    width: 94vw;
     padding: 8px 12px;
     border-radius: 50px;
   }

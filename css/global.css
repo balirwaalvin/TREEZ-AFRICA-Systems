@@ -46,7 +46,7 @@
 
   /* Spacing */
   --section-padding: clamp(60px, 8vw, 120px);
-  --container-width: 1200px;
+  --container-width: 1440px;
   --container-padding: clamp(16px, 4vw, 40px);
 
   /* Borders & Shadows */
@@ -154,9 +154,32 @@ p {
 }
 
 .container-wide {
-  max-width: 1400px;
+  max-width: 1660px;
   margin: 0 auto;
   padding: 0 var(--container-padding);
+}
+
+/* Large desktop tuning so layouts use more horizontal space on 24-inch+ screens */
+@media (min-width: 1600px) {
+  :root {
+    --container-width: 1640px;
+    --container-padding: clamp(22px, 2.2vw, 56px);
+  }
+
+  .container-wide {
+    max-width: 1820px;
+  }
+}
+
+@media (min-width: 2000px) {
+  :root {
+    --container-width: 1780px;
+    --container-padding: clamp(28px, 2vw, 68px);
+  }
+
+  .container-wide {
+    max-width: 1980px;
+  }
 }
 
 /* ---- Section ---- */
