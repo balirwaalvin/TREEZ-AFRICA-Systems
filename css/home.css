@@ -507,7 +507,17 @@ p {
 .feature-icon svg {
   width: 20px;
   height: 20px;
-  color: var(--amber);
+  color: var(--color-primary);
+}
+
+/* Alternate primary/secondary across the grid so the two
+   brand colors both get real presence, not just amber everywhere */
+.feature-item:nth-child(even) .feature-icon {
+  border-color: rgba(52, 211, 153, 0.35);
+}
+
+.feature-item:nth-child(even) .feature-icon svg {
+  color: var(--color-secondary);
 }
 
 .feature-item h3 {

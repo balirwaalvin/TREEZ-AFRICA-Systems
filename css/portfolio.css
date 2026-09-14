@@ -116,14 +116,22 @@
   font-family: var(--font-mono);
   font-size: 0.66rem;
   font-weight: 600;
-  background: var(--bg-1);
-  color: var(--text-1);
-  border: 1px solid var(--line);
+  background: rgba(255, 176, 32, 0.1);
+  color: var(--color-primary);
+  border: 1px solid rgba(255, 176, 32, 0.35);
   padding: 4px 10px;
   border-radius: var(--radius-sm);
   white-space: nowrap;
   text-transform: uppercase;
   letter-spacing: 0.04em;
+}
+
+/* Alternate primary/secondary per card so both brand colors
+   get real presence across the showcase grid */
+.partner-showcase-card:nth-child(even) .psc-badge {
+  background: rgba(52, 211, 153, 0.1);
+  color: var(--color-secondary);
+  border-color: rgba(52, 211, 153, 0.35);
 }
 
 .psc-title {
@@ -198,6 +206,10 @@
   transition: all var(--transition-base);
 }
 
+.bento-card:nth-child(even) .bento-partner {
+  color: var(--color-secondary);
+}
+
 .bento-card:hover {
   transform: translateY(-5px);
   border-color: var(--line-strong);
@@ -236,7 +248,7 @@
   font-family: var(--font-mono);
   font-size: 0.7rem;
   font-weight: 600;
-  color: var(--amber);
+  color: var(--color-primary);
   text-transform: uppercase;
   letter-spacing: 0.06em;
 }

@@ -72,18 +72,6 @@
   margin-top: 5px;
 }
 
-.blog-body .badge {
-  font-family: var(--font-mono);
-  background: var(--bg-2);
-  color: var(--amber);
-  border: 1px solid var(--line-strong);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  font-size: 0.64rem;
-  padding: 4px 10px;
-  border-radius: var(--radius-sm);
-}
-
 .blog-body h3 {
   font-size: 1.1rem;
   color: var(--text-0);
@@ -148,15 +136,8 @@
 
 .blog-post-header .badge {
   display: inline-block;
-  font-family: var(--font-mono);
-  background: var(--bg-2);
-  color: var(--amber);
-  border: 1px solid var(--line-strong);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
   font-size: 0.68rem;
   padding: 5px 12px;
-  border-radius: var(--radius-sm);
   margin-bottom: 20px;
 }
 

@@ -27,7 +27,21 @@
   --amber: #FFB020;
   --amber-dim: #C98A1D;
   --status-green: #34D399;
+  --status-green-dim: #1F9C71;
   --status-red: #FF6B6B;
+
+  /* ---- Brand color system: primary + secondary ----
+     Primary (amber) drives main actions and brand identity.
+     Secondary (emerald) is the deliberate counterpart — used
+     for secondary actions, alternating tags, and status/live
+     indicators, so it reads as "part of the brand" rather
+     than a one-off status color. */
+  --color-primary: var(--amber);
+  --color-primary-dim: var(--amber-dim);
+  --color-primary-ink: var(--ink);
+  --color-secondary: var(--status-green);
+  --color-secondary-dim: var(--status-green-dim);
+  --color-secondary-ink: var(--ink);
 
   --font-mono: 'IBM Plex Mono', 'SFMono-Regular', Consolas, Menlo, monospace;
   --font-sans: 'IBM Plex Sans', -apple-system, sans-serif;
@@ -312,13 +326,14 @@ code, .mono {
 
 .btn-secondary {
   background: transparent;
-  color: var(--white);
-  border: 1px solid rgba(255, 255, 255, 0.22);
+  color: var(--color-secondary);
+  border: 1px solid rgba(52, 211, 153, 0.4);
 }
 
 .btn-secondary:hover {
-  border-color: var(--amber);
-  color: var(--amber);
+  background: var(--color-secondary);
+  border-color: var(--color-secondary);
+  color: var(--color-secondary-ink);
   transform: translateY(-2px);
 }
 
@@ -392,14 +407,31 @@ code, .mono {
   letter-spacing: 1px;
 }
 
-.badge-blue {
-  background: rgba(0, 82, 204, 0.1);
-  color: var(--blue);
+/* Primary/secondary tag pair — used wherever content is split
+   into two natural groups (categories, statuses) and should
+   read as branded, not just a random color. */
+.badge-primary {
+  font-family: var(--font-mono);
+  background: rgba(255, 176, 32, 0.1);
+  color: var(--color-primary);
+  border: 1px solid rgba(255, 176, 32, 0.35);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: var(--fs-xs);
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
 }
 
-.badge-green {
-  background: rgba(52, 211, 153, 0.12);
-  color: var(--status-green);
+.badge-secondary {
+  font-family: var(--font-mono);
+  background: rgba(52, 211, 153, 0.1);
+  color: var(--color-secondary);
+  border: 1px solid rgba(52, 211, 153, 0.35);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: var(--fs-xs);
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
 }
 
 .status-pill {
