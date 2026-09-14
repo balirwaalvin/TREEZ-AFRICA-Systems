@@ -3,10 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Explore TREEZ AFRICA SYSTEMS' services — web development, mobile apps, enterprise banking systems, IT consulting, and system maintenance.">
+  <meta name="description" content="TREEZ AFRICA SYSTEMS services — web applications, mobile apps, enterprise banking systems, system maintenance, and IT consulting.">
   <title>Our Services — TREEZ AFRICA SYSTEMS</title>
   <link rel="icon" type="image/png" href="favicon.png">
-  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
   <link rel="stylesheet" href="css/global.css">
   <link rel="stylesheet" href="css/animations.css">
   <link rel="stylesheet" href="css/header.css">
@@ -16,13 +15,12 @@
 </head>
 <body>
 
-  <!-- Preloader -->
-  <div class="preloader"><div class="preloader-inner"><div class="preloader-logo">TREEZ <span>AFRICA</span></div><div class="preloader-bar"></div></div></div>
+  <div class="preloader"><div class="preloader-inner"><div class="preloader-logo">treez_africa <span>// systems</span></div><div class="preloader-bar"></div></div></div>
 
   <!-- Header -->
   <header class="header">
     <div class="container">
-      <a href="index.html" class="logo"><img class="logo-icon logo-icon-nav" src="assets/images/logo-mark.png" alt="TREEZ AFRICA SYSTEMS"><div class="logo-text">TREEZ AFRICA<span>Systems</span></div></a>
+      <a href="index.html" class="logo"><img class="logo-icon-nav" src="assets/images/logo-mark.png" alt="TREEZ AFRICA SYSTEMS"><div class="logo-text">TREEZ AFRICA<span>systems</span></div></a>
       <nav class="nav">
         <a href="index.html" class="nav-link">Home</a>
         <a href="about.html" class="nav-link">About</a>
@@ -30,7 +28,8 @@
         <a href="portfolio.html" class="nav-link">Partners</a>
         <a href="blog.html" class="nav-link">Blog</a>
         <a href="contact.html" class="nav-link">Contact</a>
-        <a href="booking.html" class="btn btn-primary btn-sm nav-cta">Book Us <i class='bx bx-right-arrow-alt'></i></a>
+        <button class="cmdk-trigger" aria-label="Search (Ctrl K)"><i data-lucide="search"></i><span>Search</span><span class="cmdk-kbd">Ctrl K</span></button>
+        <a href="booking.html" class="btn btn-primary btn-sm nav-cta">Start a project <i data-lucide="arrow-right"></i></a>
       </nav>
       <div class="hamburger"><span></span><span></span><span></span></div>
     </div>
@@ -43,15 +42,28 @@
     <a href="portfolio.html" class="nav-link">Partners</a>
     <a href="blog.html" class="nav-link">Blog</a>
     <a href="contact.html" class="nav-link">Contact</a>
-    <a href="booking.html" class="btn btn-primary">Book a Consultation</a>
+    <a href="booking.html" class="btn btn-primary">Start a project</a>
+  </div>
+  <!-- Command Palette -->
+  <div class="cmdk-overlay" id="cmdkOverlay" hidden>
+    <div class="cmdk-panel" role="dialog" aria-modal="true" aria-label="Command palette">
+      <div class="cmdk-input-row">
+        <i data-lucide="search"></i>
+        <input type="text" id="cmdkInput" class="cmdk-input" placeholder="Search pages, services, actions" autocomplete="off">
+        <span class="cmdk-esc">ESC</span>
+      </div>
+      <div class="cmdk-results" id="cmdkResults"></div>
+    </div>
   </div>
 
   <!-- Page Hero -->
   <section class="page-hero">
-    <div class="page-hero-content">
-      <div class="breadcrumb"><a href="index.html">Home</a><i class='bx bx-chevron-right'></i><span>Services</span></div>
-      <h1 class="reveal">Our Services</h1>
-      <p class="reveal">Comprehensive technology solutions designed to accelerate your business growth</p>
+    <div class="container">
+      <div class="page-hero-content">
+        <div class="breadcrumb"><a href="index.html">Home</a><i data-lucide="chevron-right"></i><span>Services</span></div>
+        <h1 class="reveal">Our Services</h1>
+        <p class="reveal">Five engineering disciplines, one team — from customer-facing apps to the core banking systems behind them.</p>
+      </div>
     </div>
   </section>
 
@@ -61,106 +73,137 @@
 
       <!-- Web App Development -->
       <div class="service-detail">
-        <div class="service-detail-visual bg-1 reveal-left service-detail-visual--img">
-          <img src="assets/images/web_devlopment.png" alt="Web Application Development" class="service-visual-img">
+        <div class="reveal-left">
+          <div class="service-panel">
+            <div class="service-panel-label"><span>Lighthouse audit</span><span class="status-pill"><span class="status-dot"></span>Passing</span></div>
+            <div class="score-grid">
+              <div class="score-item"><span class="score-value">98</span><span class="score-label">Performance</span></div>
+              <div class="score-item"><span class="score-value">100</span><span class="score-label">Accessibility</span></div>
+              <div class="score-item"><span class="score-value">100</span><span class="score-label">Best Practices</span></div>
+              <div class="score-item"><span class="score-value">100</span><span class="score-label">SEO</span></div>
+            </div>
+          </div>
         </div>
         <div class="service-detail-content reveal-right">
           <span class="label">Service 01</span>
           <h2>Web Application Development</h2>
           <p>We build powerful, responsive web applications using modern technologies and frameworks. From customer-facing portals to internal enterprise dashboards, our web solutions are designed for performance, security, and scalability.</p>
           <ul class="service-features-list">
-            <li><i class='bx bx-check'></i> Custom Web Portals & Dashboards</li>
-            <li><i class='bx bx-check'></i> Progressive Web Apps (PWA)</li>
-            <li><i class='bx bx-check'></i> E-Commerce Platforms</li>
-            <li><i class='bx bx-check'></i> SaaS Application Development</li>
-            <li><i class='bx bx-check'></i> API Development & Integration</li>
-            <li><i class='bx bx-check'></i> Cloud-Native Architecture</li>
+            <li><i data-lucide="check"></i> Custom Web Portals &amp; Dashboards</li>
+            <li><i data-lucide="check"></i> Progressive Web Apps (PWA)</li>
+            <li><i data-lucide="check"></i> E-Commerce Platforms</li>
+            <li><i data-lucide="check"></i> SaaS Application Development</li>
+            <li><i data-lucide="check"></i> API Development &amp; Integration</li>
+            <li><i data-lucide="check"></i> Cloud-Native Architecture</li>
           </ul>
-          <a href="booking.html" class="btn btn-primary">Get a Quote <i class='bx bx-right-arrow-alt'></i></a>
+          <a href="booking.html" class="btn btn-primary">Get a quote <i data-lucide="arrow-right"></i></a>
         </div>
       </div>
 
       <!-- Mobile App Development -->
       <div class="service-detail">
-        <div class="service-detail-visual bg-2 reveal-right service-detail-visual--img">
-          <img src="assets/images/mobile_development.png" alt="Mobile App Development" class="service-visual-img">
+        <div class="reveal-right">
+          <div class="service-panel">
+            <div class="service-panel-label"><span>Release channels</span><span class="status-pill"><span class="status-dot"></span>Live</span></div>
+            <div class="panel-row"><span class="panel-row-label"><i data-lucide="smartphone"></i> iOS App Store</span><b>v4.2.0</b></div>
+            <div class="panel-row"><span class="panel-row-label"><i data-lucide="smartphone"></i> Google Play</span><b>v4.2.0</b></div>
+            <div class="panel-row"><span class="panel-row-label"><i data-lucide="wifi-off"></i> Offline mode</span><b>Enabled</b></div>
+            <div class="panel-row"><span class="panel-row-label"><i data-lucide="banknote"></i> Mobile money</span><b>Integrated</b></div>
+          </div>
         </div>
         <div class="service-detail-content reveal-left">
           <span class="label">Service 02</span>
           <h2>Mobile App Development</h2>
           <p>We create native and cross-platform mobile applications for iOS and Android that users love. Our mobile solutions are optimized for African markets, including offline capabilities and mobile money integrations.</p>
           <ul class="service-features-list">
-            <li><i class='bx bx-check'></i> iOS & Android Native Apps</li>
-            <li><i class='bx bx-check'></i> Cross-Platform (Flutter / React Native)</li>
-            <li><i class='bx bx-check'></i> Offline-First Architecture</li>
-            <li><i class='bx bx-check'></i> Mobile Money Integration</li>
-            <li><i class='bx bx-check'></i> Push Notifications & Analytics</li>
-            <li><i class='bx bx-check'></i> App Store Optimization</li>
+            <li><i data-lucide="check"></i> iOS &amp; Android Native Apps</li>
+            <li><i data-lucide="check"></i> Cross-Platform (Flutter / React Native)</li>
+            <li><i data-lucide="check"></i> Offline-First Architecture</li>
+            <li><i data-lucide="check"></i> Mobile Money Integration</li>
+            <li><i data-lucide="check"></i> Push Notifications &amp; Analytics</li>
+            <li><i data-lucide="check"></i> App Store Optimization</li>
           </ul>
-          <a href="booking.html" class="btn btn-primary">Get a Quote <i class='bx bx-right-arrow-alt'></i></a>
+          <a href="booking.html" class="btn btn-primary">Get a quote <i data-lucide="arrow-right"></i></a>
         </div>
       </div>
 
       <!-- Enterprise Banking -->
       <div class="service-detail">
-        <div class="service-detail-visual bg-3 reveal-left service-detail-visual--img">
-          <img src="assets/images/enterprise_development.png" alt="Enterprise Banking Systems" class="service-visual-img">
+        <div class="reveal-left">
+          <div class="service-panel">
+            <div class="service-panel-label"><span>Transaction ledger</span><span class="status-pill"><span class="status-dot"></span>Reconciled</span></div>
+            <div class="panel-row"><span>TXN-88213 &middot; deposit</span><span class="mono-amount">+ UGX 2,400,000</span></div>
+            <div class="panel-row"><span>TXN-88214 &middot; transfer</span><span class="mono-amount debit">&minus; UGX 860,000</span></div>
+            <div class="panel-row"><span>TXN-88215 &middot; deposit</span><span class="mono-amount">+ UGX 14,200,000</span></div>
+            <div class="panel-row"><span>Processed today</span><b>128,402 txns</b></div>
+          </div>
         </div>
         <div class="service-detail-content reveal-right">
           <span class="label">Service 03</span>
           <h2>Enterprise Banking Systems</h2>
           <p>We design and develop core banking solutions, payment gateways, and financial technology platforms with bank-grade security, regulatory compliance, and the ability to process millions of transactions reliably.</p>
           <ul class="service-features-list">
-            <li><i class='bx bx-check'></i> Core Banking Solutions</li>
-            <li><i class='bx bx-check'></i> Payment Gateway Development</li>
-            <li><i class='bx bx-check'></i> Mobile Banking Platforms</li>
-            <li><i class='bx bx-check'></i> Fraud Detection & Prevention</li>
-            <li><i class='bx bx-check'></i> PCI-DSS Compliance</li>
-            <li><i class='bx bx-check'></i> Real-Time Transaction Processing</li>
+            <li><i data-lucide="check"></i> Core Banking Solutions</li>
+            <li><i data-lucide="check"></i> Payment Gateway Development</li>
+            <li><i data-lucide="check"></i> Mobile Banking Platforms</li>
+            <li><i data-lucide="check"></i> Fraud Detection &amp; Prevention</li>
+            <li><i data-lucide="check"></i> PCI-DSS Compliance</li>
+            <li><i data-lucide="check"></i> Real-Time Transaction Processing</li>
           </ul>
-          <a href="booking.html" class="btn btn-primary">Get a Quote <i class='bx bx-right-arrow-alt'></i></a>
+          <a href="booking.html" class="btn btn-primary">Get a quote <i data-lucide="arrow-right"></i></a>
         </div>
       </div>
 
       <!-- System Maintenance -->
       <div class="service-detail">
-        <div class="service-detail-visual bg-4 reveal-right service-detail-visual--img">
-          <img src="assets/images/system_maintenance.png" alt="System Maintenance & Support" class="service-visual-img">
+        <div class="reveal-right">
+          <div class="service-panel">
+            <div class="service-panel-label"><span>System health</span><span class="status-pill"><span class="status-dot"></span>Operational</span></div>
+            <div class="panel-row"><span>Uptime (90 days)</span><b>99.98%</b></div>
+            <div class="panel-bar" style="margin-bottom:14px;"><span style="width:99.98%"></span></div>
+            <div class="panel-row"><span>Open incidents</span><b>0</b></div>
+            <div class="panel-row"><span>Next patch window</span><b>Sun 02:00 EAT</b></div>
+          </div>
         </div>
         <div class="service-detail-content reveal-left">
           <span class="label">Service 04</span>
-          <h2>System Maintenance & Support</h2>
+          <h2>System Maintenance &amp; Support</h2>
           <p>We provide ongoing maintenance, monitoring, and support for your existing systems. From bug fixes and performance optimization to security patches and feature updates — we keep your systems running flawlessly.</p>
           <ul class="service-features-list">
-            <li><i class='bx bx-check'></i> 24/7 System Monitoring</li>
-            <li><i class='bx bx-check'></i> Performance Optimization</li>
-            <li><i class='bx bx-check'></i> Security Audits & Patching</li>
-            <li><i class='bx bx-check'></i> Database Management</li>
-            <li><i class='bx bx-check'></i> Cloud Infrastructure Management</li>
-            <li><i class='bx bx-check'></i> Disaster Recovery Planning</li>
+            <li><i data-lucide="check"></i> 24/7 System Monitoring</li>
+            <li><i data-lucide="check"></i> Performance Optimization</li>
+            <li><i data-lucide="check"></i> Security Audits &amp; Patching</li>
+            <li><i data-lucide="check"></i> Database Management</li>
+            <li><i data-lucide="check"></i> Cloud Infrastructure Management</li>
+            <li><i data-lucide="check"></i> Disaster Recovery Planning</li>
           </ul>
-          <a href="booking.html" class="btn btn-primary">Get a Quote <i class='bx bx-right-arrow-alt'></i></a>
+          <a href="booking.html" class="btn btn-primary">Get a quote <i data-lucide="arrow-right"></i></a>
         </div>
       </div>
 
       <!-- IT Consulting -->
       <div class="service-detail">
-        <div class="service-detail-visual bg-5 reveal-left service-detail-visual--img">
-          <img src="assets/images/consultation.png" alt="IT Consulting & Planning" class="service-visual-img">
+        <div class="reveal-left">
+          <div class="service-panel">
+            <div class="service-panel-label"><span>Engagement roadmap</span></div>
+            <div class="roadmap-row"><span class="roadmap-phase">Discover</span><span class="panel-bar"><span style="width:100%"></span></span><span class="roadmap-pct">Done</span></div>
+            <div class="roadmap-row"><span class="roadmap-phase">Architect</span><span class="panel-bar"><span style="width:100%"></span></span><span class="roadmap-pct">Done</span></div>
+            <div class="roadmap-row"><span class="roadmap-phase">Execute</span><span class="panel-bar"><span style="width:60%"></span></span><span class="roadmap-pct">In progress</span></div>
+          </div>
         </div>
         <div class="service-detail-content reveal-right">
           <span class="label">Service 05</span>
-          <h2>IT Consulting & Planning</h2>
+          <h2>IT Consulting &amp; Planning</h2>
           <p>Our strategic consulting services help you navigate technology decisions, plan digital transformations, and build technology roadmaps that align with your business goals and budget.</p>
           <ul class="service-features-list">
-            <li><i class='bx bx-check'></i> Digital Transformation Strategy</li>
-            <li><i class='bx bx-check'></i> Technology Roadmap Planning</li>
-            <li><i class='bx bx-check'></i> Architecture Review & Design</li>
-            <li><i class='bx bx-check'></i> Vendor Selection & Management</li>
-            <li><i class='bx bx-check'></i> Process Automation Consulting</li>
-            <li><i class='bx bx-check'></i> Data Strategy & Analytics</li>
+            <li><i data-lucide="check"></i> Digital Transformation Strategy</li>
+            <li><i data-lucide="check"></i> Technology Roadmap Planning</li>
+            <li><i data-lucide="check"></i> Architecture Review &amp; Design</li>
+            <li><i data-lucide="check"></i> Vendor Selection &amp; Management</li>
+            <li><i data-lucide="check"></i> Process Automation Consulting</li>
+            <li><i data-lucide="check"></i> Data Strategy &amp; Analytics</li>
           </ul>
-          <a href="booking.html" class="btn btn-primary">Get a Quote <i class='bx bx-right-arrow-alt'></i></a>
+          <a href="booking.html" class="btn btn-primary">Get a quote <i data-lucide="arrow-right"></i></a>
         </div>
       </div>
 
@@ -168,62 +211,35 @@
   </section>
 
   <!-- Tech Stack -->
-  <section class="section tech-stack">
+  <section class="section tech-stack bg-grid">
     <div class="container">
       <div class="section-header reveal">
-        <span class="label" style="color:var(--green);">Technologies</span>
-        <h2 style="color:var(--white);">Our Technology Stack</h2>
-        <p style="color:var(--gray-500);">We use industry-leading technologies to build reliable, scalable solutions</p>
+        <span class="label">Technologies</span>
+        <h2>Our Technology Stack</h2>
+        <p>We use industry-leading technologies to build reliable, scalable solutions</p>
       </div>
 
-      <div class="tech-grid stagger">
-        <div class="tech-item reveal">
-          <i class='bx bxl-react' style="color:#61DAFB;"></i>
-          <span>React</span>
+      <div class="stack-manifest reveal">
+        <div class="stack-manifest-head"><span>category</span><span>technology</span></div>
+        <div class="stack-row">
+          <span class="stack-cat">frontend</span>
+          <span class="stack-items"><span class="stack-tag">React</span><span class="stack-tag">Vue.js</span><span class="stack-tag">Angular</span></span>
         </div>
-        <div class="tech-item reveal">
-          <i class='bx bxl-angular' style="color:#DD0031;"></i>
-          <span>Angular</span>
+        <div class="stack-row">
+          <span class="stack-cat">backend</span>
+          <span class="stack-items"><span class="stack-tag">Node.js</span><span class="stack-tag">Python</span><span class="stack-tag">Java</span></span>
         </div>
-        <div class="tech-item reveal">
-          <i class='bx bxl-vuejs' style="color:#4FC08D;"></i>
-          <span>Vue.js</span>
+        <div class="stack-row">
+          <span class="stack-cat">mobile</span>
+          <span class="stack-items"><span class="stack-tag">Flutter</span><span class="stack-tag">Swift</span><span class="stack-tag">React Native</span></span>
         </div>
-        <div class="tech-item reveal">
-          <i class='bx bxl-nodejs' style="color:#339933;"></i>
-          <span>Node.js</span>
+        <div class="stack-row">
+          <span class="stack-cat">data</span>
+          <span class="stack-items"><span class="stack-tag">PostgreSQL</span><span class="stack-tag">MongoDB</span></span>
         </div>
-        <div class="tech-item reveal">
-          <i class='bx bxl-python' style="color:#3776AB;"></i>
-          <span>Python</span>
-        </div>
-        <div class="tech-item reveal">
-          <i class='bx bxl-java' style="color:#007396;"></i>
-          <span>Java</span>
-        </div>
-        <div class="tech-item reveal">
-          <i class='bx bxl-flutter' style="color:#02569B;"></i>
-          <span>Flutter</span>
-        </div>
-        <div class="tech-item reveal">
-          <i class='bx bxl-swift' style="color:#FA7343;"></i>
-          <span>Swift</span>
-        </div>
-        <div class="tech-item reveal">
-          <i class='bx bxl-postgresql' style="color:#4169E1;"></i>
-          <span>PostgreSQL</span>
-        </div>
-        <div class="tech-item reveal">
-          <i class='bx bxl-mongodb' style="color:#47A248;"></i>
-          <span>MongoDB</span>
-        </div>
-        <div class="tech-item reveal">
-          <i class='bx bxl-aws' style="color:#FF9900;"></i>
-          <span>AWS</span>
-        </div>
-        <div class="tech-item reveal">
-          <i class='bx bxl-docker' style="color:#2496ED;"></i>
-          <span>Docker</span>
+        <div class="stack-row">
+          <span class="stack-cat">infra</span>
+          <span class="stack-items"><span class="stack-tag">AWS</span><span class="stack-tag">Docker</span><span class="stack-tag">Kubernetes</span></span>
         </div>
       </div>
     </div>
@@ -233,49 +249,33 @@
   <section class="section">
     <div class="container">
       <div class="section-header reveal">
-        <span class="label">Our Process</span>
+        <span class="label">Our process</span>
         <h2>How We Work</h2>
         <p>A proven methodology that delivers results on time and within budget</p>
       </div>
 
-      <div class="process-steps reveal">
-        <div class="process-step">
-          <div class="process-number">01</div>
-          <h4>Discovery</h4>
-          <p>Understanding your goals, challenges, and requirements</p>
-        </div>
-        <div class="process-step">
-          <div class="process-number">02</div>
-          <h4>Design</h4>
-          <p>Crafting UI/UX designs and architecture blueprints</p>
-        </div>
-        <div class="process-step">
-          <div class="process-number">03</div>
-          <h4>Develop</h4>
-          <p>Building with agile sprints and continuous integration</p>
-        </div>
-        <div class="process-step">
-          <div class="process-number">04</div>
-          <h4>Deploy</h4>
-          <p>Testing, launching, and ensuring smooth rollout</p>
-        </div>
-        <div class="process-step">
-          <div class="process-number">05</div>
-          <h4>Support</h4>
-          <p>Ongoing maintenance, monitoring, and optimization</p>
-        </div>
+      <div class="pipeline reveal">
+        <div class="pipeline-stage"><span class="pipeline-index">01</span><h4>Discovery</h4><p>Understanding your goals, challenges, and requirements</p></div>
+        <div class="pipeline-arrow"><i data-lucide="arrow-right"></i></div>
+        <div class="pipeline-stage"><span class="pipeline-index">02</span><h4>Design</h4><p>Crafting UI/UX designs and architecture blueprints</p></div>
+        <div class="pipeline-arrow"><i data-lucide="arrow-right"></i></div>
+        <div class="pipeline-stage"><span class="pipeline-index">03</span><h4>Develop</h4><p>Building with agile sprints and continuous integration</p></div>
+        <div class="pipeline-arrow"><i data-lucide="arrow-right"></i></div>
+        <div class="pipeline-stage"><span class="pipeline-index">04</span><h4>Deploy</h4><p>Testing, launching, and ensuring smooth rollout</p></div>
+        <div class="pipeline-arrow"><i data-lucide="arrow-right"></i></div>
+        <div class="pipeline-stage"><span class="pipeline-index">05</span><h4>Support</h4><p>Ongoing maintenance, monitoring, and optimization</p></div>
       </div>
     </div>
   </section>
 
   <!-- CTA -->
-  <section class="cta-banner" style="padding:80px 0;background:var(--gradient-hero);">
-    <div class="container" style="text-align:center;">
-      <h2 class="reveal" style="color:var(--white);">Ready to Get Started?</h2>
-      <p class="reveal" style="color:rgba(255,255,255,0.7);max-width:600px;margin:0 auto 32px;">Tell us about your project and we'll craft a tailored solution that exceeds your expectations.</p>
-      <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;" class="reveal">
-        <a href="booking.html" class="btn btn-primary btn-lg">Book a Consultation <i class='bx bx-right-arrow-alt'></i></a>
-        <a href="portfolio.html" class="btn btn-secondary btn-lg">View Our Work <i class='bx bx-chevron-right'></i></a>
+  <section class="cta-banner bg-grid">
+    <div class="container">
+      <h2 class="reveal">Ready to Get Started?</h2>
+      <p class="reveal">Tell us about your project and we'll craft a tailored solution that exceeds your expectations.</p>
+      <div class="cta-actions reveal">
+        <a href="booking.html" class="btn btn-primary btn-lg">Book a consultation <i data-lucide="arrow-right"></i></a>
+        <a href="portfolio.html" class="btn btn-secondary btn-lg">View our work <i data-lucide="chevron-right"></i></a>
       </div>
     </div>
   </section>
@@ -286,23 +286,25 @@
       <div class="container">
         <div class="footer-grid">
           <div class="footer-brand">
-            <a href="index.html" class="logo"><img class="logo-icon logo-icon-nav" src="assets/images/logo-mark.png" alt="TREEZ AFRICA SYSTEMS"><div class="logo-text">TREEZ AFRICA<span>Systems</span></div></a>
-            <p>Building innovative software solutions that power Africa's digital transformation.</p>
-            <div class="footer-socials"><a href="#"><i class='bx bxl-linkedin'></i></a><a href="#"><i class='bx bxl-twitter'></i></a><a href="#"><i class='bx bxl-github'></i></a><a href="#"><i class='bx bxl-facebook'></i></a></div>
+            <a href="index.html" class="logo"><img class="logo-icon-nav" src="assets/images/logo-mark.png" alt="TREEZ AFRICA SYSTEMS"><div class="logo-text">TREEZ AFRICA<span>systems</span></div></a>
+            <p>We design, build, and operate production software for African banks, enterprises, and mobile platforms — web, mobile, and the infrastructure underneath.</p>
+            <div class="footer-socials"><a href="#" aria-label="LinkedIn">in</a><a href="#" aria-label="GitHub">gh</a><a href="#" aria-label="Twitter / X">x</a><a href="#" aria-label="Facebook">fb</a></div>
           </div>
           <div class="footer-col"><h4>Quick Links</h4><ul class="footer-links"><li><a href="about.html">About Us</a></li><li><a href="services.html">Services</a></li><li><a href="portfolio.html">Partners</a></li><li><a href="blog.html">Blog</a></li><li><a href="booking.html">Book Us</a></li><li><a href="contact.html">Contact</a></li></ul></div>
           <div class="footer-col"><h4>Services</h4><ul class="footer-links"><li><a href="services.html">Web Applications</a></li><li><a href="services.html">Mobile Apps</a></li><li><a href="services.html">Enterprise Banking</a></li><li><a href="services.html">System Maintenance</a></li><li><a href="services.html">IT Consulting</a></li></ul></div>
-          <div class="footer-col footer-newsletter"><h4>Stay Updated</h4><p>Subscribe for tech insights.</p><form class="newsletter-form"><input type="email" placeholder="Your email"><button type="submit">Subscribe</button></form><div style="margin-top:24px;"><div class="footer-contact-item"><i class='bx bx-map'></i><span>Kampala, Uganda</span></div><div class="footer-contact-item"><i class='bx bx-phone'></i><span>+256 700 000 000</span></div><div class="footer-contact-item"><i class='bx bx-envelope'></i><span>info@treezafrica.systems</span></div></div></div>
+          <div class="footer-col footer-newsletter"><h4>Stay Updated</h4><p>Subscribe for tech insights.</p><form class="newsletter-form"><input type="email" placeholder="Your email"><button type="submit">Subscribe</button></form><div style="margin-top:24px;"><div class="footer-contact-item"><i data-lucide="map-pin"></i><span>Kampala, Uganda</span></div><div class="footer-contact-item"><i data-lucide="phone"></i><span>+256 700 000 000</span></div><div class="footer-contact-item"><i data-lucide="mail"></i><span>info@treezafrica.systems</span></div></div></div>
         </div>
       </div>
     </div>
-    <div class="container"><div class="footer-bottom"><p>&copy; 2026 TREEZ AFRICA SYSTEMS. All rights reserved.</p><div class="footer-subsidiary"><i class='bx bx-building-house'></i> A subsidiary of <a href="#">TREEZ AFRICA HOLDINGS</a></div><a class="admin-access" href="admin.html" aria-label="Admin sign in" title="Admin sign in"><i class='bx bx-key'></i></a></div></div>
+    <div class="container"><div class="footer-bottom"><p>&copy; 2026 TREEZ AFRICA SYSTEMS. All rights reserved.</p><div class="footer-subsidiary"><i data-lucide="building-2"></i> A subsidiary of <a href="#">TREEZ AFRICA HOLDINGS</a></div><a class="admin-access" href="admin.html" aria-label="Admin sign in" title="Admin sign in"><i data-lucide="key"></i></a></div></div>
   </footer>
 
-  <button class="back-to-top"><i class='bx bx-up-arrow-alt'></i></button>
+  <button class="back-to-top"><i data-lucide="chevron-up"></i></button>
   <script src="js/main.js"></script>
   <script src="js/animations.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/appwrite@14.0.1"></script><script src="js/appwrite-config.js"></script><script src="js/analytics.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@1.46.0/dist/umd/lucide.js"></script>
+  <script>lucide.createIcons();</script>
+  <script src="js/command-palette.js"></script>
 </body>
 </html>
-

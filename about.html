@@ -3,10 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Learn about TREEZ AFRICA SYSTEMS — our story, mission, team, and commitment to building Africa's digital future.">
+  <meta name="description" content="TREEZ AFRICA SYSTEMS — our history, our principles, and the team engineering Africa's digital infrastructure.">
   <title>About Us — TREEZ AFRICA SYSTEMS</title>
   <link rel="icon" type="image/png" href="favicon.png">
-  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
   <link rel="stylesheet" href="css/global.css">
   <link rel="stylesheet" href="css/animations.css">
   <link rel="stylesheet" href="css/header.css">
@@ -18,7 +17,7 @@
   <!-- Preloader -->
   <div class="preloader">
     <div class="preloader-inner">
-      <div class="preloader-logo">TREEZ <span>AFRICA</span></div>
+      <div class="preloader-logo">treez_africa <span>// systems</span></div>
       <div class="preloader-bar"></div>
     </div>
   </div>
@@ -27,8 +26,8 @@
   <header class="header">
     <div class="container">
       <a href="index.html" class="logo">
-        <img class="logo-icon logo-icon-nav" src="assets/images/logo-mark.png" alt="TREEZ AFRICA SYSTEMS">
-        <div class="logo-text">TREEZ AFRICA<span>Systems</span></div>
+        <img class="logo-icon-nav" src="assets/images/logo-mark.png" alt="TREEZ AFRICA SYSTEMS">
+        <div class="logo-text">TREEZ AFRICA<span>systems</span></div>
       </a>
       <nav class="nav">
         <a href="index.html" class="nav-link">Home</a>
@@ -37,7 +36,8 @@
         <a href="portfolio.html" class="nav-link">Partners</a>
         <a href="blog.html" class="nav-link">Blog</a>
         <a href="contact.html" class="nav-link">Contact</a>
-        <a href="booking.html" class="btn btn-primary btn-sm nav-cta">Book Us <i class='bx bx-right-arrow-alt'></i></a>
+        <button class="cmdk-trigger" aria-label="Search (Ctrl K)"><i data-lucide="search"></i><span>Search</span><span class="cmdk-kbd">Ctrl K</span></button>
+        <a href="booking.html" class="btn btn-primary btn-sm nav-cta">Start a project <i data-lucide="arrow-right"></i></a>
       </nav>
       <div class="hamburger" aria-label="Toggle menu"><span></span><span></span><span></span></div>
     </div>
@@ -50,90 +50,91 @@
     <a href="portfolio.html" class="nav-link">Partners</a>
     <a href="blog.html" class="nav-link">Blog</a>
     <a href="contact.html" class="nav-link">Contact</a>
-    <a href="booking.html" class="btn btn-primary">Book a Consultation</a>
+    <a href="booking.html" class="btn btn-primary">Start a project</a>
+  </div>
+  <!-- Command Palette -->
+  <div class="cmdk-overlay" id="cmdkOverlay" hidden>
+    <div class="cmdk-panel" role="dialog" aria-modal="true" aria-label="Command palette">
+      <div class="cmdk-input-row">
+        <i data-lucide="search"></i>
+        <input type="text" id="cmdkInput" class="cmdk-input" placeholder="Search pages, services, actions" autocomplete="off">
+        <span class="cmdk-esc">ESC</span>
+      </div>
+      <div class="cmdk-results" id="cmdkResults"></div>
+    </div>
   </div>
 
   <!-- Page Hero -->
   <section class="page-hero">
-    <div class="page-hero-content">
-      <div class="breadcrumb">
-        <a href="index.html">Home</a>
-        <i class='bx bx-chevron-right'></i>
-        <span>About Us</span>
+    <div class="container">
+      <div class="page-hero-content">
+        <div class="breadcrumb">
+          <a href="index.html">Home</a>
+          <i data-lucide="chevron-right"></i>
+          <span>About</span>
+        </div>
+        <h1 class="reveal">Systems engineering, run out of Kampala.</h1>
+        <p class="reveal">We're the technology arm of TREEZ AFRICA HOLDINGS — a team of engineers, architects, and consultants building software that African institutions depend on.</p>
       </div>
-      <h1 class="reveal">About TREEZ AFRICA SYSTEMS</h1>
-      <p class="reveal">Discover our story, our mission, and the passionate team driving Africa's digital transformation.</p>
     </div>
   </section>
 
-  <!-- Company Story / Timeline -->
+  <!-- Company History -->
   <section class="section">
     <div class="container">
       <div class="section-header reveal">
-        <span class="label">Our Journey</span>
-        <h2>The TREEZ AFRICA Story</h2>
-        <p>From a bold vision to a leading technology company, here's how we got here.</p>
+        <span class="label">Our history</span>
+        <h2>Company Changelog</h2>
+        <p>The milestones that shaped TREEZ AFRICA SYSTEMS, in order.</p>
       </div>
 
-      <div class="timeline">
-        <div class="timeline-item reveal">
-          <div class="timeline-content">
-            <div class="timeline-year">2019</div>
-            <h3>The Beginning</h3>
-            <p>TREEZ AFRICA HOLDINGS was founded with a vision to create a technology-driven ecosystem across Africa. The Systems division was established as the core tech arm.</p>
+      <div class="changelog">
+        <div class="changelog-entry reveal">
+          <div class="changelog-year"><span class="status-dot amber"></span>2019</div>
+          <div class="changelog-body">
+            <h3>The beginning</h3>
+            <p>TREEZ AFRICA HOLDINGS was founded with a vision to create a technology-driven ecosystem across Africa. The Systems division was established as the core engineering arm.</p>
           </div>
-          <div class="timeline-dot"></div>
-          <div class="timeline-spacer"></div>
         </div>
 
-        <div class="timeline-item reveal">
-          <div class="timeline-content">
-            <div class="timeline-year">2020</div>
-            <h3>First Major Project</h3>
+        <div class="changelog-entry reveal">
+          <div class="changelog-year"><span class="status-dot amber"></span>2020</div>
+          <div class="changelog-body">
+            <h3>First major project</h3>
             <p>Delivered our first enterprise banking solution for a regional bank, processing over 100,000 transactions daily and establishing our expertise in financial technology.</p>
           </div>
-          <div class="timeline-dot"></div>
-          <div class="timeline-spacer"></div>
         </div>
 
-        <div class="timeline-item reveal">
-          <div class="timeline-content">
-            <div class="timeline-year">2021</div>
-            <h3>Mobile Revolution</h3>
-            <p>Launched our mobile development division, delivering 15+ mobile applications that reached over 200,000 users across East Africa and beyond during the digital acceleration of 2020.</p>
+        <div class="changelog-entry reveal">
+          <div class="changelog-year"><span class="status-dot amber"></span>2021</div>
+          <div class="changelog-body">
+            <h3>Mobile revolution</h3>
+            <p>Launched our mobile development division, delivering 15+ mobile applications that reached over 200,000 users across East Africa during the digital acceleration of 2020.</p>
           </div>
-          <div class="timeline-dot"></div>
-          <div class="timeline-spacer"></div>
         </div>
 
-        <div class="timeline-item reveal">
-          <div class="timeline-content">
-            <div class="timeline-year">2022</div>
-            <h3>Enterprise Expansion</h3>
-            <p>Expanded into enterprise systems for healthcare, logistics, and agriculture. Grew our team to over 50 specialists and opened partnerships with Google Cloud and Microsoft. We as well launched the Windows Application Department dedicated to Windows Application Development</p>
+        <div class="changelog-entry reveal">
+          <div class="changelog-year"><span class="status-dot amber"></span>2022</div>
+          <div class="changelog-body">
+            <h3>Enterprise expansion</h3>
+            <p>Expanded into enterprise systems for healthcare, logistics, and agriculture. Grew the team past 50 specialists, partnered with Google Cloud and Microsoft, and launched a dedicated Windows application development practice.</p>
           </div>
-          <div class="timeline-dot"></div>
-          <div class="timeline-spacer"></div>
         </div>
 
-        <div class="timeline-item reveal">
-          <div class="timeline-content">
-            <div class="timeline-year">2024</div>
-            <h3>Innovation Hub</h3>
-            <p>Launched our innovation hub focused on AI, blockchain, and IoT solutions. Completed our 100th project milestone and partnered with GitHub to have part of our team as GitHub Campus Experts.</p>
+        <div class="changelog-entry reveal">
+          <div class="changelog-year"><span class="status-dot amber"></span>2024</div>
+          <div class="changelog-body">
+            <h3>Innovation hub</h3>
+            <p>Launched an innovation hub focused on AI, blockchain, and IoT. Crossed our 100th delivered project, and part of the team was recognized as GitHub Campus Experts.</p>
           </div>
-          <div class="timeline-dot"></div>
-          <div class="timeline-spacer"></div>
         </div>
 
-        <div class="timeline-item reveal">
-          <div class="timeline-content">
-            <div class="timeline-year">2026</div>
-            <h3>Today & Beyond</h3>
-            <p>With over 100+ projects delivered and 80+ satisfied clients, we continue to push boundaries and shape the digital future of Africa through cutting-edge technology solutions.</p>
+        <div class="changelog-entry reveal">
+          <div class="changelog-year"><span class="status-dot"></span>2026</div>
+          <div class="changelog-body">
+            <h3>Today &amp; beyond</h3>
+            <p>150+ projects delivered, 80+ active clients, and a growing footprint across East Africa. Still shipping — still based in Kampala.</p>
           </div>
-          <div class="timeline-dot"></div>
-          <div class="timeline-spacer"></div>
         </div>
       </div>
     </div>
@@ -143,28 +144,34 @@
   <section class="section section-gray">
     <div class="container">
       <div class="section-header reveal">
-        <span class="label">Our Foundation</span>
-        <h2>Mission, Vision & Values</h2>
-        <p>The principles that guide everything we do at TREEZ AFRICA SYSTEMS</p>
+        <span class="label">Our foundation</span>
+        <h2>Mission, Vision &amp; Values</h2>
+        <p>The principles that guide everything we do at TREEZ AFRICA SYSTEMS.</p>
       </div>
 
-      <div class="mvv-grid stagger">
-        <div class="mvv-card reveal">
-          <div class="mvv-icon"><i class='bx bx-target-lock'></i></div>
-          <h3>Our Mission</h3>
-          <p>To empower African businesses and communities through innovative, reliable, and accessible technology solutions that drive growth and create lasting impact.</p>
+      <div class="principles">
+        <div class="principle reveal">
+          <span class="principle-index">01</span>
+          <div class="principle-body">
+            <span class="principle-label">Mission</span>
+            <p>To empower African businesses and communities through innovative, reliable, and accessible technology solutions that drive growth and create lasting impact.</p>
+          </div>
         </div>
 
-        <div class="mvv-card reveal">
-          <div class="mvv-icon"><i class='bx bx-show'></i></div>
-          <h3>Our Vision</h3>
-          <p>To be Africa's most trusted technology partner, building the digital infrastructure that enables every organization on the continent to compete globally.</p>
+        <div class="principle reveal">
+          <span class="principle-index">02</span>
+          <div class="principle-body">
+            <span class="principle-label">Vision</span>
+            <p>To be Africa's most trusted technology partner, building the digital infrastructure that enables every organization on the continent to compete globally.</p>
+          </div>
         </div>
 
-        <div class="mvv-card reveal">
-          <div class="mvv-icon"><i class='bx bx-heart'></i></div>
-          <h3>Our Values</h3>
-          <p>Innovation, integrity, excellence, collaboration, and impact. We believe technology should be a force for good that uplifts communities and transforms lives.</p>
+        <div class="principle reveal">
+          <span class="principle-index">03</span>
+          <div class="principle-body">
+            <span class="principle-label">Values</span>
+            <p>Innovation, integrity, excellence, collaboration, and impact. We believe technology should be a force for good that uplifts communities and transforms lives.</p>
+          </div>
         </div>
       </div>
     </div>
@@ -174,121 +181,105 @@
   <section class="section">
     <div class="container">
       <div class="section-header reveal">
-        <span class="label">Our People</span>
+        <span class="label">Our people</span>
         <h2>Meet the Team</h2>
-        <p>The talented individuals behind TREEZ AFRICA SYSTEMS' success</p>
+        <p>The people behind TREEZ AFRICA SYSTEMS.</p>
       </div>
 
       <div class="team-grid stagger">
         <div class="team-card reveal">
-          <div class="team-photo team-photo-img">
-            <img src="assets/profiles/Alexdander Treez.png" alt="Alexander Treez — CEO">
-            <div class="team-social">
-              <a href="#"><i class='bx bxl-linkedin'></i></a>
-              <a href="#"><i class='bx bxl-twitter'></i></a>
-            </div>
-          </div>
+          <div class="team-avatar">AT</div>
           <div class="team-info">
             <h4>Alexander Treez</h4>
             <p>Chief Executive Officer</p>
+            <div class="team-social">
+              <a href="#" aria-label="LinkedIn">in</a>
+              <a href="#" aria-label="Twitter / X">x</a>
+            </div>
           </div>
         </div>
 
         <div class="team-card reveal">
-          <div class="team-photo team-photo-img">
-            <img src="assets/profiles/nakiri.png" alt="Nakiiri Ashley — Chief Technology Officer">
-            <div class="team-social">
-              <a href="#"><i class='bx bxl-linkedin'></i></a>
-              <a href="#"><i class='bx bxl-twitter'></i></a>
-            </div>
-          </div>
+          <div class="team-avatar">NA</div>
           <div class="team-info">
             <h4>Nakiiri Ashley</h4>
             <p>Chief Technology Officer</p>
+            <div class="team-social">
+              <a href="#" aria-label="LinkedIn">in</a>
+              <a href="#" aria-label="Twitter / X">x</a>
+            </div>
           </div>
         </div>
 
         <div class="team-card reveal">
-          <div class="team-photo team-photo-img">
-            <img src="assets/profiles/bulyerali.png" alt="Bulyerali Arnold Henry — Head of Engineering">
-            <div class="team-social">
-              <a href="#"><i class='bx bxl-linkedin'></i></a>
-              <a href="#"><i class='bx bxl-twitter'></i></a>
-            </div>
-          </div>
+          <div class="team-avatar">BH</div>
           <div class="team-info">
             <h4>Bulyerali Arnold Henry</h4>
             <p>Head of Engineering</p>
+            <div class="team-social">
+              <a href="#" aria-label="LinkedIn">in</a>
+              <a href="#" aria-label="Twitter / X">x</a>
+            </div>
           </div>
         </div>
 
         <div class="team-card reveal">
-          <div class="team-photo team-photo-img">
-            <img src="assets/profiles/fatima2.png" alt="Fatima Zawadi — Lead UI/UX Designer">
-            <div class="team-social">
-              <a href="#"><i class='bx bxl-linkedin'></i></a>
-              <a href="#"><i class='bx bxl-twitter'></i></a>
-            </div>
-          </div>
+          <div class="team-avatar">FZ</div>
           <div class="team-info">
             <h4>Fatima Zawadi</h4>
             <p>Lead UI/UX Designer</p>
+            <div class="team-social">
+              <a href="#" aria-label="LinkedIn">in</a>
+              <a href="#" aria-label="Twitter / X">x</a>
+            </div>
           </div>
         </div>
 
         <div class="team-card reveal">
-          <div class="team-photo team-photo-img">
-            <img src="assets/profiles/badd at google.png" alt="Balirwa Alvin Daniel — Enterprise Solutions Architect">
-            <div class="team-social">
-              <a href="#"><i class='bx bxl-linkedin'></i></a>
-              <a href="#"><i class='bx bxl-twitter'></i></a>
-            </div>
-          </div>
+          <div class="team-avatar">BD</div>
           <div class="team-info">
             <h4>Balirwa Alvin Daniel</h4>
             <p>Enterprise Solutions Architect</p>
+            <div class="team-social">
+              <a href="#" aria-label="LinkedIn">in</a>
+              <a href="#" aria-label="Twitter / X">x</a>
+            </div>
           </div>
         </div>
 
         <div class="team-card reveal">
-          <div class="team-photo team-photo-img">
-            <img src="assets/profiles/linda.png" alt="Linda Achieng — Project Manager">
-            <div class="team-social">
-              <a href="#"><i class='bx bxl-linkedin'></i></a>
-              <a href="#"><i class='bx bxl-twitter'></i></a>
-            </div>
-          </div>
+          <div class="team-avatar">LA</div>
           <div class="team-info">
             <h4>Linda Achieng</h4>
             <p>Project Manager</p>
+            <div class="team-social">
+              <a href="#" aria-label="LinkedIn">in</a>
+              <a href="#" aria-label="Twitter / X">x</a>
+            </div>
           </div>
         </div>
 
         <div class="team-card reveal">
-          <div class="team-photo team-photo-img">
-            <img src="assets/profiles/mugisha.png" alt="Joseph Mugisha — Mobile Development Lead">
-            <div class="team-social">
-              <a href="#"><i class='bx bxl-linkedin'></i></a>
-              <a href="#"><i class='bx bxl-twitter'></i></a>
-            </div>
-          </div>
+          <div class="team-avatar">JM</div>
           <div class="team-info">
             <h4>Joseph Mugisha</h4>
             <p>Mobile Development Lead</p>
+            <div class="team-social">
+              <a href="#" aria-label="LinkedIn">in</a>
+              <a href="#" aria-label="Twitter / X">x</a>
+            </div>
           </div>
         </div>
 
         <div class="team-card reveal">
-          <div class="team-photo team-photo-img">
-            <img src="assets/profiles/esther.png" alt="Esther Nalubega — QA & DevOps Lead">
-            <div class="team-social">
-              <a href="#"><i class='bx bxl-linkedin'></i></a>
-              <a href="#"><i class='bx bxl-twitter'></i></a>
-            </div>
-          </div>
+          <div class="team-avatar">EN</div>
           <div class="team-info">
             <h4>Esther Nalubega</h4>
-            <p>QA & DevOps Lead</p>
+            <p>QA &amp; DevOps Lead</p>
+            <div class="team-social">
+              <a href="#" aria-label="LinkedIn">in</a>
+              <a href="#" aria-label="Twitter / X">x</a>
+            </div>
           </div>
         </div>
       </div>
@@ -296,11 +287,13 @@
   </section>
 
   <!-- CTA -->
-  <section class="cta-banner" style="padding:80px 0; background:var(--gradient-hero);">
-    <div class="container" style="text-align:center;">
-      <h2 class="reveal" style="color:var(--white);">Want to Join Our Team?</h2>
-      <p class="reveal" style="color:rgba(255,255,255,0.7); max-width:600px; margin:0 auto 32px;">We're always looking for talented people who share our passion for technology and Africa's potential.</p>
-      <a href="contact.html" class="btn btn-primary btn-lg reveal">Get in Touch <i class='bx bx-right-arrow-alt'></i></a>
+  <section class="cta-banner bg-grid">
+    <div class="container">
+      <h2 class="reveal">Want to Join Our Team?</h2>
+      <p class="reveal">We're always looking for talented people who share our passion for technology and Africa's potential.</p>
+      <div class="cta-actions reveal">
+        <a href="contact.html" class="btn btn-primary btn-lg">Get in touch <i data-lucide="arrow-right"></i></a>
+      </div>
     </div>
   </section>
 
@@ -311,15 +304,15 @@
         <div class="footer-grid">
           <div class="footer-brand">
             <a href="index.html" class="logo">
-              <img class="logo-icon logo-icon-nav" src="assets/images/logo-mark.png" alt="TREEZ AFRICA SYSTEMS">
-              <div class="logo-text">TREEZ AFRICA<span>Systems</span></div>
+              <img class="logo-icon-nav" src="assets/images/logo-mark.png" alt="TREEZ AFRICA SYSTEMS">
+              <div class="logo-text">TREEZ AFRICA<span>systems</span></div>
             </a>
-            <p>Building innovative software solutions that power Africa's digital transformation.</p>
+            <p>We design, build, and operate production software for African banks, enterprises, and mobile platforms — web, mobile, and the infrastructure underneath.</p>
             <div class="footer-socials">
-              <a href="#"><i class='bx bxl-linkedin'></i></a>
-              <a href="#"><i class='bx bxl-twitter'></i></a>
-              <a href="#"><i class='bx bxl-github'></i></a>
-              <a href="#"><i class='bx bxl-facebook'></i></a>
+              <a href="#" aria-label="LinkedIn">in</a>
+              <a href="#" aria-label="GitHub">gh</a>
+              <a href="#" aria-label="Twitter / X">x</a>
+              <a href="#" aria-label="Facebook">fb</a>
             </div>
           </div>
           <div class="footer-col">
@@ -351,9 +344,9 @@
               <button type="submit">Subscribe</button>
             </form>
             <div style="margin-top:24px;">
-              <div class="footer-contact-item"><i class='bx bx-map'></i><span>Kampala, Uganda</span></div>
-              <div class="footer-contact-item"><i class='bx bx-phone'></i><span>+256 700 000 000</span></div>
-              <div class="footer-contact-item"><i class='bx bx-envelope'></i><span>info@treezafrica.systems</span></div>
+              <div class="footer-contact-item"><i data-lucide="map-pin"></i><span>Kampala, Uganda</span></div>
+              <div class="footer-contact-item"><i data-lucide="phone"></i><span>+256 700 000 000</span></div>
+              <div class="footer-contact-item"><i data-lucide="mail"></i><span>info@treezafrica.systems</span></div>
             </div>
           </div>
         </div>
@@ -362,16 +355,19 @@
     <div class="container">
       <div class="footer-bottom">
         <p>&copy; 2026 TREEZ AFRICA SYSTEMS. All rights reserved.</p>
-        <div class="footer-subsidiary"><i class='bx bx-building-house'></i> A subsidiary of <a href="#">TREEZ AFRICA HOLDINGS</a></div><a class="admin-access" href="admin.html" aria-label="Admin sign in" title="Admin sign in"><i class='bx bx-key'></i></a>
+        <div class="footer-subsidiary"><i data-lucide="building-2"></i> A subsidiary of <a href="#">TREEZ AFRICA HOLDINGS</a></div>
+        <a class="admin-access" href="admin.html" aria-label="Admin sign in" title="Admin sign in"><i data-lucide="key"></i></a>
       </div>
     </div>
   </footer>
 
-  <button class="back-to-top" aria-label="Back to top"><i class='bx bx-up-arrow-alt'></i></button>
+  <button class="back-to-top" aria-label="Back to top"><i data-lucide="chevron-up"></i></button>
 
   <script src="js/main.js"></script>
   <script src="js/animations.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/appwrite@14.0.1"></script><script src="js/appwrite-config.js"></script><script src="js/analytics.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@1.46.0/dist/umd/lucide.js"></script>
+  <script>lucide.createIcons();</script>
+  <script src="js/command-palette.js"></script>
 </body>
 </html>
-

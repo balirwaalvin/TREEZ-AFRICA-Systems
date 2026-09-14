@@ -43,20 +43,18 @@ This repository contains the official company website — a modern, animated, mu
 <td width="50%">
 
 ### 🎨 Design & UX
-- Modern, responsive design across all devices
-- Brand-consistent color palette (Blue, Green, Yellow, Black, White)
-- Interactive particle canvas animation on hero
+- "Systems engineering" visual language — graphite surfaces, hairline borders, monospace data/labels, amber + status-green accents
+- No stock/AI illustration — hero, architecture, and service visuals are coded components (terminal-style panels, ledgers, diagrams)
 - Smooth scroll-reveal animations on every page
-- Animated counters, carousels & accordions
-- Card tilt effects & hover micro-interactions
+- Command palette (`Ctrl/Cmd K`) for fast site-wide navigation
 - Custom scrollbar & page preloader
 
 </td>
 <td width="50%">
 
 ### ⚙️ Functionality
-- **Multi-step booking form** with validation & review
-- **Portfolio filtering** by category with modal case studies
+- **Multi-step booking form** with validation, review, and real Appwrite submission
+- **Partner showcase** — logo wall, story cards, landmark-project bento grid
 - **Testimonial carousel** with swipe/touch support
 - **FAQ accordion** with smooth transitions
 - **Contact form** with real-time validation
@@ -73,14 +71,15 @@ This repository contains the official company website — a modern, animated, mu
 
 | Page | Description |
 |:-----|:------------|
-| 🏠 **Home** | Hero with particle animation, about snapshot, services overview, trust bar, testimonials carousel, CTA |
-| 📖 **About** | Company timeline, mission/vision/values, team grid with hover overlays |
-| 🛠️ **Services** | 5 detailed service sections, technology stack grid, "How We Work" process stepper |
-| 💼 **Portfolio** | Filterable project grid (Web, Mobile, Enterprise, FinTech) with modal case studies |
+| 🏠 **Home** | Editorial hero with a real "systems ledger" of production clients, architecture-diagram about panel, service cards, testimonials |
+| 📖 **About** | Company changelog (history as version entries), mission/vision/values manifesto, team roster |
+| 🛠️ **Services** | 5 service sections each with a bespoke coded panel (Lighthouse scores, release channels, transaction ledger, uptime, roadmap), technology stack manifest, process pipeline |
+| 🤝 **Partners** | Partner logo wall, partner story cards, landmark-project bento grid, partner testimonials, stats |
 | 📅 **Booking** | 4-step consultation form: Contact → Services → Project Details → Review & Submit |
-| 📝 **Blog** | Article listing with thumbnails, categories, and reading times |
+| 📝 **Blog** | Editorial article index (date-tile rows), categories, reading times |
 | 📰 **Blog Post** | Full article template with share buttons and related posts |
-| 📞 **Contact** | Contact form, info cards, Google Maps embed, 7-item FAQ accordion |
+| 📞 **Contact** | Contact form, info ledger, Google Maps embed, 7-item FAQ accordion |
+| 🚫 **404** | Custom not-found page with the requested path and quick links back |
 
 <br>
 
@@ -92,38 +91,42 @@ TREEZ-AFRICA-Systems/
 ├── index.html              # Homepage
 ├── about.html              # About Us
 ├── services.html           # Our Services
-├── portfolio.html          # Project Portfolio
+├── portfolio.html          # Partners
 ├── booking.html            # Book a Consultation
 ├── blog.html               # Blog & Insights
 ├── blog-post.html          # Blog Article Template
 ├── contact.html            # Contact Us + FAQ
-├── favicon.svg             # Brand favicon
+├── 404.html                # Custom not-found page
+├── admin.html               # Private admin workspace (own stylesheet, unbranded)
+├── favicon.png              # Brand favicon (amber circuit-tree mark)
+├── robots.txt
+├── sitemap.xml
 │
 ├── css/
-│   ├── global.css          # Reset, variables, typography, utilities
-│   ├── animations.css      # Keyframes & scroll-reveal classes
+│   ├── global.css          # Reset, tokens, typography, buttons, command palette
+│   ├── animations.css      # Scroll-reveal & marquee keyframes
 │   ├── header.css          # Sticky navbar & mobile menu
 │   ├── footer.css          # Footer layout & newsletter
 │   ├── home.css            # Homepage-specific styles
-│   ├── about.css           # About & page-hero styles
-│   ├── services.css        # Service details & tech stack
-│   ├── portfolio.css       # Portfolio grid, filter & modal
+│   ├── about.css           # Shared inner-page chrome (page-hero, CTA banner, 404) + About sections
+│   ├── services.css        # Service panels, stack manifest, process pipeline
+│   ├── portfolio.css       # Partner wall, showcase cards, bento grid
 │   ├── booking.css         # Multi-step form & sidebar
-│   ├── blog.css            # Blog grid & article styles
-│   └── contact.css         # Contact form, map & FAQ
+│   ├── blog.css            # Blog index & article typography
+│   └── contact.css         # Contact form, ledger & FAQ
 │
 ├── js/
-│   ├── main.js             # Navbar, preloader, smooth scroll
-│   ├── animations.js       # IntersectionObserver, counters, parallax
-│   ├── particles.js        # Interactive canvas particle network
-│   ├── testimonials.js     # Auto-play carousel with swipe
-│   ├── booking.js          # Multi-step form logic & validation
-│   ├── portfolio.js        # Filter, modal & case study data
-│   └── contact.js          # Contact form validation & FAQ accordion
+│   ├── main.js              # Navbar, preloader, smooth scroll
+│   ├── animations.js        # IntersectionObserver scroll-reveal & stagger
+│   ├── command-palette.js   # Ctrl/Cmd K site-wide search
+│   ├── testimonials.js      # Auto-play carousel with swipe
+│   ├── booking.js           # Multi-step form logic, validation & Appwrite submission
+│   ├── contact.js           # Contact form validation, Appwrite submission & FAQ accordion
+│   ├── blog-public.js       # Blog index — Appwrite fetch with static fallback
+│   └── blog-post-public.js  # Blog post — Appwrite fetch with static fallback
 │
 └── assets/
-    ├── images/             # Project images & backgrounds
-    └── icons/              # Custom SVG icons
+    └── images/              # Brand mark only — no stock/AI imagery
 ```
 
 ## 🔐 Admin Workspace
@@ -140,15 +143,18 @@ Allow unauthenticated users to create documents in the messages and analytics co
 
 ## 🎨 Brand Colors
 
+"Systems engineering" palette — graphite surfaces with a single amber accent and a status-green for live/positive states. No stock gradients.
+
 <div align="center">
 
 | Color | Hex | Usage |
 |:------|:----|:------|
-| 🔵 **Blue** | `#0052CC` | Primary — CTAs, headings, links |
-| 🟢 **Green** | `#00A651` | Secondary — accents, labels, success states |
-| 🟡 **Yellow** | `#FFD700` | Highlight — badges, special accents |
-| ⚫ **Black** | `#1A1A1A` | Dark backgrounds, body text |
-| ⚪ **White** | `#FFFFFF` | Backgrounds, contrast text |
+| 🟠 **Amber** | `#FFB020` | Primary accent — CTAs, links, highlights, brand mark |
+| 🟢 **Status Green** | `#34D399` | Live/operational indicators, success states |
+| 🔴 **Status Red** | `#FF6B6B` | Errors, validation |
+| ⬛ **Graphite (base)** | `#0A0D11` | Page background |
+| ⬛ **Graphite (raised)** | `#10151C` / `#161D26` | Section bands, card surfaces |
+| ⚪ **Text** | `#EDF1F5` / `#9AA5B3` / `#616B78` | Primary / secondary / tertiary text |
 
 </div>
 
@@ -161,10 +167,10 @@ Allow unauthenticated users to create documents in the messages and analytics co
 | **Markup** | Semantic HTML5 |
 | **Styling** | Vanilla CSS3 (Custom Properties, Grid, Flexbox, `@keyframes`) |
 | **Interactivity** | Vanilla ES6+ JavaScript |
-| **Icons** | [Boxicons](https://boxicons.com/) via CDN |
-| **Fonts** | [Google Fonts](https://fonts.google.com/) — Poppins + Inter |
+| **Icons** | [Lucide](https://lucide.dev/) via CDN — minimal stroke icons, used sparingly |
+| **Fonts** | [Google Fonts](https://fonts.google.com/) — IBM Plex Mono + IBM Plex Sans |
 | **Animations** | CSS transitions + IntersectionObserver scroll-reveal |
-| **Canvas** | HTML5 Canvas API (particle network) |
+| **Navigation** | Dependency-free command palette (`Ctrl/Cmd K`) |
 
 > **Zero dependencies. Zero frameworks. Pure HTML, CSS & JavaScript.**
 

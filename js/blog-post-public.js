@@ -11,8 +11,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     const content = document.querySelector('.blog-post-content');
     if (title) title.textContent = post.title || '';
     if (badge) badge.textContent = post.category || 'Insights';
-    if (header) header.querySelector('.blog-post-meta').innerHTML = `<span><i class="bx bx-user"></i> ${escapeHtml(post.author || 'TREEZ AFRICA SYSTEMS')}</span><span><i class="bx bx-calendar"></i> ${formatDate(post.date)}</span><span><i class="bx bx-time-five"></i> ${escapeHtml(post.readTime || '')}</span>`;
+    if (header) header.querySelector('.blog-post-meta').innerHTML = `<span><i data-lucide="user"></i> ${escapeHtml(post.author || 'TREEZ AFRICA SYSTEMS')}</span><span><i data-lucide="calendar"></i> ${formatDate(post.date)}</span><span><i data-lucide="clock"></i> ${escapeHtml(post.readTime || '')}</span>`;
     if (content) content.innerHTML = `${String(post.content || post.excerpt || '').split(/\n\s*\n/).filter(Boolean).map((paragraph) => `<p>${escapeHtml(paragraph).replace(/\n/g, '<br>')}</p>`).join('')}<div class="blog-share"><span>Share this article:</span></div>`;
+    if (window.lucide) window.lucide.createIcons();
   } catch {
     // Keep the editorial fallback when a document cannot be loaded.
   }

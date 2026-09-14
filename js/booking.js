@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (checked.length === 0) {
         const group = step.querySelector('.checkbox-group');
         if (group) {
-          group.style.border = '2px solid #e74c3c';
+          group.style.border = '2px solid #FF6B6B';
           group.style.borderRadius = '8px';
           group.style.padding = '8px';
           setTimeout(() => {
@@ -102,11 +102,11 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function showError(input, message) {
-    input.style.borderColor = '#e74c3c';
+    input.style.borderColor = '#FF6B6B';
     const error = document.createElement('span');
     error.className = 'field-error';
     error.textContent = message;
-    error.style.cssText = 'color:#e74c3c;font-size:0.75rem;margin-top:4px;display:block;';
+    error.style.cssText = 'color:#FF6B6B;font-size:0.75rem;margin-top:4px;display:block;';
     input.parentElement.appendChild(error);
   }
 
@@ -179,23 +179,70 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ---- Form Submit ----
-  document.querySelector('.btn-submit')?.addEventListener('click', (e) => {
+  document.querySelector('.btn-submit')?.addEventListener('click', async (e) => {
     e.preventDefault();
 
-    // Simulate submission
-    const submitBtn = e.target;
+    const submitBtn = e.target.closest('.btn-submit');
     submitBtn.disabled = true;
-    submitBtn.innerHTML = '<i class="bx bx-loader-alt bx-spin"></i> Submitting...';
+    submitBtn.innerHTML = '<span class="btn-spinner"></span> Submitting...';
 
-    setTimeout(() => {
-      // Hide form, show success
+    try {
+      const getName = () => {
+        const fn = form.querySelector('[name="firstName"]')?.value || '';
+        const ln = form.querySelector('[name="lastName"]')?.value || '';
+        return `${fn} ${ln}`.trim();
+      };
+
+      const services = [];
+      form.querySelectorAll('.checkbox-item.selected .checkbox-label').forEach(el => services.push(el.textContent));
+
+      const budget = form.querySelector('.budget-option.selected .amount')?.textContent || 'Not specified';
+      const timeline = form.querySelector('[name="timeline"]')?.value || 'Not specified';
+      const description = form.querySelector('[name="description"]')?.value || '';
+      const company = form.querySelector('[name="company"]')?.value || 'Not provided';
+
+      const payload = {
+        name: getName(),
+        email: form.querySelector('[name="email"]')?.value || '',
+        phone: form.querySelector('[name="phone"]')?.value || '',
+        subject: 'Consultation booking request',
+        message: [
+          `Company: ${company}`,
+          `Services requested: ${services.join(', ') || 'Not specified'}`,
+          `Budget range: ${budget}`,
+          `Timeline: ${timeline}`,
+          '',
+          'Project description:',
+          description
+        ].join('\n')
+      };
+
+      await window.TREEZ_APPWRITE.databases.createDocument(
+        window.APPWRITE_CONFIG.databaseId,
+        window.APPWRITE_CONFIG.messagesCollectionId,
+        window.TREEZ_APPWRITE.ID.unique(),
+        payload
+      );
+
       form.style.display = 'none';
       document.querySelector('.form-progress')?.style.setProperty('display', 'none');
       if (successEl) successEl.classList.add('active');
-
+    } catch (error) {
+      const step = steps[currentStep];
+      const nav = step?.querySelector('.form-nav');
+      let errorEl = step?.querySelector('.booking-submit-error');
+      if (nav && !errorEl) {
+        errorEl = document.createElement('p');
+        errorEl.className = 'booking-submit-error';
+        nav.parentElement.insertBefore(errorEl, nav);
+      }
+      if (errorEl) {
+        errorEl.textContent = error.message || 'We could not submit your booking. Please try again or contact us directly.';
+      }
+    } finally {
       submitBtn.disabled = false;
       submitBtn.innerHTML = 'Submit Booking';
-    }, 2000);
+    }
   });
 
   // Initialize

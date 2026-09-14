@@ -21,19 +21,19 @@
 .form-progress::before {
   content: '';
   position: absolute;
-  top: 20px;
+  top: 19px;
   left: 0;
   right: 0;
-  height: 3px;
-  background: var(--gray-100);
+  height: 1px;
+  background: var(--line);
 }
 
 .progress-fill {
   position: absolute;
-  top: 20px;
+  top: 19px;
   left: 0;
-  height: 3px;
-  background: var(--gradient-primary);
+  height: 1px;
+  background: var(--amber);
   transition: width var(--transition-slow);
   z-index: 1;
 }
@@ -45,43 +45,41 @@
 }
 
 .progress-number {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  background: var(--white);
-  border: 3px solid var(--gray-300);
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-2);
+  border: 1px solid var(--line-strong);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: var(--font-heading);
+  font-family: var(--font-mono);
   font-weight: 700;
-  font-size: 0.9rem;
-  color: var(--gray-500);
-  margin: 0 auto 8px;
+  font-size: 0.85rem;
+  color: var(--text-2);
+  margin: 0 auto 10px;
   transition: all var(--transition-base);
 }
 
 .progress-step.active .progress-number,
 .progress-step.completed .progress-number {
-  background: var(--gradient-primary);
-  border-color: transparent;
-  color: var(--white);
-}
-
-.progress-step.completed .progress-number {
-  background: var(--green);
+  background: var(--amber);
+  border-color: var(--amber);
+  color: var(--ink);
 }
 
 .progress-label {
-  font-size: var(--fs-xs);
-  color: var(--gray-500);
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  color: var(--text-2);
   font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
   transition: color var(--transition-base);
 }
 
 .progress-step.active .progress-label {
-  color: var(--blue);
-  font-weight: 600;
+  color: var(--amber);
 }
 
 /* ---- Form Steps ---- */
@@ -99,46 +97,49 @@
 }
 
 .form-step > p {
-  color: var(--gray-500);
+  color: var(--text-2);
   margin-bottom: 32px;
 }
 
 /* ---- Form Elements ---- */
 .form-group {
-  margin-bottom: 24px;
+  margin-bottom: 22px;
 }
 
 .form-group label {
   display: block;
-  font-family: var(--font-heading);
+  font-family: var(--font-mono);
   font-weight: 600;
-  font-size: var(--fs-small);
-  color: var(--gray-900);
-  margin-bottom: 8px;
+  font-size: 0.78rem;
+  color: var(--text-1);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin-bottom: 9px;
 }
 
 .form-group label .required {
-  color: #e74c3c;
+  color: var(--status-red);
 }
 
 .form-input {
   width: 100%;
-  padding: 14px 16px;
-  border: 2px solid var(--gray-100);
+  padding: 13px 15px;
+  border: 1px solid var(--line-strong);
   border-radius: var(--radius-sm);
   font-size: var(--fs-body);
-  color: var(--gray-900);
-  background: var(--white);
+  font-family: var(--font-sans);
+  color: var(--text-0);
+  background: var(--bg-2);
   transition: all var(--transition-base);
 }
 
 .form-input:focus {
-  border-color: var(--blue);
-  box-shadow: 0 0 0 4px rgba(0,82,204,0.1);
+  border-color: var(--amber);
+  box-shadow: 0 0 0 3px rgba(255, 176, 32, 0.12);
 }
 
 .form-input::placeholder {
-  color: var(--gray-500);
+  color: var(--text-2);
 }
 
 textarea.form-input {
@@ -149,7 +150,7 @@ textarea.form-input {
 select.form-input {
   cursor: pointer;
   appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%23888' stroke-width='2'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%239AA5B3' stroke-width='2'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 16px center;
 }
@@ -172,20 +173,20 @@ select.form-input {
   align-items: center;
   gap: 12px;
   padding: 14px 16px;
-  border: 2px solid var(--gray-100);
+  border: 1px solid var(--line-strong);
   border-radius: var(--radius-sm);
+  background: var(--bg-2);
   cursor: pointer;
   transition: all var(--transition-base);
 }
 
 .checkbox-item:hover {
-  border-color: var(--blue-light);
-  background: rgba(0,82,204,0.02);
+  border-color: var(--text-2);
 }
 
 .checkbox-item.selected {
-  border-color: var(--blue);
-  background: rgba(0,82,204,0.05);
+  border-color: var(--amber);
+  background: rgba(255, 176, 32, 0.06);
 }
 
 .checkbox-item input {
@@ -195,27 +196,32 @@ select.form-input {
 .checkbox-check {
   width: 22px;
   height: 22px;
-  border-radius: 4px;
-  border: 2px solid var(--gray-300);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line-strong);
+  background: var(--bg-1);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.8rem;
   color: transparent;
   transition: all var(--transition-base);
   flex-shrink: 0;
 }
 
+.checkbox-check svg {
+  width: 14px;
+  height: 14px;
+}
+
 .checkbox-item.selected .checkbox-check {
-  background: var(--blue);
-  border-color: var(--blue);
-  color: var(--white);
+  background: var(--amber);
+  border-color: var(--amber);
+  color: var(--ink);
 }
 
 .checkbox-label {
   font-size: var(--fs-small);
   font-weight: 500;
-  color: var(--gray-700);
+  color: var(--text-1);
 }
 
 /* Budget range */
@@ -227,82 +233,108 @@ select.form-input {
 
 .budget-option {
   padding: 16px;
-  border: 2px solid var(--gray-100);
+  border: 1px solid var(--line-strong);
   border-radius: var(--radius-sm);
+  background: var(--bg-2);
   text-align: center;
   cursor: pointer;
   transition: all var(--transition-base);
 }
 
 .budget-option:hover {
-  border-color: var(--blue-light);
+  border-color: var(--text-2);
 }
 
 .budget-option.selected {
-  border-color: var(--blue);
-  background: rgba(0,82,204,0.05);
+  border-color: var(--amber);
+  background: rgba(255, 176, 32, 0.06);
 }
 
 .budget-option input { display: none; }
 
 .budget-option .amount {
-  font-family: var(--font-heading);
+  font-family: var(--font-mono);
   font-weight: 700;
-  color: var(--black);
+  color: var(--text-0);
   display: block;
   margin-bottom: 4px;
 }
 
 .budget-option .desc {
   font-size: var(--fs-xs);
-  color: var(--gray-500);
+  color: var(--text-2);
 }
 
 /* ---- Form Navigation ---- */
 .form-nav {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   margin-top: 32px;
   padding-top: 24px;
-  border-top: 1px solid var(--gray-100);
+  border-top: 1px solid var(--line);
 }
 
 .form-nav .btn-back {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 12px 24px;
-  color: var(--gray-500);
+  padding: 12px 20px;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--text-2);
   font-weight: 600;
   transition: all var(--transition-base);
 }
 
+.form-nav .btn-back svg {
+  width: 15px;
+  height: 15px;
+}
+
 .form-nav .btn-back:hover {
-  color: var(--black);
+  color: var(--text-0);
+}
+
+.booking-submit-error {
+  color: var(--status-red);
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  margin-top: 16px;
 }
 
 /* ---- Review Step ---- */
 .review-section {
-  background: var(--gray-100);
+  background: var(--bg-2);
+  border: 1px solid var(--line);
   border-radius: var(--radius-sm);
-  padding: 24px;
-  margin-bottom: 20px;
+  padding: 22px 24px;
+  margin-bottom: 16px;
 }
 
 .review-section h4 {
-  font-size: 0.9rem;
-  color: var(--blue);
-  margin-bottom: 12px;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--amber);
+  margin-bottom: 14px;
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
+.review-section h4 svg {
+  width: 15px;
+  height: 15px;
+}
+
 .review-row {
   display: flex;
   justify-content: space-between;
-  padding: 8px 0;
-  border-bottom: 1px solid rgba(0,0,0,0.05);
+  gap: 12px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--line);
   font-size: var(--fs-small);
 }
 
@@ -311,12 +343,14 @@ select.form-input {
 }
 
 .review-label {
-  color: var(--gray-500);
+  color: var(--text-2);
 }
 
 .review-value {
   font-weight: 600;
-  color: var(--gray-900);
+  font-family: var(--font-mono);
+  color: var(--text-0);
+  text-align: right;
 }
 
 /* ---- Success State ---- */
@@ -331,41 +365,46 @@ select.form-input {
 }
 
 .success-icon {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  background: rgba(0,166,81,0.1);
+  width: 84px;
+  height: 84px;
+  border-radius: var(--radius-md);
+  background: rgba(52, 211, 153, 0.1);
+  border: 1px solid rgba(52, 211, 153, 0.3);
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto 24px;
-  font-size: 3rem;
-  color: var(--green);
-  animation: scaleIn 0.5s ease forwards;
+  color: var(--status-green);
+}
+
+.success-icon svg {
+  width: 38px;
+  height: 38px;
 }
 
 .booking-success h2 {
   margin-bottom: 12px;
-  color: var(--green);
+  color: var(--text-0);
 }
 
 .booking-success p {
   max-width: 500px;
   margin: 0 auto 24px;
+  color: var(--text-1);
 }
 
 /* ---- Sidebar ---- */
 .booking-sidebar {
   position: sticky;
-  top: 120px;
+  top: 100px;
 }
 
 .sidebar-card {
-  background: var(--white);
-  border-radius: var(--radius-lg);
-  padding: 32px;
-  box-shadow: var(--shadow-md);
-  margin-bottom: 24px;
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 30px;
+  margin-bottom: 20px;
 }
 
 .sidebar-card h4 {
@@ -380,17 +419,22 @@ select.form-input {
   margin-bottom: 20px;
 }
 
-.sidebar-info-item i {
-  width: 40px;
-  height: 40px;
-  background: var(--gradient-card);
+.sidebar-info-icon {
+  width: 38px;
+  height: 38px;
+  background: var(--bg-1);
+  border: 1px solid var(--line-strong);
   border-radius: var(--radius-sm);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--blue);
-  font-size: 1rem;
+  color: var(--text-1);
   flex-shrink: 0;
+}
+
+.sidebar-info-icon svg {
+  width: 17px;
+  height: 17px;
 }
 
 .sidebar-info-item div p {
@@ -400,12 +444,12 @@ select.form-input {
 
 .sidebar-info-item div p:first-child {
   font-weight: 600;
-  color: var(--gray-900);
+  color: var(--text-0);
   margin-bottom: 2px;
 }
 
 .sidebar-info-item div p:last-child {
-  color: var(--gray-500);
+  color: var(--text-2);
 }
 
 .sidebar-trust {
@@ -419,12 +463,14 @@ select.form-input {
   align-items: center;
   gap: 10px;
   font-size: var(--fs-small);
-  color: var(--gray-700);
+  color: var(--text-1);
 }
 
-.sidebar-trust-item i {
-  color: var(--green);
-  font-size: 1.1rem;
+.sidebar-trust-item svg {
+  width: 16px;
+  height: 16px;
+  color: var(--status-green);
+  flex-shrink: 0;
 }
 
 /* Responsive */
@@ -451,5 +497,8 @@ select.form-input {
   .budget-options {
     grid-template-columns: 1fr;
   }
-}
 
+  .progress-label {
+    display: none;
+  }
+}

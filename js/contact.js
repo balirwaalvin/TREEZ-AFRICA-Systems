@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const submitBtn = form.querySelector('button[type="submit"]');
     const originalText = submitBtn.innerHTML;
     submitBtn.disabled = true;
-    submitBtn.innerHTML = '<i class="bx bx-loader-alt bx-spin"></i> Sending...';
+    submitBtn.innerHTML = '<span class="btn-spinner"></span> Sending...';
 
     try {
       const formData = new FormData(form);
@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const msg = document.querySelector('.form-message');
       if (msg) {
         msg.className = 'form-message success';
-        msg.innerHTML = '<i class="bx bx-check-circle"></i> Thank you! Your message has been sent successfully. We\'ll get back to you within 24 hours.';
+        msg.innerHTML = '<span class="status-dot"></span> Thank you! Your message has been sent successfully. We\'ll get back to you within 24 hours.';
         msg.style.display = 'block';
       }
 
@@ -78,11 +78,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function showError(input, message) {
     if (!input) return;
-    input.style.borderColor = '#e74c3c';
+    input.style.borderColor = '#FF6B6B';
     const error = document.createElement('span');
     error.className = 'field-error';
     error.textContent = message;
-    error.style.cssText = 'color:#e74c3c;font-size:0.75rem;margin-top:4px;display:block;';
+    error.style.cssText = 'color:#FF6B6B;font-size:0.75rem;margin-top:4px;display:block;';
     input.parentElement.appendChild(error);
   }
 

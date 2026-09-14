@@ -6,21 +6,21 @@
   <meta name="description" content="The Rise of Super Apps in Africa — insights from TREEZ AFRICA SYSTEMS on the future of mobile development.">
   <title>The Rise of Super Apps in Africa — TREEZ AFRICA SYSTEMS Blog</title>
   <link rel="icon" type="image/png" href="favicon.png">
-  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
   <link rel="stylesheet" href="css/global.css">
   <link rel="stylesheet" href="css/animations.css">
   <link rel="stylesheet" href="css/header.css">
   <link rel="stylesheet" href="css/footer.css">
+  <link rel="stylesheet" href="css/about.css">
   <link rel="stylesheet" href="css/blog.css">
 </head>
 <body>
 
-  <div class="preloader"><div class="preloader-inner"><div class="preloader-logo">TREEZ <span>AFRICA</span></div><div class="preloader-bar"></div></div></div>
+  <div class="preloader"><div class="preloader-inner"><div class="preloader-logo">treez_africa <span>// systems</span></div><div class="preloader-bar"></div></div></div>
 
   <!-- Header -->
   <header class="header">
     <div class="container">
-      <a href="index.html" class="logo"><img class="logo-icon logo-icon-nav" src="assets/images/logo-mark.png" alt="TREEZ AFRICA SYSTEMS"><div class="logo-text">TREEZ AFRICA<span>Systems</span></div></a>
+      <a href="index.html" class="logo"><img class="logo-icon-nav" src="assets/images/logo-mark.png" alt="TREEZ AFRICA SYSTEMS"><div class="logo-text">TREEZ AFRICA<span>systems</span></div></a>
       <nav class="nav">
         <a href="index.html" class="nav-link">Home</a>
         <a href="about.html" class="nav-link">About</a>
@@ -28,24 +28,36 @@
         <a href="portfolio.html" class="nav-link">Partners</a>
         <a href="blog.html" class="nav-link active">Blog</a>
         <a href="contact.html" class="nav-link">Contact</a>
-        <a href="booking.html" class="btn btn-primary btn-sm nav-cta">Book Us <i class='bx bx-right-arrow-alt'></i></a>
+        <button class="cmdk-trigger" aria-label="Search (Ctrl K)"><i data-lucide="search"></i><span>Search</span><span class="cmdk-kbd">Ctrl K</span></button>
+        <a href="booking.html" class="btn btn-primary btn-sm nav-cta">Start a project <i data-lucide="arrow-right"></i></a>
       </nav>
       <div class="hamburger"><span></span><span></span><span></span></div>
     </div>
   </header>
   <div class="mobile-nav">
-    <a href="index.html" class="nav-link">Home</a><a href="about.html" class="nav-link">About</a><a href="services.html" class="nav-link">Services</a><a href="portfolio.html" class="nav-link">Partners</a><a href="blog.html" class="nav-link active">Blog</a><a href="contact.html" class="nav-link">Contact</a><a href="booking.html" class="btn btn-primary">Book a Consultation</a>
+    <a href="index.html" class="nav-link">Home</a><a href="about.html" class="nav-link">About</a><a href="services.html" class="nav-link">Services</a><a href="portfolio.html" class="nav-link">Partners</a><a href="blog.html" class="nav-link active">Blog</a><a href="contact.html" class="nav-link">Contact</a><a href="booking.html" class="btn btn-primary">Start a project</a>
+  </div>
+  <!-- Command Palette -->
+  <div class="cmdk-overlay" id="cmdkOverlay" hidden>
+    <div class="cmdk-panel" role="dialog" aria-modal="true" aria-label="Command palette">
+      <div class="cmdk-input-row">
+        <i data-lucide="search"></i>
+        <input type="text" id="cmdkInput" class="cmdk-input" placeholder="Search pages, services, actions" autocomplete="off">
+        <span class="cmdk-esc">ESC</span>
+      </div>
+      <div class="cmdk-results" id="cmdkResults"></div>
+    </div>
   </div>
 
   <!-- Blog Post Header -->
   <section class="blog-post-header">
     <div class="container">
-      <span class="badge badge-blue" style="background:rgba(255,255,255,0.15);color:var(--white);">Mobile Development</span>
+      <span class="badge">Mobile Development</span>
       <h1>The Rise of Super Apps in Africa: What Businesses Need to Know</h1>
       <div class="blog-post-meta">
-        <span><i class='bx bx-user'></i> Grace Nakamya</span>
-        <span><i class='bx bx-calendar'></i> February 15, 2026</span>
-        <span><i class='bx bx-time-five'></i> 6 min read</span>
+        <span><i data-lucide="user"></i> Grace Nakamya</span>
+        <span><i data-lucide="calendar"></i> February 15, 2026</span>
+        <span><i data-lucide="clock"></i> 6 min read</span>
       </div>
     </div>
   </section>
@@ -108,34 +120,34 @@
         <!-- Share -->
         <div class="blog-share">
           <span>Share this article:</span>
-          <a href="#" aria-label="Share on Twitter"><i class='bx bxl-twitter'></i></a>
-          <a href="#" aria-label="Share on LinkedIn"><i class='bx bxl-linkedin'></i></a>
-          <a href="#" aria-label="Share on Facebook"><i class='bx bxl-facebook'></i></a>
-          <a href="#" aria-label="Copy link"><i class='bx bx-link'></i></a>
+          <a href="#" aria-label="Share on Twitter / X">x</a>
+          <a href="#" aria-label="Share on LinkedIn">in</a>
+          <a href="#" aria-label="Share on Facebook">fb</a>
+          <a href="#" aria-label="Copy link"><i data-lucide="link"></i></a>
         </div>
 
         <!-- Related Posts -->
         <div class="related-posts">
           <h3>Related Articles</h3>
-          <div class="blog-grid" style="grid-template-columns: repeat(2, 1fr);">
+          <div class="blog-grid">
             <a href="blog-post.html" class="blog-card">
               <div class="blog-thumbnail">
-                <div class="blog-thumbnail-bg bg-4"><i class='bx bx-credit-card'></i></div>
+                <div class="blog-date-badge"><span class="day">25</span><span class="month">Jan</span></div>
               </div>
               <div class="blog-body">
-                <span class="badge badge-green">FinTech</span>
+                <span class="badge">FinTech</span>
                 <h3>Mobile Money APIs: Building Seamless Payment Experiences</h3>
-                <div class="blog-meta"><span><i class='bx bx-time-five'></i> 10 min read</span></div>
+                <div class="blog-meta"><span><i data-lucide="clock"></i> 10 min read</span></div>
               </div>
             </a>
             <a href="blog-post.html" class="blog-card">
               <div class="blog-thumbnail">
-                <div class="blog-thumbnail-bg bg-5"><i class='bx bx-paint-roll'></i></div>
+                <div class="blog-date-badge"><span class="day">18</span><span class="month">Jan</span></div>
               </div>
               <div class="blog-body">
-                <span class="badge badge-blue">UI/UX Design</span>
+                <span class="badge">UI/UX Design</span>
                 <h3>Designing for Low-Bandwidth: UX Lessons from Africa</h3>
-                <div class="blog-meta"><span><i class='bx bx-time-five'></i> 5 min read</span></div>
+                <div class="blog-meta"><span><i data-lucide="clock"></i> 5 min read</span></div>
               </div>
             </a>
           </div>
@@ -146,11 +158,13 @@
   </section>
 
   <!-- CTA -->
-  <section class="cta-banner" style="padding:80px 0;background:var(--gradient-hero);">
-    <div class="container" style="text-align:center;">
-      <h2 style="color:var(--white);">Ready to Build Your Mobile Platform?</h2>
-      <p style="color:rgba(255,255,255,0.7);max-width:600px;margin:0 auto 32px;">Let's discuss how TREEZ AFRICA SYSTEMS can help you create a mobile experience that your users will love.</p>
-      <a href="booking.html" class="btn btn-primary btn-lg">Book a Consultation <i class='bx bx-right-arrow-alt'></i></a>
+  <section class="cta-banner bg-grid">
+    <div class="container">
+      <h2>Ready to Build Your Mobile Platform?</h2>
+      <p>Let's discuss how TREEZ AFRICA SYSTEMS can help you create a mobile experience that your users will love.</p>
+      <div class="cta-actions">
+        <a href="booking.html" class="btn btn-primary btn-lg">Book a consultation <i data-lucide="arrow-right"></i></a>
+      </div>
     </div>
   </section>
 
@@ -160,26 +174,28 @@
       <div class="container">
         <div class="footer-grid">
           <div class="footer-brand">
-            <a href="index.html" class="logo"><img class="logo-icon logo-icon-nav" src="assets/images/logo-mark.png" alt="TREEZ AFRICA SYSTEMS"><div class="logo-text">TREEZ AFRICA<span>Systems</span></div></a>
-            <p>Building innovative software solutions that power Africa's digital transformation.</p>
-            <div class="footer-socials"><a href="#"><i class='bx bxl-linkedin'></i></a><a href="#"><i class='bx bxl-twitter'></i></a><a href="#"><i class='bx bxl-github'></i></a><a href="#"><i class='bx bxl-facebook'></i></a></div>
+            <a href="index.html" class="logo"><img class="logo-icon-nav" src="assets/images/logo-mark.png" alt="TREEZ AFRICA SYSTEMS"><div class="logo-text">TREEZ AFRICA<span>systems</span></div></a>
+            <p>We design, build, and operate production software for African banks, enterprises, and mobile platforms — web, mobile, and the infrastructure underneath.</p>
+            <div class="footer-socials"><a href="#" aria-label="LinkedIn">in</a><a href="#" aria-label="GitHub">gh</a><a href="#" aria-label="Twitter / X">x</a><a href="#" aria-label="Facebook">fb</a></div>
           </div>
           <div class="footer-col"><h4>Quick Links</h4><ul class="footer-links"><li><a href="about.html">About Us</a></li><li><a href="services.html">Services</a></li><li><a href="portfolio.html">Partners</a></li><li><a href="blog.html">Blog</a></li><li><a href="booking.html">Book Us</a></li><li><a href="contact.html">Contact</a></li></ul></div>
           <div class="footer-col"><h4>Services</h4><ul class="footer-links"><li><a href="services.html">Web Applications</a></li><li><a href="services.html">Mobile Apps</a></li><li><a href="services.html">Enterprise Banking</a></li><li><a href="services.html">System Maintenance</a></li><li><a href="services.html">IT Consulting</a></li></ul></div>
-          <div class="footer-col footer-newsletter"><h4>Stay Updated</h4><p>Subscribe for tech insights.</p><form class="newsletter-form"><input type="email" placeholder="Your email"><button type="submit">Subscribe</button></form><div style="margin-top:24px;"><div class="footer-contact-item"><i class='bx bx-map'></i><span>Kampala, Uganda</span></div><div class="footer-contact-item"><i class='bx bx-phone'></i><span>+256 700 000 000</span></div><div class="footer-contact-item"><i class='bx bx-envelope'></i><span>info@treezafrica.systems</span></div></div></div>
+          <div class="footer-col footer-newsletter"><h4>Stay Updated</h4><p>Subscribe for tech insights.</p><form class="newsletter-form"><input type="email" placeholder="Your email"><button type="submit">Subscribe</button></form><div style="margin-top:24px;"><div class="footer-contact-item"><i data-lucide="map-pin"></i><span>Kampala, Uganda</span></div><div class="footer-contact-item"><i data-lucide="phone"></i><span>+256 700 000 000</span></div><div class="footer-contact-item"><i data-lucide="mail"></i><span>info@treezafrica.systems</span></div></div></div>
         </div>
       </div>
     </div>
-    <div class="container"><div class="footer-bottom"><p>&copy; 2026 TREEZ AFRICA SYSTEMS. All rights reserved.</p><div class="footer-subsidiary"><i class='bx bx-building-house'></i> A subsidiary of <a href="#">TREEZ AFRICA HOLDINGS</a></div><a class="admin-access" href="admin.html" aria-label="Admin sign in" title="Admin sign in"><i class='bx bx-key'></i></a></div></div>
+    <div class="container"><div class="footer-bottom"><p>&copy; 2026 TREEZ AFRICA SYSTEMS. All rights reserved.</p><div class="footer-subsidiary"><i data-lucide="building-2"></i> A subsidiary of <a href="#">TREEZ AFRICA HOLDINGS</a></div><a class="admin-access" href="admin.html" aria-label="Admin sign in" title="Admin sign in"><i data-lucide="key"></i></a></div></div>
   </footer>
 
-  <button class="back-to-top"><i class='bx bx-up-arrow-alt'></i></button>
+  <button class="back-to-top"><i data-lucide="chevron-up"></i></button>
   <script src="js/main.js"></script>
   <script src="js/animations.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/appwrite@14.0.1"></script>
   <script src="js/appwrite-config.js"></script>
   <script src="js/analytics.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@1.46.0/dist/umd/lucide.js"></script>
+  <script>lucide.createIcons();</script>
+  <script src="js/command-palette.js"></script>
   <script src="js/blog-post-public.js"></script>
 </body>
 </html>
-

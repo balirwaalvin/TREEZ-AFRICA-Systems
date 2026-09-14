@@ -46,6 +46,7 @@
         <a href="portfolio.html" class="nav-link">Partners</a>
         <a href="blog.html" class="nav-link">Blog</a>
         <a href="contact.html" class="nav-link">Contact</a>
+        <button class="cmdk-trigger" aria-label="Search (Ctrl K)"><i data-lucide="search"></i><span>Search</span><span class="cmdk-kbd">Ctrl K</span></button>
         <a href="booking.html" class="btn btn-primary btn-sm nav-cta">Start a project <i data-lucide="arrow-right"></i></a>
       </nav>
 
@@ -66,6 +67,17 @@
     <a href="blog.html" class="nav-link">Blog</a>
     <a href="contact.html" class="nav-link">Contact</a>
     <a href="booking.html" class="btn btn-primary">Start a project</a>
+  </div>
+  <!-- Command Palette -->
+  <div class="cmdk-overlay" id="cmdkOverlay" hidden>
+    <div class="cmdk-panel" role="dialog" aria-modal="true" aria-label="Command palette">
+      <div class="cmdk-input-row">
+        <i data-lucide="search"></i>
+        <input type="text" id="cmdkInput" class="cmdk-input" placeholder="Search pages, services, actions" autocomplete="off">
+        <span class="cmdk-esc">ESC</span>
+      </div>
+      <div class="cmdk-results" id="cmdkResults"></div>
+    </div>
   </div>
 
   <!-- Hero Section -->
@@ -525,5 +537,6 @@
   <script src="js/testimonials.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/lucide@1.46.0/dist/umd/lucide.js"></script>
   <script>lucide.createIcons();</script>
+  <script src="js/command-palette.js"></script>
 </body>
 </html>
