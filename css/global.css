@@ -102,11 +102,13 @@
   --shadow-glow-green: 0 0 0 1px rgba(52, 211, 153, 0.4), 0 0 24px rgba(52, 211, 153, 0.15);
 
   /* Icon-tile "keycap" depth system — a raised surface that lifts on
-     hover and presses flush on click. Layered shadow, not an image. */
-  --tile-shadow-rest: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 1px 1px rgba(0, 0, 0, 0.3), 0 3px 6px rgba(0, 0, 0, 0.35);
-  --tile-shadow-hover: inset 0 1px 0 rgba(255, 255, 255, 0.09), 0 3px 6px rgba(0, 0, 0, 0.3), 0 12px 20px rgba(0, 0, 0, 0.4);
-  --tile-shadow-active: inset 0 2px 4px rgba(0, 0, 0, 0.5);
-  --tile-lift: -3px;
+     hover and presses flush on click. Layered shadow, not an image.
+     Rest state is deliberately strong (not just a hover-only reveal)
+     so the tile reads as physically raised before any interaction. */
+  --tile-shadow-rest: inset 0 1px 0 rgba(255, 255, 255, 0.16), inset 0 -10px 14px -8px rgba(0, 0, 0, 0.55), 0 1px 2px rgba(0, 0, 0, 0.7), 0 10px 18px -4px rgba(0, 0, 0, 0.55);
+  --tile-shadow-hover: inset 0 1px 0 rgba(255, 255, 255, 0.24), inset 0 -10px 14px -8px rgba(0, 0, 0, 0.4), 0 4px 8px rgba(0, 0, 0, 0.6), 0 20px 32px -6px rgba(0, 0, 0, 0.65);
+  --tile-shadow-active: inset 0 3px 8px rgba(0, 0, 0, 0.75), inset 0 -1px 0 rgba(0, 0, 0, 0.4);
+  --tile-lift: -4px;
 
   /* Transitions */
   --transition-fast: 0.15s ease;
