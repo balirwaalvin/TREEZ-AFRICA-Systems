@@ -172,10 +172,17 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ---- Active Nav Link ----
-  const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+  // Clean-URL aware: normalizes both the current path and each link's
+  // href to a no-trailing-slash form (root stays "/") before comparing.
+  const normalizePath = (path) => {
+    path = path.split('?')[0].split('#')[0];
+    if (path.length > 1 && path.endsWith('/')) path = path.slice(0, -1);
+    return path || '/';
+  };
+  const currentPath = normalizePath(window.location.pathname);
   document.querySelectorAll('.nav-link, .mobile-nav .nav-link').forEach(link => {
-    const href = link.getAttribute('href');
-    if (href === currentPage || (currentPage === '' && href === 'index.html')) {
+    const href = normalizePath(link.getAttribute('href') || '');
+    if (href === currentPath) {
       link.classList.add('active');
     }
   });

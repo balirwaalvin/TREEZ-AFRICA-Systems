@@ -85,19 +85,26 @@ This repository contains the official company website — a modern, animated, mu
 
 ## 🗂️ Project Structure
 
+Every page lives at a clean URL (`/about/` rather than `/about.html`) via the
+folder + `index.html` convention — the standard directory-index behavior
+every static host supports natively, no rewrite rules required. The old
+flat `*.html` paths still exist as tiny client-side redirect stubs (meta
+refresh + JS) that bounce to the clean URL, so old bookmarks/links never 404.
+
 ```
 TREEZ-AFRICA-Systems/
 │
-├── index.html              # Homepage
-├── about.html              # About Us
-├── services.html           # Our Services
-├── portfolio.html          # Partners
-├── booking.html            # Book a Consultation
-├── blog.html               # Blog & Insights
-├── blog-post.html          # Blog Article Template
-├── contact.html            # Contact Us + FAQ
-├── 404.html                # Custom not-found page
-├── admin.html               # Private admin workspace (own stylesheet, unbranded)
+├── index.html              # Homepage — served at /
+├── about/index.html        # About Us — served at /about/
+├── services/index.html     # Our Services — served at /services/
+├── portfolio/index.html    # Partners — served at /portfolio/
+├── booking/index.html      # Book a Consultation — served at /booking/
+├── blog/index.html         # Blog & Insights — served at /blog/
+├── blog-post/index.html    # Blog Article Template — served at /blog-post/?id=…
+├── contact/index.html      # Contact Us + FAQ — served at /contact/
+├── admin/index.html        # Private admin workspace — served at /admin/
+├── about.html, services.html, …   # Redirect stubs -> their /slug/ equivalent
+├── 404.html                # Custom not-found page (stays at root)
 ├── favicon.png              # Brand favicon (amber circuit-tree mark)
 ├── robots.txt
 ├── sitemap.xml

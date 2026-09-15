@@ -10,21 +10,21 @@ document.addEventListener('DOMContentLoaded', () => {
   if (!overlay || !input || !results) return;
 
   const items = [
-    { label: 'Home', hint: 'Overview', href: 'index.html', group: 'Pages' },
-    { label: 'About', hint: 'History, team', href: 'about.html', group: 'Pages' },
-    { label: 'Services', hint: 'What we build', href: 'services.html', group: 'Pages' },
-    { label: 'Partners', hint: 'Who we build with', href: 'portfolio.html', group: 'Pages' },
-    { label: 'Blog', hint: 'Insights & articles', href: 'blog.html', group: 'Pages' },
-    { label: 'Contact', hint: 'Get in touch', href: 'contact.html', group: 'Pages' },
-    { label: 'Book a project', hint: 'Start a consultation', href: 'booking.html', group: 'Actions' },
+    { label: 'Home', hint: 'Overview', href: '/', group: 'Pages' },
+    { label: 'About', hint: 'History, team', href: '/about/', group: 'Pages' },
+    { label: 'Services', hint: 'What we build', href: '/services/', group: 'Pages' },
+    { label: 'Partners', hint: 'Who we build with', href: '/portfolio/', group: 'Pages' },
+    { label: 'Blog', hint: 'Insights & articles', href: '/blog/', group: 'Pages' },
+    { label: 'Contact', hint: 'Get in touch', href: '/contact/', group: 'Pages' },
+    { label: 'Book a project', hint: 'Start a consultation', href: '/booking/', group: 'Actions' },
     { label: 'Call us', hint: '+256 700 000 000', href: 'tel:+256700000000', group: 'Actions' },
     { label: 'Email us', hint: 'info@treezafrica.systems', href: 'mailto:info@treezafrica.systems', group: 'Actions' },
-    { label: 'Web Application Development', hint: 'Service', href: 'services.html', group: 'Services' },
-    { label: 'Mobile App Development', hint: 'Service', href: 'services.html', group: 'Services' },
-    { label: 'Enterprise Banking Systems', hint: 'Service', href: 'services.html', group: 'Services' },
-    { label: 'System Maintenance & Support', hint: 'Service', href: 'services.html', group: 'Services' },
-    { label: 'IT Consulting & Planning', hint: 'Service', href: 'services.html', group: 'Services' },
-    { label: 'FAQ', hint: 'Common questions', href: 'contact.html#', group: 'Pages' }
+    { label: 'Web Application Development', hint: 'Service', href: '/services/', group: 'Services' },
+    { label: 'Mobile App Development', hint: 'Service', href: '/services/', group: 'Services' },
+    { label: 'Enterprise Banking Systems', hint: 'Service', href: '/services/', group: 'Services' },
+    { label: 'System Maintenance & Support', hint: 'Service', href: '/services/', group: 'Services' },
+    { label: 'IT Consulting & Planning', hint: 'Service', href: '/services/', group: 'Services' },
+    { label: 'FAQ', hint: 'Common questions', href: '/contact/', group: 'Pages' }
   ];
 
   let activeIndex = 0;

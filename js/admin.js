@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const loginMessage = document.getElementById('loginMessage');
   const notice = document.getElementById('adminNotice');
   if (window.location.protocol === 'file:') {
-    showMessage(loginMessage, 'Open this page through a local web server, not directly from a file. Use http://localhost:8000/admin.html.', true);
+    showMessage(loginMessage, 'Open this page through a local web server, not directly from a file. Use http://localhost:8000/admin/.', true);
     loginForm.querySelector('button[type="submit"]').disabled = true;
     return;
   }
@@ -66,6 +66,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         listDocuments(config.analyticsCollectionId).catch(() => ({ total: 0, documents: [] }))
       ]);
       document.getElementById('messageCount').textContent = messages.total;
+      document.getElementById('bookingCount').textContent = messages.documents.filter(isBooking).length;
       document.getElementById('blogCount').textContent = blogs.documents.filter((post) => post.published !== false).length;
       document.getElementById('viewCount').textContent = views.total;
       renderMessages(messages.documents);
@@ -75,10 +76,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }
 
+  const isBooking = (message) => message.subject === 'Consultation booking request';
+  const sourceBadge = (message) => isBooking(message)
+    ? '<span class="badge-secondary admin-row-badge">Booking</span>'
+    : '<span class="badge-primary admin-row-badge">Message</span>';
+
   function renderMessages(messages) {
-    const html = messages.length ? messages.map((message) => `<article class="admin-list-item"><div><h3>${escapeHtml(message.subject || 'No subject')}</h3><p>${escapeHtml(message.name || 'Unknown')} · ${escapeHtml(message.email || '')}</p><p>${escapeHtml(message.message || '')}</p></div><time>${formatDate(message.$createdAt)}</time></article>`).join('') : emptyState('No messages yet.');
+    const html = messages.length ? messages.map((message) => `<article class="admin-list-item"><div>${sourceBadge(message)}<h3>${escapeHtml(message.subject || 'No subject')}</h3><p>${escapeHtml(message.name || 'Unknown')} · ${escapeHtml(message.email || '')}</p><p>${escapeHtml(message.message || '')}</p></div><time>${formatDate(message.$createdAt)}</time></article>`).join('') : emptyState('No messages yet.');
     document.getElementById('messageList').innerHTML = html;
-    document.getElementById('recentMessages').innerHTML = messages.slice(0, 5).map((message) => `<article class="admin-list-item"><div><h3>${escapeHtml(message.subject || 'No subject')}</h3><p>${escapeHtml(message.name || 'Unknown')} · ${escapeHtml(message.message || '')}</p></div><time>${formatDate(message.$createdAt)}</time></article>`).join('') || emptyState('No messages yet.');
+    document.getElementById('recentMessages').innerHTML = messages.slice(0, 5).map((message) => `<article class="admin-list-item"><div>${sourceBadge(message)}<h3>${escapeHtml(message.subject || 'No subject')}</h3><p>${escapeHtml(message.name || 'Unknown')} · ${escapeHtml(message.message || '')}</p></div><time>${formatDate(message.$createdAt)}</time></article>`).join('') || emptyState('No messages yet.');
   }
 
   function renderBlogs(blogs) {

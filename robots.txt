@@ -1,5 +1,13 @@
 User-agent: *
 Allow: /
+Disallow: /admin/
 Disallow: /admin.html
+Disallow: /about.html
+Disallow: /services.html
+Disallow: /portfolio.html
+Disallow: /booking.html
+Disallow: /blog.html
+Disallow: /blog-post.html
+Disallow: /contact.html
 
 Sitemap: https://treezafrica.systems/sitemap.xml
