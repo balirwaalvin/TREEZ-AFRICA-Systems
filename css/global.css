@@ -101,6 +101,13 @@
   --shadow-glow-amber: 0 0 0 1px rgba(255, 176, 32, 0.4), 0 0 24px rgba(255, 176, 32, 0.15);
   --shadow-glow-green: 0 0 0 1px rgba(52, 211, 153, 0.4), 0 0 24px rgba(52, 211, 153, 0.15);
 
+  /* Icon-tile "keycap" depth system — a raised surface that lifts on
+     hover and presses flush on click. Layered shadow, not an image. */
+  --tile-shadow-rest: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 1px 1px rgba(0, 0, 0, 0.3), 0 3px 6px rgba(0, 0, 0, 0.35);
+  --tile-shadow-hover: inset 0 1px 0 rgba(255, 255, 255, 0.09), 0 3px 6px rgba(0, 0, 0, 0.3), 0 12px 20px rgba(0, 0, 0, 0.4);
+  --tile-shadow-active: inset 0 2px 4px rgba(0, 0, 0, 0.5);
+  --tile-lift: -3px;
+
   /* Transitions */
   --transition-fast: 0.15s ease;
   --transition-base: 0.25s ease;
@@ -324,6 +331,12 @@ code, .mono {
   box-shadow: var(--shadow-glow-amber);
 }
 
+.btn-primary:active {
+  transform: translateY(0) scale(0.97);
+  box-shadow: var(--tile-shadow-active);
+  transition-duration: 0.08s;
+}
+
 .btn-secondary {
   background: transparent;
   color: var(--color-secondary);
@@ -335,6 +348,12 @@ code, .mono {
   border-color: var(--color-secondary);
   color: var(--color-secondary-ink);
   transform: translateY(-2px);
+}
+
+.btn-secondary:active {
+  transform: translateY(0) scale(0.97);
+  box-shadow: var(--tile-shadow-active);
+  transition-duration: 0.08s;
 }
 
 .btn-outline {
@@ -349,6 +368,11 @@ code, .mono {
   transform: translateY(-2px);
 }
 
+.btn-outline:active {
+  transform: translateY(0) scale(0.97);
+  transition-duration: 0.08s;
+}
+
 .btn-green {
   background: var(--green);
   color: var(--white);
@@ -359,6 +383,12 @@ code, .mono {
   background: var(--green-dark);
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(0, 166, 81, 0.4);
+}
+
+.btn-green:active {
+  transform: translateY(0) scale(0.97);
+  box-shadow: var(--tile-shadow-active);
+  transition-duration: 0.08s;
 }
 
 .btn-sm {
@@ -379,6 +409,10 @@ code, .mono {
 
 .btn:hover svg {
   transform: translateX(3px);
+}
+
+.btn:active svg {
+  transform: translateX(1px) scale(0.92);
 }
 
 /* ---- Cards ---- */
@@ -546,7 +580,6 @@ code, .mono {
   opacity: 0;
   visibility: hidden;
   transform: translateY(20px);
-  transition: all var(--transition-base);
   z-index: 999;
   cursor: pointer;
 }
@@ -564,7 +597,6 @@ code, .mono {
 
 .back-to-top:hover {
   border-color: var(--amber);
-  transform: translateY(-4px);
 }
 
 /* ---- Image Protection ---- */
@@ -681,6 +713,119 @@ body {
   50% { box-shadow: 0 0 0 5px rgba(52, 211, 153, 0.06); }
 }
 
+/* ---- Icon-tile 3D interaction system ----
+   Shared depth/lift/press mechanics for every bordered icon tile
+   across the site. Each tile's own stylesheet still owns its size,
+   color, and hover-color accent — this block only owns the "3D"
+   part (shadow, lift, press) so it behaves identically everywhere. */
+.service-icon,
+.feature-icon,
+.arch-node-icon,
+.contact-info-icon,
+.sidebar-info-icon,
+.psc-logo-wrap,
+.bento-icon-wrap,
+.footer-socials a,
+.back-to-top,
+.cmdk-trigger,
+.team-avatar,
+.testimonial-avatar,
+.tstrip-avatar,
+.admin-button {
+  box-shadow: var(--tile-shadow-rest);
+  transition: transform 0.18s cubic-bezier(0.2, 0.8, 0.2, 1),
+              box-shadow 0.18s cubic-bezier(0.2, 0.8, 0.2, 1),
+              border-color var(--transition-base),
+              background var(--transition-base),
+              color var(--transition-base),
+              opacity var(--transition-base),
+              visibility var(--transition-base);
+}
+
+.service-icon:hover,
+.feature-icon:hover,
+.arch-node-icon:hover,
+.contact-info-icon:hover,
+.sidebar-info-icon:hover,
+.psc-logo-wrap:hover,
+.bento-icon-wrap:hover,
+.footer-socials a:hover,
+.back-to-top:hover,
+.cmdk-trigger:hover,
+.team-avatar:hover,
+.testimonial-avatar:hover,
+.tstrip-avatar:hover {
+  transform: translateY(var(--tile-lift));
+  box-shadow: var(--tile-shadow-hover);
+}
+
+.service-icon:active,
+.feature-icon:active,
+.arch-node-icon:active,
+.contact-info-icon:active,
+.sidebar-info-icon:active,
+.psc-logo-wrap:active,
+.bento-icon-wrap:active,
+.footer-socials a:active,
+.back-to-top:active,
+.cmdk-trigger:active,
+.team-avatar:active,
+.testimonial-avatar:active,
+.tstrip-avatar:active {
+  transform: translateY(0) scale(0.94);
+  box-shadow: var(--tile-shadow-active);
+  transition-duration: 0.08s;
+}
+
+/* The glyph itself lifts a touch further than its tile, for a
+   subtle parallax "popping off the surface" read. */
+.service-icon svg,
+.feature-icon svg,
+.arch-node-icon svg,
+.contact-info-icon svg,
+.sidebar-info-icon svg,
+.psc-logo-wrap img,
+.bento-icon-wrap img,
+.back-to-top svg,
+.cmdk-trigger svg {
+  transition: transform 0.18s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.service-icon:hover svg,
+.feature-icon:hover svg,
+.arch-node-icon:hover svg,
+.contact-info-icon:hover svg,
+.sidebar-info-icon:hover svg,
+.psc-logo-wrap:hover img,
+.bento-icon-wrap:hover img,
+.back-to-top:hover svg,
+.cmdk-trigger:hover svg {
+  transform: scale(1.14);
+}
+
+.service-icon:active svg,
+.feature-icon:active svg,
+.arch-node-icon:active svg,
+.contact-info-icon:active svg,
+.sidebar-info-icon:active svg,
+.psc-logo-wrap:active img,
+.bento-icon-wrap:active img,
+.back-to-top:active svg,
+.cmdk-trigger:active svg {
+  transform: scale(0.98);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .service-icon, .feature-icon, .arch-node-icon, .contact-info-icon,
+  .sidebar-info-icon, .psc-logo-wrap, .bento-icon-wrap, .footer-socials a,
+  .back-to-top, .cmdk-trigger, .team-avatar, .testimonial-avatar, .tstrip-avatar,
+  .service-icon svg, .feature-icon svg, .arch-node-icon svg, .contact-info-icon svg,
+  .sidebar-info-icon svg, .psc-logo-wrap img, .bento-icon-wrap img,
+  .back-to-top svg, .cmdk-trigger svg {
+    transition: none;
+  }
+}
+
 /* ---- Command palette ---- */
 .cmdk-trigger {
   display: flex;
@@ -693,7 +838,6 @@ body {
   color: var(--text-2);
   font-family: var(--font-mono);
   font-size: 0.78rem;
-  transition: all var(--transition-base);
   margin-right: 6px;
 }
 
