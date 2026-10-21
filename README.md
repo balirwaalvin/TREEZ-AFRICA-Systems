@@ -111,7 +111,7 @@ TREEZ-AFRICA-Systems/
 │
 ├── css/
 │   ├── global.css          # Reset, tokens, typography, buttons, command palette
-│   ├── animations.css      # Scroll-reveal & marquee keyframes
+│   ├── animations.css      # Scroll-reveal, marquee, page transitions & reduced-motion rules
 │   ├── header.css          # Sticky navbar & mobile menu
 │   ├── footer.css          # Footer layout & newsletter
 │   ├── home.css            # Homepage-specific styles
@@ -125,6 +125,8 @@ TREEZ-AFRICA-Systems/
 ├── js/
 │   ├── main.js              # Navbar, preloader, smooth scroll
 │   ├── animations.js        # IntersectionObserver scroll-reveal & stagger
+│   ├── hero.js              # Homepage network map (dot-matrix Africa) & headline decode
+│   ├── live-panels.js       # Live system panels: metrics, transaction stream, deploy log, uptime
 │   ├── command-palette.js   # Ctrl/Cmd K site-wide search
 │   ├── testimonials.js      # Auto-play carousel with swipe
 │   ├── booking.js           # Multi-step form logic, validation & Appwrite submission

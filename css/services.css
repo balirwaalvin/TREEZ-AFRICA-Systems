@@ -180,6 +180,180 @@
   color: var(--status-green);
 }
 
+/* Lighthouse-style dial: the ring fills to the score when the panel reveals */
+.score-dial {
+  position: relative;
+  width: 84px;
+  height: 84px;
+  margin: 0 auto;
+  display: grid;
+  place-items: center;
+}
+
+.score-dial .score-value {
+  font-size: 1.45rem;
+}
+
+.score-ring {
+  position: absolute;
+  inset: 0;
+  transform: rotate(-90deg);
+}
+
+.score-ring circle {
+  fill: none;
+  stroke-width: 4;
+}
+
+.score-ring-track {
+  stroke: var(--line);
+}
+
+.score-ring-fill {
+  stroke: var(--status-green);
+  stroke-linecap: round;
+  stroke-dasharray: 175.93;
+  stroke-dashoffset: 175.93;
+  filter: drop-shadow(0 0 4px rgba(52, 211, 153, 0.45));
+  transition: stroke-dashoffset 1.6s cubic-bezier(0.2, 0.7, 0.2, 1) 0.3s;
+}
+
+.revealed .score-ring-fill {
+  stroke-dashoffset: calc(175.93 * (1 - var(--score) / 100));
+}
+
+/* ---- Deploy log (mobile panel) ---- */
+.deploy-log {
+  margin-top: 18px;
+  padding: 14px 16px;
+  background: var(--bg-0);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  line-height: 1.9;
+  color: var(--text-2);
+  overflow: hidden;
+}
+
+.deploy-line {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: opacity 0.25s ease;
+}
+
+.deploy-line.is-pending {
+  opacity: 0;
+}
+
+.deploy-cmd {
+  color: var(--text-0);
+}
+
+.deploy-cmd.is-typing::after {
+  content: '_';
+  color: var(--amber);
+  animation: blink 1s step-end infinite;
+}
+
+.deploy-ok {
+  color: var(--status-green);
+}
+
+/* ---- Streaming transaction ledger ---- */
+.txn-stream .panel-row:last-child {
+  border-bottom: 1px solid var(--line);
+}
+
+.txn-enter {
+  animation: txnEnter 0.6s ease;
+}
+
+@keyframes txnEnter {
+  0% { opacity: 0; transform: translateY(-8px); background: rgba(255, 176, 32, 0.12); }
+  40% { opacity: 1; transform: none; }
+  100% { background: transparent; }
+}
+
+/* ---- 90-day uptime history ---- */
+.uptime-history {
+  margin: 4px 0 14px;
+}
+
+.uptime-bars {
+  display: flex;
+  gap: 2px;
+  height: 28px;
+  align-items: flex-end;
+}
+
+.uptime-bars span {
+  flex: 1;
+  height: 100%;
+  border-radius: 1px;
+  background: var(--status-green);
+  opacity: 0.75;
+  transform: scaleY(0.15);
+  transform-origin: bottom;
+  transition: transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) var(--d, 0ms), opacity 0.2s ease;
+}
+
+.uptime-bars span:hover {
+  opacity: 1;
+}
+
+.uptime-bars .is-degraded {
+  background: var(--amber);
+}
+
+.revealed .uptime-bars span {
+  transform: none;
+}
+
+.uptime-scale {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-2);
+}
+
+/* ---- Roadmap bars fill on reveal; the active phase carries a moving sheen ---- */
+.roadmap-row .panel-bar span {
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 1.2s cubic-bezier(0.2, 0.7, 0.2, 1) 0.3s;
+}
+
+.revealed .roadmap-row .panel-bar span {
+  transform: none;
+}
+
+.roadmap-row:nth-child(3) .panel-bar span { transition-delay: 0.5s; }
+.roadmap-row:nth-child(4) .panel-bar span { transition-delay: 0.7s; }
+
+.panel-bar.is-active span {
+  position: relative;
+  overflow: hidden;
+}
+
+.panel-bar.is-active span::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.55), transparent);
+  transform: translateX(-100%);
+  animation: barSheen 2.2s ease-in-out infinite;
+}
+
+@keyframes barSheen {
+  to { transform: translateX(100%); }
+}
+
 .score-label {
   display: block;
   font-family: var(--font-mono);

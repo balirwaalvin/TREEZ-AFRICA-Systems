@@ -67,7 +67,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ================================================================
   // ---- Preloader ----
+  // Shown once per visit: the inline head script adds .tz-seen on later pages
   const preloader = document.querySelector('.preloader');
+  try { sessionStorage.setItem('tz-seen', '1'); } catch (e) { /* storage blocked — preloader just shows each time */ }
+  if (document.documentElement.classList.contains('tz-seen')) {
+    document.body.classList.add('loaded');
+  }
   window.addEventListener('load', () => {
     setTimeout(() => {
       preloader?.classList.add('hidden');

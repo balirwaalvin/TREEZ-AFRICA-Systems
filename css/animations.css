@@ -91,3 +91,71 @@
   from { opacity: 0; }
   to { opacity: 1; }
 }
+
+/* Live metric update (js/live-panels.js) */
+.is-ticking {
+  animation: tickFlash 0.6s ease;
+}
+
+@keyframes tickFlash {
+  from { color: var(--amber); }
+}
+
+/* ---- Cross-page transitions (View Transitions API) ----
+   Browsers without support simply navigate as before. The header keeps
+   its own name so it holds still while the page content swaps under it. */
+@view-transition {
+  navigation: auto;
+}
+
+.header {
+  view-transition-name: site-header;
+}
+
+::view-transition-old(root) {
+  animation: vtOut 0.2s ease both;
+}
+
+::view-transition-new(root) {
+  animation: vtIn 0.35s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+@keyframes vtOut {
+  to { opacity: 0; transform: translateY(-8px); }
+}
+
+@keyframes vtIn {
+  from { opacity: 0; transform: translateY(14px); }
+}
+
+/* ---- Reduced motion: everything lands in its final state, instantly ---- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    animation-delay: 0s !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0s !important;
+    scroll-behavior: auto !important;
+  }
+
+  .reveal,
+  .reveal-left,
+  .reveal-right,
+  .reveal-scale {
+    opacity: 1;
+    transform: none;
+  }
+
+  .animate-marquee {
+    animation: none;
+  }
+
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}

@@ -152,6 +152,17 @@ body.loaded {
   opacity: 1;
 }
 
+/* Later pages in the same visit skip the preloader (class set by an inline
+   head script), so page-to-page view transitions have content to show. */
+.tz-seen .preloader {
+  display: none;
+}
+
+.tz-seen body {
+  opacity: 1;
+  transition: none;
+}
+
 img {
   max-width: 100%;
   height: auto;

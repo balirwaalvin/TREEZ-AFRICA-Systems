@@ -12,11 +12,12 @@
   <link rel="icon" type="image/png" href="/favicon.png">
 
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="/css/global.css">
-  <link rel="stylesheet" href="/css/animations.css">
-  <link rel="stylesheet" href="/css/header.css">
-  <link rel="stylesheet" href="/css/footer.css">
-  <link rel="stylesheet" href="/css/home.css">
+  <script>try{if(sessionStorage.getItem('tz-seen'))document.documentElement.classList.add('tz-seen')}catch(e){}</script>
+  <link rel="stylesheet" href="/css/global.css?v=20261021">
+  <link rel="stylesheet" href="/css/animations.css?v=20261021">
+  <link rel="stylesheet" href="/css/header.css?v=20261021">
+  <link rel="stylesheet" href="/css/footer.css?v=20261021">
+  <link rel="stylesheet" href="/css/home.css?v=20261021">
 </head>
 <body>
 
@@ -83,23 +84,36 @@
   <!-- Hero Section -->
   <section class="hero">
     <div class="container">
-      <div class="hero-content">
-        <p class="hero-eyebrow">Technology arm of TREEZ AFRICA HOLDINGS</p>
-        <h1 class="hero-title">
-          Engineering the systems <span class="hero-emphasis">Africa's institutions</span> run on.
-        </h1>
-        <p class="hero-description">
-          We design, build, and operate production-grade software for banks, enterprises, and mobile platforms across Africa — from core banking systems to the apps millions of people use every day.
-        </p>
-        <div class="hero-buttons">
-          <a href="/booking/" class="btn btn-primary btn-lg">
-            Start a project <i data-lucide="arrow-right"></i>
-          </a>
-          <a href="/services/" class="btn btn-secondary btn-lg">
-            Our services <i data-lucide="chevron-right"></i>
-          </a>
+      <div class="hero-main">
+        <div class="hero-content">
+          <p class="hero-eyebrow">Technology arm of TREEZ AFRICA HOLDINGS</p>
+          <h1 class="hero-title">
+            Engineering the systems <span class="hero-emphasis">Africa's institutions</span> run on.
+          </h1>
+          <p class="hero-description">
+            We design, build, and operate production-grade software for banks, enterprises, and mobile platforms across Africa — from core banking systems to the apps millions of people use every day.
+          </p>
+          <div class="hero-buttons">
+            <a href="/booking/" class="btn btn-primary btn-lg">
+              Start a project <i data-lucide="arrow-right"></i>
+            </a>
+            <a href="/services/" class="btn btn-secondary btn-lg">
+              Our services <i data-lucide="chevron-right"></i>
+            </a>
+          </div>
+          <p class="hero-credentials">150+ systems shipped &nbsp;·&nbsp; 80+ active clients &nbsp;·&nbsp; operating since 2019</p>
         </div>
-        <p class="hero-credentials">150+ systems shipped &nbsp;·&nbsp; 80+ active clients &nbsp;·&nbsp; operating since 2019</p>
+
+        <div class="hero-network" aria-hidden="true">
+          <div class="hero-network-head">
+            <span>network.topology</span>
+            <span class="status-pill"><span class="status-dot"></span>live</span>
+          </div>
+          <div class="hero-network-map"></div>
+          <div class="hero-network-log"></div>
+          <span class="hn-corner hn-corner-tl"></span><span class="hn-corner hn-corner-tr"></span>
+          <span class="hn-corner hn-corner-bl"></span><span class="hn-corner hn-corner-br"></span>
+        </div>
       </div>
 
       <div class="hero-ledger">
@@ -168,8 +182,8 @@
             </div>
           </div>
           <div class="arch-panel-foot">
-            <span>requests/sec <b>4,820</b></span>
-            <span>p99 latency <b>118ms</b></span>
+            <span>requests/sec <b data-live="4820" data-jitter="90">4,820</b></span>
+            <span>p99 latency <b data-live="118" data-jitter="7" data-suffix="ms">118ms</b></span>
           </div>
         </div>
         <div class="about-experience-badge">
@@ -332,6 +346,7 @@
       <div class="trust-bar-slide">
         <span class="trust-logo">TREEZ AFRICA HOLDINGS</span>
         <span class="trust-logo">EduScan Intelligence</span>
+        <span class="trust-logo">AfriBank Corp</span>
         <span class="trust-logo">MobiConnect</span>
         <span class="trust-logo">SafePay Financial</span>
         <span class="trust-logo">GreenTech Africa</span>
@@ -339,8 +354,9 @@
         <span class="trust-logo">CityLogistics</span>
         <span class="trust-logo">HealthBridge</span>
       </div>
-      <div class="trust-bar-slide">
+      <div class="trust-bar-slide" aria-hidden="true">
         <span class="trust-logo">TREEZ AFRICA HOLDINGS</span>
+        <span class="trust-logo">EduScan Intelligence</span>
         <span class="trust-logo">AfriBank Corp</span>
         <span class="trust-logo">MobiConnect</span>
         <span class="trust-logo">SafePay Financial</span>
@@ -531,12 +547,14 @@
   </button>
 
   <!-- Scripts -->
-  <script src="/js/main.js"></script>
-  <script src="/js/animations.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/appwrite@27.0.0"></script><script src="/js/appwrite-config.js"></script><script src="/js/analytics.js"></script>
-  <script src="/js/testimonials.js"></script>
+  <script src="/js/main.js?v=20261021"></script>
+  <script src="/js/animations.js?v=20261021"></script>
+  <script src="/js/hero.js?v=20261021"></script>
+  <script src="/js/live-panels.js?v=20261021"></script>
+  <script src="https://cdn.jsdelivr.net/npm/appwrite@27.0.0"></script><script src="/js/appwrite-config.js?v=20261021"></script><script src="/js/analytics.js?v=20261021"></script>
+  <script src="/js/testimonials.js?v=20261021"></script>
   <script src="https://cdn.jsdelivr.net/npm/lucide@1.46.0/dist/umd/lucide.js"></script>
   <script>lucide.createIcons();</script>
-  <script src="/js/command-palette.js"></script>
+  <script src="/js/command-palette.js?v=20261021"></script>
 </body>
 </html>

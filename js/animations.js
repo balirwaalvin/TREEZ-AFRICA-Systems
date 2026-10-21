@@ -41,7 +41,10 @@ document.addEventListener('DOMContentLoaded', () => {
   staggerContainers.forEach(el => staggerObserver.observe(el));
 
   // ---- Counter Animation ----
-  const counters = document.querySelectorAll('.counter-value');
+  // Under reduced motion the HTML already holds the final number
+  const counters = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    ? []
+    : document.querySelectorAll('.counter-value');
 
   const counterObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
@@ -76,24 +79,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }, { threshold: 0.5 });
 
   counters.forEach(el => counterObserver.observe(el));
-
-  // ---- Parallax on mouse move (hero section) ----
-  const hero = document.querySelector('.hero');
-  if (hero) {
-    const floatingIcons = hero.querySelectorAll('.hero-icon-float');
-
-    hero.addEventListener('mousemove', (e) => {
-      const { clientX, clientY } = e;
-      const { left, top, width, height } = hero.getBoundingClientRect();
-      const x = (clientX - left) / width - 0.5;
-      const y = (clientY - top) / height - 0.5;
-
-      floatingIcons.forEach((icon, i) => {
-        const speed = (i + 1) * 15;
-        icon.style.transform = `translate(${x * speed}px, ${y * speed}px)`;
-      });
-    });
-  }
 
   // ---- Tilt effect on cards ----
   document.querySelectorAll('.card-tilt').forEach(card => {
