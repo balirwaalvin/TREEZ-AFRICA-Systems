@@ -5,6 +5,32 @@
    .cta-banner used across the site)
    ============================================ */
 
+/* ---- Reading progress (blog post): CSS scroll timeline, JS fallback in animations.js ---- */
+.read-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  z-index: 1001;
+  background: linear-gradient(90deg, var(--amber), var(--status-green));
+  transform-origin: left;
+  transform: scaleX(var(--read, 0));
+  pointer-events: none;
+}
+
+@supports (animation-timeline: scroll()) {
+  .read-progress {
+    animation: readGrow linear both;
+    animation-timeline: scroll(root);
+  }
+}
+
+@keyframes readGrow {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
 /* ---- Blog Index: an editorial list, not an icon-card grid ---- */
 .blog-grid {
   display: flex;

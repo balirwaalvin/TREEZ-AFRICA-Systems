@@ -71,7 +71,7 @@ This repository contains the official company website — a modern, animated, mu
 
 | Page | Description |
 |:-----|:------------|
-| 🏠 **Home** | Editorial hero with a real "systems ledger" of production clients, architecture-diagram about panel, service cards, testimonials |
+| 🏠 **Home** | Editorial hero with a live Africa network map and "systems ledger", architecture-diagram about panel, service cards, tech-stack band, engineering pipeline, case studies, testimonials |
 | 📖 **About** | Company changelog (history as version entries), mission/vision/values manifesto, team roster |
 | 🛠️ **Services** | 5 service sections each with a bespoke coded panel (Lighthouse scores, release channels, transaction ledger, uptime, roadmap), technology stack manifest, process pipeline |
 | 🤝 **Partners** | Partner logo wall, partner story cards, landmark-project bento grid, partner testimonials, stats |
@@ -126,7 +126,7 @@ TREEZ-AFRICA-Systems/
 │   ├── main.js              # Navbar, preloader, smooth scroll
 │   ├── animations.js        # IntersectionObserver scroll-reveal & stagger
 │   ├── hero.js              # Homepage network map (dot-matrix Africa) & headline decode
-│   ├── live-panels.js       # Live system panels: metrics, transaction stream, deploy log, uptime
+│   ├── live-panels.js       # Live panels: metrics, transactions, terminals, CI run, partner graph, clock
 │   ├── command-palette.js   # Ctrl/Cmd K site-wide search
 │   ├── testimonials.js      # Auto-play carousel with swipe
 │   ├── booking.js           # Multi-step form logic, validation & Appwrite submission

@@ -13,11 +13,11 @@
 
   <!-- Stylesheets -->
   <script>try{if(sessionStorage.getItem('tz-seen'))document.documentElement.classList.add('tz-seen')}catch(e){}</script>
-  <link rel="stylesheet" href="/css/global.css?v=20261021">
-  <link rel="stylesheet" href="/css/animations.css?v=20261021">
-  <link rel="stylesheet" href="/css/header.css?v=20261021">
-  <link rel="stylesheet" href="/css/footer.css?v=20261021">
-  <link rel="stylesheet" href="/css/home.css?v=20261021">
+  <link rel="stylesheet" href="/css/global.css?v=20261022">
+  <link rel="stylesheet" href="/css/animations.css?v=20261022">
+  <link rel="stylesheet" href="/css/header.css?v=20261022">
+  <link rel="stylesheet" href="/css/footer.css?v=20261022">
+  <link rel="stylesheet" href="/css/home.css?v=20261022">
 </head>
 <body>
 
@@ -284,6 +284,71 @@
     </div>
   </section>
 
+  <!-- Technology Stack Band -->
+  <section class="stack-band" aria-label="Technologies we build with">
+    <div class="stack-band-label">// the stack behind our systems</div>
+    <div class="stack-band-row">
+      <div class="stack-band-track animate-marquee">
+        <div class="stack-band-set">
+          <span class="stack-chip"><em>frontend</em>React</span>
+          <span class="stack-chip"><em>frontend</em>Vue.js</span>
+          <span class="stack-chip"><em>frontend</em>Angular</span>
+          <span class="stack-chip"><em>backend</em>Node.js</span>
+          <span class="stack-chip"><em>backend</em>Python</span>
+          <span class="stack-chip"><em>backend</em>Java Spring Boot</span>
+          <span class="stack-chip"><em>backend</em>.NET</span>
+          <span class="stack-chip"><em>mobile</em>Flutter</span>
+          <span class="stack-chip"><em>mobile</em>Swift</span>
+          <span class="stack-chip"><em>mobile</em>React Native</span>
+        </div>
+        <div class="stack-band-set" aria-hidden="true">
+          <span class="stack-chip"><em>frontend</em>React</span>
+          <span class="stack-chip"><em>frontend</em>Vue.js</span>
+          <span class="stack-chip"><em>frontend</em>Angular</span>
+          <span class="stack-chip"><em>backend</em>Node.js</span>
+          <span class="stack-chip"><em>backend</em>Python</span>
+          <span class="stack-chip"><em>backend</em>Java Spring Boot</span>
+          <span class="stack-chip"><em>backend</em>.NET</span>
+          <span class="stack-chip"><em>mobile</em>Flutter</span>
+          <span class="stack-chip"><em>mobile</em>Swift</span>
+          <span class="stack-chip"><em>mobile</em>React Native</span>
+        </div>
+      </div>
+    </div>
+    <div class="stack-band-row">
+      <div class="stack-band-track animate-marquee marquee-reverse">
+        <div class="stack-band-set">
+          <span class="stack-chip"><em>data</em>PostgreSQL</span>
+          <span class="stack-chip"><em>data</em>MongoDB</span>
+          <span class="stack-chip"><em>data</em>Oracle DB</span>
+          <span class="stack-chip"><em>cloud</em>AWS</span>
+          <span class="stack-chip"><em>cloud</em>Google Cloud</span>
+          <span class="stack-chip"><em>cloud</em>Microsoft Azure</span>
+          <span class="stack-chip"><em>infra</em>Docker</span>
+          <span class="stack-chip"><em>infra</em>Kubernetes</span>
+          <span class="stack-chip"><em>ci/cd</em>GitHub Actions</span>
+          <span class="stack-chip"><em>payments</em>MoMo API</span>
+          <span class="stack-chip"><em>payments</em>M-PESA Daraja</span>
+          <span class="stack-chip"><em>channels</em>USSD</span>
+        </div>
+        <div class="stack-band-set" aria-hidden="true">
+          <span class="stack-chip"><em>data</em>PostgreSQL</span>
+          <span class="stack-chip"><em>data</em>MongoDB</span>
+          <span class="stack-chip"><em>data</em>Oracle DB</span>
+          <span class="stack-chip"><em>cloud</em>AWS</span>
+          <span class="stack-chip"><em>cloud</em>Google Cloud</span>
+          <span class="stack-chip"><em>cloud</em>Microsoft Azure</span>
+          <span class="stack-chip"><em>infra</em>Docker</span>
+          <span class="stack-chip"><em>infra</em>Kubernetes</span>
+          <span class="stack-chip"><em>ci/cd</em>GitHub Actions</span>
+          <span class="stack-chip"><em>payments</em>MoMo API</span>
+          <span class="stack-chip"><em>payments</em>M-PESA Daraja</span>
+          <span class="stack-chip"><em>channels</em>USSD</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Why Choose Us -->
   <section class="section why-choose">
     <div class="container">
@@ -335,6 +400,98 @@
           <h3>Africa-First Approach</h3>
           <p>Solutions built with deep understanding of African markets, infrastructure, and user needs.</p>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Engineering at TREEZ -->
+  <section id="engineering" class="section engineering">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="label">Engineering at TREEZ</span>
+        <h2>How We Ship &amp; Run Production Systems</h2>
+        <p>Every project runs through the same delivery pipeline — automated builds, tests, and security checks before anything reaches production, and monitoring after it does.</p>
+      </div>
+
+      <div class="ci-run reveal" data-ci-run>
+        <div class="ci-run-head">
+          <span><span class="ci-run-id">run #<span data-ci-run-id>1284</span></span> &middot; main &middot; github actions</span>
+          <span class="ci-run-status" data-ci-status>passed</span>
+        </div>
+        <ol class="ci-stages">
+          <li class="ci-stage is-passed"><span class="ci-stage-icon"></span><b>commit</b><small>signed &amp; reviewed</small></li>
+          <li class="ci-stage is-passed"><span class="ci-stage-icon"></span><b>build</b><small>docker image</small></li>
+          <li class="ci-stage is-passed"><span class="ci-stage-icon"></span><b>test</b><small>unit &middot; integration</small></li>
+          <li class="ci-stage is-passed"><span class="ci-stage-icon"></span><b>scan</b><small>dependencies &middot; secrets</small></li>
+          <li class="ci-stage is-passed"><span class="ci-stage-icon"></span><b>deploy</b><small>staged rollout</small></li>
+          <li class="ci-stage is-passed"><span class="ci-stage-icon"></span><b>monitor</b><small>24/7 alerting</small></li>
+        </ol>
+      </div>
+
+      <div class="practice-grid stagger">
+        <div class="practice-card reveal">
+          <span class="practice-index">01 // ship</span>
+          <h3>Automated delivery</h3>
+          <p>CI/CD pipelines on GitHub Actions, containerised with Docker and orchestrated on Kubernetes — so releases take hours, not weeks.</p>
+          <div class="practice-tags"><span>GitHub Actions</span><span>Docker</span><span>Kubernetes</span></div>
+        </div>
+        <div class="practice-card reveal">
+          <span class="practice-index">02 // secure</span>
+          <h3>Security by default</h3>
+          <p>Bank-grade practices from the first commit: encryption, regular security audits and patching, and PCI-DSS compliance for payment systems.</p>
+          <div class="practice-tags"><span>Encryption</span><span>Audits &amp; patching</span><span>PCI-DSS</span></div>
+        </div>
+        <div class="practice-card reveal">
+          <span class="practice-index">03 // operate</span>
+          <h3>Operated, not just delivered</h3>
+          <p>Round-the-clock monitoring, scheduled patch windows, and disaster-recovery planning keep systems up long after launch day.</p>
+          <div class="practice-tags"><span>24/7 monitoring</span><span>Patch windows</span><span>Disaster recovery</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Case Studies -->
+  <section id="case-studies" class="section case-studies">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="label">Case studies</span>
+        <h2>Systems in Production</h2>
+        <p>A few of the landmark systems we've delivered with partners across the continent.</p>
+      </div>
+
+      <div class="case-grid stagger">
+        <article class="case-card reveal">
+          <div class="case-head"><span class="case-client">Stanbic Bank Uganda</span><span class="status-pill"><span class="status-dot"></span>live</span></div>
+          <h3>High-volume transaction processing engine</h3>
+          <div class="case-metrics">
+            <div><span class="case-metric"><span class="counter-value" data-target="100000" data-suffix="+">100,000+</span></span><span class="case-metric-label">daily transactions</span></div>
+            <div><span class="case-metric">99.98%</span><span class="case-metric-label">uptime</span></div>
+          </div>
+          <div class="case-stack"><span>Microservices</span><span>Google Cloud</span><span>Java Spring Boot</span><span>PostgreSQL</span></div>
+        </article>
+        <article class="case-card reveal">
+          <div class="case-head"><span class="case-client">MTN Uganda</span><span class="status-pill"><span class="status-dot"></span>live</span></div>
+          <h3>Rural USSD payment platform</h3>
+          <div class="case-metrics">
+            <div><span class="case-metric"><span class="counter-value" data-target="50000" data-suffix="+">50,000+</span></span><span class="case-metric-label">farmers reached</span></div>
+            <div><span class="case-metric">USSD</span><span class="case-metric-label">works without data</span></div>
+          </div>
+          <div class="case-stack"><span>USSD</span><span>MoMo API</span><span>Python</span></div>
+        </article>
+        <article class="case-card reveal">
+          <div class="case-head"><span class="case-client">Safaricom &mdash; Kenya</span><span class="status-pill"><span class="status-dot"></span>live</span></div>
+          <h3>M-PESA ERP reconciliation module</h3>
+          <div class="case-metrics">
+            <div><span class="case-metric"><span class="counter-value" data-target="90" data-suffix="%">90%</span></span><span class="case-metric-label">less manual work</span></div>
+            <div><span class="case-metric">Auto</span><span class="case-metric-label">reconciliation</span></div>
+          </div>
+          <div class="case-stack"><span>M-PESA Daraja</span><span>ERP</span><span>Node.js</span></div>
+        </article>
+      </div>
+
+      <div class="case-cta reveal">
+        <a href="/portfolio/#featured-work" class="btn btn-secondary">See all landmark projects <i data-lucide="arrow-right"></i></a>
       </div>
     </div>
   </section>
@@ -547,14 +704,14 @@
   </button>
 
   <!-- Scripts -->
-  <script src="/js/main.js?v=20261021"></script>
-  <script src="/js/animations.js?v=20261021"></script>
-  <script src="/js/hero.js?v=20261021"></script>
-  <script src="/js/live-panels.js?v=20261021"></script>
-  <script src="https://cdn.jsdelivr.net/npm/appwrite@27.0.0"></script><script src="/js/appwrite-config.js?v=20261021"></script><script src="/js/analytics.js?v=20261021"></script>
-  <script src="/js/testimonials.js?v=20261021"></script>
+  <script src="/js/main.js?v=20261022"></script>
+  <script src="/js/animations.js?v=20261022"></script>
+  <script src="/js/hero.js?v=20261022"></script>
+  <script src="/js/live-panels.js?v=20261022"></script>
+  <script src="https://cdn.jsdelivr.net/npm/appwrite@27.0.0"></script><script src="/js/appwrite-config.js?v=20261022"></script><script src="/js/analytics.js?v=20261022"></script>
+  <script src="/js/testimonials.js?v=20261022"></script>
   <script src="https://cdn.jsdelivr.net/npm/lucide@1.46.0/dist/umd/lucide.js"></script>
   <script>lucide.createIcons();</script>
-  <script src="/js/command-palette.js?v=20261021"></script>
+  <script src="/js/command-palette.js?v=20261022"></script>
 </body>
 </html>

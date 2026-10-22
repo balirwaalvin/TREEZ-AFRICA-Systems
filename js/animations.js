@@ -63,12 +63,12 @@ document.addEventListener('DOMContentLoaded', () => {
           const eased = 1 - (1 - progress) * (1 - progress);
           const current = Math.floor(eased * target);
 
-          el.textContent = current + suffix;
+          el.textContent = current.toLocaleString('en-US') + suffix;
 
           if (progress < 1) {
             requestAnimationFrame(animate);
           } else {
-            el.textContent = target + suffix;
+            el.textContent = target.toLocaleString('en-US') + suffix;
           }
         };
 
@@ -142,5 +142,45 @@ document.addEventListener('DOMContentLoaded', () => {
 
     setTimeout(type, 1000);
   });
+
+  // ---- Reading progress fallback (browsers without CSS scroll timelines) ----
+  const readProgress = document.querySelector('.read-progress');
+  if (readProgress && !(window.CSS && CSS.supports('animation-timeline: scroll()'))) {
+    const update = () => {
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      readProgress.style.setProperty('--read', max > 0 ? Math.min(window.scrollY / max, 1) : 0);
+    };
+    window.addEventListener('scroll', update, { passive: true });
+    update();
+  }
+
+  // ---- Pointer-reactive surfaces (mouse/trackpad only) ----
+  // Grid spotlight on hero bands, and a border glow that follows the cursor
+  // on cards. Both just feed CSS custom properties; CSS does the drawing.
+  const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (finePointer && !reduceMotion) {
+    const track = (el, xVar, yVar) => {
+      el.addEventListener('pointermove', (e) => {
+        const r = el.getBoundingClientRect();
+        el.style.setProperty(xVar, `${e.clientX - r.left}px`);
+        el.style.setProperty(yVar, `${e.clientY - r.top}px`);
+      });
+    };
+
+    document.querySelectorAll('.hero, .page-hero, .cta-banner').forEach(el => {
+      el.classList.add('has-spotlight');
+      track(el, '--mx', '--my');
+    });
+
+    document.querySelectorAll(
+      '.service-card, .feature-item, .pipeline-stage, .bento-card, .partner-showcase-card, ' +
+      '.service-panel, .arch-panel, .case-card, .practice-card'
+    ).forEach(el => {
+      el.classList.add('glow-card');
+      track(el, '--gx', '--gy');
+    });
+  }
 });
 

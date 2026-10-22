@@ -222,45 +222,6 @@
   stroke-dashoffset: calc(175.93 * (1 - var(--score) / 100));
 }
 
-/* ---- Deploy log (mobile panel) ---- */
-.deploy-log {
-  margin-top: 18px;
-  padding: 14px 16px;
-  background: var(--bg-0);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-sm);
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  line-height: 1.9;
-  color: var(--text-2);
-  overflow: hidden;
-}
-
-.deploy-line {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  transition: opacity 0.25s ease;
-}
-
-.deploy-line.is-pending {
-  opacity: 0;
-}
-
-.deploy-cmd {
-  color: var(--text-0);
-}
-
-.deploy-cmd.is-typing::after {
-  content: '_';
-  color: var(--amber);
-  animation: blink 1s step-end infinite;
-}
-
-.deploy-ok {
-  color: var(--status-green);
-}
-
 /* ---- Streaming transaction ledger ---- */
 .txn-stream .panel-row:last-child {
   border-bottom: 1px solid var(--line);
@@ -502,6 +463,50 @@
 .pipeline-arrow svg {
   width: 18px;
   height: 18px;
+}
+
+/* Scroll-driven: stages and arrows light up in order as the pipeline
+   scrolls toward mid-screen, like a build progressing. Unsupported
+   browsers keep the static pipeline. */
+@supports (animation-timeline: view()) {
+  .pipeline {
+    view-timeline: --pipeline block;
+  }
+
+  .pipeline > * {
+    animation: pipelineLight linear both;
+    animation-timeline: --pipeline;
+  }
+
+  .pipeline-stage .pipeline-index {
+    animation: pipelineIndex linear both;
+    animation-timeline: --pipeline;
+  }
+
+  .pipeline > :nth-child(1), .pipeline > :nth-child(1) .pipeline-index { animation-range: cover 8% cover 14%; }
+  .pipeline > :nth-child(2) { animation-range: cover 14% cover 17%; }
+  .pipeline > :nth-child(3), .pipeline > :nth-child(3) .pipeline-index { animation-range: cover 17% cover 23%; }
+  .pipeline > :nth-child(4) { animation-range: cover 23% cover 26%; }
+  .pipeline > :nth-child(5), .pipeline > :nth-child(5) .pipeline-index { animation-range: cover 26% cover 32%; }
+  .pipeline > :nth-child(6) { animation-range: cover 32% cover 35%; }
+  .pipeline > :nth-child(7), .pipeline > :nth-child(7) .pipeline-index { animation-range: cover 35% cover 41%; }
+  .pipeline > :nth-child(8) { animation-range: cover 41% cover 44%; }
+  .pipeline > :nth-child(9), .pipeline > :nth-child(9) .pipeline-index { animation-range: cover 44% cover 48%; }
+}
+
+@keyframes pipelineLight {
+  from {
+    opacity: 0.35;
+  }
+  to {
+    opacity: 1;
+    border-color: rgba(255, 176, 32, 0.55);
+    color: var(--amber);
+  }
+}
+
+@keyframes pipelineIndex {
+  to { color: var(--amber); }
 }
 
 /* Responsive */

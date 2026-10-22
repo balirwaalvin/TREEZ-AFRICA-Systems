@@ -49,7 +49,113 @@
     bar.replaceWith(wrap);
   });
 
+  // ---- Kampala clock (a real reading, so it runs regardless of motion settings) ----
+  document.querySelectorAll('[data-eat-clock]').forEach(el => {
+    const clock = new Intl.DateTimeFormat('en-GB', {
+      timeZone: 'Africa/Kampala', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
+    });
+    const tick = () => { el.textContent = clock.format(new Date()); };
+    tick();
+    setInterval(tick, 1000);
+  });
+
+  // ---- Partner graph: TREEZ hub wired to each partner, packets on every link ----
+  document.querySelectorAll('[data-partner-graph]').forEach(host => {
+    const names = Array.from(host.querySelectorAll('li')).map(li => li.textContent.trim());
+    const NS = 'http://www.w3.org/2000/svg';
+    const W = 420, H = 320, cx = W / 2, cy = H / 2;
+    const el = (tag, attrs, parent) => {
+      const node = document.createElementNS(NS, tag);
+      for (const k in attrs) node.setAttribute(k, attrs[k]);
+      parent.appendChild(node);
+      return node;
+    };
+
+    const svg = document.createElementNS(NS, 'svg');
+    svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+    svg.setAttribute('aria-hidden', 'true');
+    const links = el('g', {}, svg);
+    const packets = el('g', {}, svg);
+    const nodes = el('g', {}, svg);
+
+    names.forEach((name, i) => {
+      const a = (i / names.length) * Math.PI * 2 - Math.PI / 2;
+      const x = cx + Math.cos(a) * 138, y = cy + Math.sin(a) * 118;
+      const id = `pgLink${i}`;
+      el('path', { id, d: `M${cx} ${cy}L${x.toFixed(1)} ${y.toFixed(1)}`, class: 'pg-link' }, links);
+
+      const dur = 1.8 + (i % 3) * 0.5;
+      const dot = el('circle', { r: 2.4, class: i % 2 ? 'pg-packet pg-packet-in' : 'pg-packet' }, packets);
+      const motion = el('animateMotion', {
+        dur: `${dur}s`, begin: `-${(i * 0.41) % dur}s`, repeatCount: 'indefinite',
+        keyPoints: i % 2 ? '1;0' : '0;1', keyTimes: '0;1', calcMode: 'linear'
+      }, dot);
+      const mpath = el('mpath', { href: `#${id}` }, motion);
+      mpath.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', `#${id}`);
+
+      el('circle', { cx: x.toFixed(1), cy: y.toFixed(1), r: 4, class: 'pg-node' }, nodes);
+      const right = Math.cos(a) >= -0.05;
+      const label = el('text', {
+        x: (x + (right ? 9 : -9)).toFixed(1), y: (y + 4).toFixed(1),
+        'text-anchor': right ? 'start' : 'end', class: 'pg-label'
+      }, nodes);
+      label.textContent = name;
+    });
+
+    el('circle', { cx, cy, r: 26, class: 'pg-hub-ring' }, nodes);
+    el('circle', { cx, cy, r: 20, class: 'pg-hub' }, nodes);
+    const hubText = el('text', { x: cx, y: cy + 4, 'text-anchor': 'middle', class: 'pg-hub-label' }, nodes);
+    hubText.textContent = 'TREEZ';
+
+    host.replaceChildren(svg);
+    if (reduceMotion) svg.pauseAnimations();
+    else whileVisible(host, () => svg.unpauseAnimations(), () => svg.pauseAnimations());
+  });
+
   if (reduceMotion) return;
+
+  // ---- CI run: stages go pending → running → passed, then a new run starts ----
+  document.querySelectorAll('[data-ci-run]').forEach(run => {
+    const stages = Array.from(run.querySelectorAll('.ci-stage'));
+    const status = run.querySelector('[data-ci-status]');
+    const runId = run.querySelector('[data-ci-run-id]');
+    let timer = null;
+    let running = false;
+    const wait = (ms) => new Promise(resolve => { timer = setTimeout(resolve, ms); });
+    const setStage = (stage, state) => {
+      stage.classList.remove('is-pending', 'is-running', 'is-passed');
+      stage.classList.add(`is-${state}`);
+    };
+
+    const play = async () => {
+      while (running) {
+        stages.forEach(s => setStage(s, 'pending'));
+        status.textContent = 'running';
+        status.classList.add('is-running');
+        await wait(700);
+        for (const stage of stages) {
+          if (!running) return;
+          setStage(stage, 'running');
+          await wait(900 + Math.random() * 700);
+          setStage(stage, 'passed');
+        }
+        status.textContent = 'passed';
+        status.classList.remove('is-running');
+        await wait(3600);
+        if (runId) runId.textContent = parseInt(runId.textContent, 10) + 1;
+      }
+    };
+
+    whileVisible(run,
+      () => { if (!running) { running = true; play(); } },
+      () => {
+        running = false;
+        clearTimeout(timer);
+        stages.forEach(s => setStage(s, 'passed'));
+        status.textContent = 'passed';
+        status.classList.remove('is-running');
+      });
+  });
 
   // ---- Ticking metrics: <b data-live="4820" data-jitter="90" data-suffix="ms"> ----
   document.querySelectorAll('[data-live]').forEach(el => {

@@ -91,6 +91,266 @@ p {
   margin: 0;
 }
 
+/* ---- Page-hero visual: a small live console beside the heading ---- */
+.page-hero .container:has(.page-hero-visual) {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  gap: clamp(32px, 5vw, 72px);
+  align-items: center;
+}
+
+.page-hero-visual {
+  position: relative;
+  z-index: 2;
+}
+
+.hv-terminal {
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-md);
+  background: rgba(16, 21, 28, 0.85);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+}
+
+.hv-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--line);
+  background: var(--bg-0);
+}
+
+.hv-bar span {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--line-strong);
+}
+
+.hv-bar span:first-child {
+  background: var(--amber);
+}
+
+.hv-bar em {
+  margin-left: 8px;
+  font-style: normal;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text-2);
+}
+
+.hv-body.deploy-log {
+  margin: 0;
+  padding: 18px 20px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  font-size: 0.78rem;
+  min-height: 13.5em;
+}
+
+.hv-body b {
+  color: var(--status-green);
+  font-weight: 500;
+}
+
+.hv-body i {
+  font-style: normal;
+  color: var(--amber);
+  margin-right: 8px;
+}
+
+/* Partners: hub-and-spoke graph (drawn by js/live-panels.js) */
+.hv-graph {
+  padding: 12px 10px 6px;
+}
+
+.hv-graph svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.hv-graph ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 10px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-1);
+}
+
+.pg-link {
+  stroke: rgba(255, 176, 32, 0.3);
+  stroke-width: 1;
+  stroke-dasharray: 3 4;
+}
+
+.pg-packet {
+  fill: var(--amber);
+  filter: drop-shadow(0 0 4px rgba(255, 176, 32, 0.9));
+}
+
+.pg-packet-in {
+  fill: var(--status-green);
+  filter: drop-shadow(0 0 4px rgba(52, 211, 153, 0.9));
+}
+
+.pg-node {
+  fill: var(--bg-0);
+  stroke: var(--status-green);
+  stroke-width: 1.5;
+}
+
+.pg-label {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  fill: var(--text-1);
+}
+
+.pg-hub {
+  fill: var(--amber);
+}
+
+.pg-hub-ring {
+  fill: none;
+  stroke: var(--amber);
+  stroke-width: 1;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: pgRing 2.6s ease-out infinite;
+}
+
+.pg-hub-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  fill: var(--ink);
+}
+
+@keyframes pgRing {
+  from { transform: scale(0.8); opacity: 0.9; }
+  to { transform: scale(2.2); opacity: 0; }
+}
+
+/* Contact: radar sweep pinned on Kampala + live readout */
+.hv-radar-wrap {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: 22px;
+  align-items: center;
+  padding: 22px 20px;
+}
+
+.hv-radar {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 1px solid rgba(52, 211, 153, 0.35);
+  background:
+    radial-gradient(circle, transparent 32%, rgba(52, 211, 153, 0.18) 33%, transparent 34%),
+    radial-gradient(circle, transparent 65%, rgba(52, 211, 153, 0.18) 66%, transparent 67%),
+    linear-gradient(rgba(52, 211, 153, 0.15), rgba(52, 211, 153, 0.15)) center / 1px 100% no-repeat,
+    linear-gradient(rgba(52, 211, 153, 0.15), rgba(52, 211, 153, 0.15)) center / 100% 1px no-repeat,
+    rgba(10, 13, 17, 0.6);
+  overflow: hidden;
+}
+
+.hv-radar-sweep {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, rgba(52, 211, 153, 0.45), transparent 70deg);
+  animation: spin 3.2s linear infinite;
+}
+
+.hv-radar-blip {
+  position: absolute;
+  top: 40%;
+  left: 58%;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--amber);
+  box-shadow: 0 0 0 0 rgba(255, 176, 32, 0.6);
+  animation: radarBlip 3.2s ease-out infinite;
+}
+
+@keyframes radarBlip {
+  0% { box-shadow: 0 0 0 0 rgba(255, 176, 32, 0.6); }
+  70%, 100% { box-shadow: 0 0 0 16px rgba(255, 176, 32, 0); }
+}
+
+.hv-readout {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+}
+
+.hv-readout div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.hv-readout div:last-child {
+  border-bottom: 0;
+}
+
+.hv-readout dt {
+  color: var(--text-2);
+}
+
+.hv-readout dd {
+  margin: 0;
+  color: var(--text-0);
+  text-align: right;
+}
+
+/* ---- Terminal / deploy log lines (replayed by js/live-panels.js) ---- */
+.deploy-log {
+  margin-top: 18px;
+  padding: 14px 16px;
+  background: var(--bg-0);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  line-height: 1.9;
+  color: var(--text-2);
+  overflow: hidden;
+}
+
+.deploy-line {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: opacity 0.25s ease;
+}
+
+.deploy-line.is-pending {
+  opacity: 0;
+}
+
+.deploy-cmd {
+  color: var(--text-0);
+}
+
+.deploy-cmd.is-typing::after {
+  content: '_';
+  color: var(--amber);
+  animation: blink 1s step-end infinite;
+}
+
+.deploy-ok {
+  color: var(--status-green);
+}
+
 /* ---- Company History: changelog, not a zig-zag timeline ---- */
 .changelog {
   max-width: 820px;
@@ -126,6 +386,66 @@ p {
   color: var(--text-2);
   font-size: 0.95rem;
   max-width: 560px;
+}
+
+/* Commit-graph rail: a line threads the year dots and fills in amber as the
+   history scrolls past; each dot lights up when it reaches mid-screen.
+   Browsers without scroll-driven animations keep the static changelog. */
+.changelog {
+  position: relative;
+}
+
+.changelog::before,
+.changelog::after {
+  content: '';
+  position: absolute;
+  left: 3px;
+  top: 52px;
+  bottom: 52px;
+  width: 1px;
+  background: var(--line-strong);
+}
+
+.changelog::after {
+  background: linear-gradient(180deg, var(--amber), var(--status-green));
+  transform-origin: top;
+  transform: scaleY(0);
+}
+
+.changelog .status-dot {
+  position: relative;
+  z-index: 1;
+}
+
+@supports (animation-timeline: view()) {
+  .changelog::after {
+    animation: railDraw linear both;
+    animation-timeline: view();
+    animation-range: cover 15% cover 70%;
+  }
+
+  .changelog-entry .status-dot {
+    animation: commitLight linear both;
+    animation-timeline: view();
+    animation-range: entry 100% cover 50%;
+  }
+}
+
+@supports not (animation-timeline: view()) {
+  .changelog::after {
+    transform: none;
+  }
+}
+
+@keyframes railDraw {
+  to { transform: scaleY(1); }
+}
+
+@keyframes commitLight {
+  from {
+    background: var(--line-strong);
+    box-shadow: 0 0 0 3px transparent;
+  }
 }
 
 /* ---- Mission / Vision / Values: manifesto rows, not icon cards ---- */
@@ -385,11 +705,27 @@ p {
   }
 }
 
+@media (max-width: 900px) {
+  .page-hero .container:has(.page-hero-visual) {
+    grid-template-columns: 1fr;
+  }
+
+  /* Decorative only — keep the hero short on phones and small tablets */
+  .page-hero-visual {
+    display: none;
+  }
+}
+
 @media (max-width: 640px) {
   .changelog-entry,
   .principle {
     grid-template-columns: 1fr;
     gap: 12px;
+  }
+
+  .changelog::before,
+  .changelog::after {
+    display: none;
   }
 }
 
