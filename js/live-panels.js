@@ -199,9 +199,11 @@
   });
 
   // ---- Deploy log: replays the release, line by line, on a loop ----
+  // Lines are re-read each pass, so a page may swap them (e.g. the blog feed
+  // once posts arrive from Appwrite); the first child is always the command.
   document.querySelectorAll('[data-deploy-log]').forEach(log => {
-    const lines = Array.from(log.children);
-    const command = lines[0];
+    const lines = () => Array.from(log.children);
+    const command = log.firstElementChild;
     const commandText = command.textContent;
     let timer = null;
     let running = false;
@@ -210,7 +212,7 @@
 
     const play = async () => {
       while (running) {
-        lines.forEach(l => l.classList.add('is-pending'));
+        lines().forEach(l => l.classList.add('is-pending'));
         command.textContent = '';
         command.classList.remove('is-pending');
         command.classList.add('is-typing');
@@ -219,7 +221,7 @@
           await wait(28);
         }
         command.classList.remove('is-typing');
-        for (const line of lines.slice(1)) {
+        for (const line of lines().slice(1)) {
           if (!running) return;
           await wait(520);
           line.classList.remove('is-pending');
@@ -235,7 +237,7 @@
         clearTimeout(timer);
         command.textContent = commandText;
         command.classList.remove('is-typing');
-        lines.forEach(l => l.classList.remove('is-pending'));
+        lines().forEach(l => l.classList.remove('is-pending'));
       });
   });
 })();
