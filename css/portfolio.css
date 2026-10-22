@@ -284,6 +284,28 @@
   border-radius: var(--radius-sm);
 }
 
+.bento-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  align-self: flex-start;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.bento-link svg {
+  width: 14px;
+  height: 14px;
+  transition: transform var(--transition-base);
+}
+
+.bento-link:hover svg {
+  transform: translate(2px, -2px);
+}
+
 /* ---- Partner Testimonials Strip ---- */
 .partner-testimonials-section {
   background: var(--bg-1);
