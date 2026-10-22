@@ -10,4 +10,4 @@ Disallow: /blog.html
 Disallow: /blog-post.html
 Disallow: /contact.html
 
-Sitemap: https://treezafrica.systems/sitemap.xml
+Sitemap: https://treez.tech/sitemap.xml

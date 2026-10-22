@@ -238,9 +238,9 @@ Or simply open `index.html` directly in any web browser.
 
 | Channel | Details |
 |:--------|:--------|
-| 🌐 **Website** | [treezafrica.systems](https://treezafrica.systems) |
-| 📧 **Email** | info@treezafrica.systems |
-| 📞 **Phone** | +256 700 000 000 |
+| 🌐 **Website** | [treez.tech](https://treez.tech) |
+| 📧 **Email** | care@treez.tech |
+| 📞 **Phone** | +256 782 607 351 |
 | 📍 **Office** | Kampala, Uganda, East Africa |
 | 🏢 **Parent** | TREEZ AFRICA HOLDINGS |
 
@@ -250,7 +250,7 @@ Or simply open `index.html` directly in any web browser.
 
 ## 🤝 Contributing
 
-This is a proprietary project of TREEZ AFRICA SYSTEMS. For partnership inquiries, collaboration, or career opportunities, please reach out via our [Contact Page](https://treezafrica.systems/contact.html) or email us directly.
+This is a proprietary project of TREEZ AFRICA SYSTEMS. For partnership inquiries, collaboration, or career opportunities, please reach out via our [Contact Page](https://treez.tech/contact/) or email us directly.
 
 <br>
 

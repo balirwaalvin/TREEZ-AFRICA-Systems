@@ -825,18 +825,15 @@ body.loaded .hero-ledger-row::after {
   line-height: 1;
 }
 
-.testimonial-rating {
+.testimonial-tag {
   font-family: var(--font-mono);
-  font-size: 0.85rem;
-  font-weight: 700;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
   color: var(--amber);
-  margin: 8px 0 18px;
-  letter-spacing: 0.02em;
-}
-
-.testimonial-rating span {
-  color: var(--text-2);
-  font-weight: 500;
+  margin: 0 0 18px;
+  padding-left: 18px; /* clears the '>' prompt so the tag reads as its command line */
 }
 
 .testimonial-text {
