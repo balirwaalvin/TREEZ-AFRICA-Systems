@@ -3,10 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
   <title>Admin Workspace | TREEZ AFRICA SYSTEMS</title>
   <link rel="icon" type="image/png" href="/favicon.png">
   <link rel="stylesheet" href="/css/global.css?v=20261024">
-  <link rel="stylesheet" href="/css/admin.css?v=20261024">
+  <link rel="stylesheet" href="/css/admin.css?v=20261025">
 </head>
 <body class="admin-page">
   <main class="admin-shell">
@@ -25,30 +26,93 @@
     <section id="adminApp" class="admin-app" hidden>
       <header class="admin-header">
         <div class="admin-header-brand"><img src="/assets/images/logo-mark.png" alt="TREEZ AFRICA SYSTEMS logo"><div><p class="admin-kicker">TREEZ AFRICA SYSTEMS</p><h1>Operations dashboard</h1></div></div>
-        <div class="admin-header-actions"><span id="adminIdentity" class="admin-identity"></span><button id="logoutButton" class="admin-button admin-button-quiet" type="button"><i data-lucide="log-out"></i> Sign out</button></div>
+        <div class="admin-header-actions">
+          <span id="lastSynced" class="admin-identity" aria-live="polite"></span>
+          <button id="refreshDashboard" class="admin-button admin-button-quiet admin-button-icon" type="button" aria-label="Refresh data" title="Refresh data"><i data-lucide="refresh-cw"></i></button>
+          <span id="adminIdentity" class="admin-identity"></span>
+          <button id="logoutButton" class="admin-button admin-button-quiet" type="button"><i data-lucide="log-out"></i> Sign out</button>
+        </div>
       </header>
       <nav class="admin-tabs" aria-label="Admin sections">
         <button class="admin-tab active" data-tab="overview" type="button"><i data-lucide="layout-grid"></i> Overview</button>
-        <button class="admin-tab" data-tab="messages" type="button"><i data-lucide="mail"></i> Messages</button>
+        <button class="admin-tab" data-tab="inbox" type="button"><i data-lucide="inbox"></i> Inbox <span id="unreadTabCount" class="admin-tab-count" hidden></span></button>
         <button class="admin-tab" data-tab="blogs" type="button"><i data-lucide="pen-line"></i> Blog editor</button>
       </nav>
       <div id="adminNotice" class="admin-message" role="status"></div>
+
+      <!-- Overview -->
       <section class="admin-view active" data-view="overview">
-        <div class="admin-stat-grid"><article class="admin-stat"><span>Messages</span><strong id="messageCount">0</strong><small>All contact enquiries</small></article><article class="admin-stat admin-stat-secondary"><span>Bookings</span><strong id="bookingCount">0</strong><small>Consultation requests</small></article><article class="admin-stat"><span>Published posts</span><strong id="blogCount">0</strong><small>Live blog documents</small></article><article class="admin-stat"><span>Page views</span><strong id="viewCount">0</strong><small>Tracked in Appwrite</small></article></div>
-        <div class="admin-section-heading"><div><p class="admin-kicker">Recent activity</p><h2>Latest messages</h2></div><button class="admin-button admin-button-quiet" data-go-tab="messages" type="button">View inbox <i data-lucide="arrow-right"></i></button></div>
-        <div id="recentMessages" class="admin-list"></div>
+        <div class="admin-stat-grid">
+          <button class="admin-stat admin-stat-link" data-go-filter="unread" type="button"><span>Unread</span><strong id="unreadCount">0</strong><small>Not yet opened here</small></button>
+          <button class="admin-stat admin-stat-secondary admin-stat-link" data-go-filter="bookings" type="button"><span>Bookings</span><strong id="bookingCount">0</strong><small id="bookingWeek">Consultation requests</small></button>
+          <button class="admin-stat admin-stat-link" data-go-filter="messages" type="button"><span>Messages</span><strong id="messageCount">0</strong><small id="messageWeek">Contact enquiries</small></button>
+          <article class="admin-stat"><span>Page views</span><strong id="viewCount">0</strong><small id="viewWindow">Last 30 days</small></article>
+        </div>
+        <div class="admin-overview-grid">
+          <div>
+            <div class="admin-section-heading"><div><p class="admin-kicker">Consultations</p><h2>Latest bookings</h2></div><button class="admin-button admin-button-quiet" data-go-filter="bookings" type="button">All bookings <i data-lucide="arrow-right"></i></button></div>
+            <div id="recentBookings" class="admin-list"></div>
+            <div class="admin-section-heading admin-section-spaced"><div><p class="admin-kicker">Enquiries</p><h2>Latest messages</h2></div><button class="admin-button admin-button-quiet" data-go-filter="messages" type="button">All messages <i data-lucide="arrow-right"></i></button></div>
+            <div id="recentMessages" class="admin-list"></div>
+          </div>
+          <aside class="admin-panel">
+            <p class="admin-kicker">Traffic</p>
+            <h2 class="admin-panel-title">Page views · last 14 days</h2>
+            <div id="trafficChart" class="admin-chart"></div>
+            <h3 class="admin-panel-subtitle">Top pages · 30 days</h3>
+            <ol id="topPages" class="admin-top-pages"></ol>
+          </aside>
+        </div>
       </section>
-      <section class="admin-view" data-view="messages"><div class="admin-section-heading"><div><p class="admin-kicker">Inbox</p><h2>Contact messages</h2></div><button id="refreshMessages" class="admin-button admin-button-quiet" type="button"><i data-lucide="refresh-cw"></i> Refresh</button></div><div id="messageList" class="admin-list"></div></section>
+
+      <!-- Inbox -->
+      <section class="admin-view" data-view="inbox">
+        <div class="admin-inbox-toolbar">
+          <div class="admin-filters" role="tablist" aria-label="Filter inbox">
+            <button class="admin-filter active" data-filter="all" type="button">All <span data-filter-count="all">0</span></button>
+            <button class="admin-filter" data-filter="bookings" type="button">Bookings <span data-filter-count="bookings">0</span></button>
+            <button class="admin-filter" data-filter="messages" type="button">Messages <span data-filter-count="messages">0</span></button>
+            <button class="admin-filter" data-filter="unread" type="button">Unread <span data-filter-count="unread">0</span></button>
+          </div>
+          <div class="admin-inbox-tools">
+            <label class="admin-search"><i data-lucide="search"></i><input id="inboxSearch" type="search" placeholder="Search name, email, company…" aria-label="Search inbox"></label>
+            <button id="markAllRead" class="admin-button admin-button-quiet" type="button"><i data-lucide="check-check"></i> Mark all read</button>
+            <button id="exportInbox" class="admin-button admin-button-quiet" type="button"><i data-lucide="download"></i> Export CSV</button>
+          </div>
+        </div>
+        <div id="inboxLayout" class="admin-inbox">
+          <div id="inboxList" class="admin-inbox-list" aria-label="Conversations"></div>
+          <article id="inboxDetail" class="admin-inbox-detail" aria-live="polite"></article>
+        </div>
+        <p class="admin-hint">Tip: use <kbd>j</kbd> / <kbd>k</kbd> to move between conversations. Read status is remembered in this browser.</p>
+      </section>
+
+      <!-- Blog editor -->
       <section class="admin-view" data-view="blogs">
         <div class="admin-section-heading"><div><p class="admin-kicker">Publishing</p><h2>Blog editor</h2></div><button id="newBlogButton" class="admin-button admin-button-primary" type="button"><i data-lucide="plus"></i> New post</button></div>
-        <div class="admin-blog-layout"><div id="blogList" class="admin-list"></div><form id="blogForm" class="admin-form admin-editor" hidden><input name="id" type="hidden"><label>Title<input name="title" required></label><div class="admin-form-row"><label>Category<input name="category" required></label><label>Author<input name="author" required></label></div><div class="admin-form-row"><label>Date<input name="date" type="date" required></label><label>Read time<input name="readTime" placeholder="6 min read" required></label></div><label>Excerpt<textarea name="excerpt" rows="3" required></textarea></label><label>Article content<textarea name="content" rows="12" required></textarea></label><label class="admin-checkbox"><input name="published" type="checkbox" checked> Published</label><div class="admin-form-actions"><button class="admin-button admin-button-primary" type="submit">Save post</button><button id="cancelBlogButton" class="admin-button admin-button-quiet" type="button">Cancel</button></div><p id="blogMessage" class="admin-message" role="alert"></p></form></div>
+        <div class="admin-blog-layout">
+          <div id="blogList" class="admin-list"></div>
+          <form id="blogForm" class="admin-form admin-editor" hidden>
+            <input name="id" type="hidden">
+            <label>Title<input name="title" required></label>
+            <div class="admin-form-row"><label>Category<input name="category" required></label><label>Author<input name="author" required></label></div>
+            <div class="admin-form-row"><label>Date<input name="date" type="date" required></label><label>Read time<input name="readTime" placeholder="6 min read" required></label></div>
+            <label>Excerpt<textarea name="excerpt" rows="3" required></textarea></label>
+            <label>Article content<textarea name="content" rows="14" required></textarea></label>
+            <label class="admin-checkbox"><input name="published" type="checkbox" checked> Published</label>
+            <div class="admin-form-actions">
+              <div class="admin-form-actions-group"><button class="admin-button admin-button-primary" type="submit">Save post</button><button id="cancelBlogButton" class="admin-button admin-button-quiet" type="button">Cancel</button></div>
+              <div class="admin-form-actions-group"><a id="viewBlogLink" class="admin-button admin-button-quiet" target="_blank" rel="noopener" hidden><i data-lucide="external-link"></i> View live</a><button id="deleteBlogButton" class="admin-button admin-button-danger" type="button" hidden><i data-lucide="trash-2"></i> Delete</button></div>
+            </div>
+            <p id="blogMessage" class="admin-message" role="alert"></p>
+          </form>
+        </div>
       </section>
     </section>
   </main>
   <script src="https://cdn.jsdelivr.net/npm/appwrite@27.0.0"></script>
   <script src="/js/appwrite-config.js?v=20261024"></script>
-  <script src="/js/admin.js?v=20261024"></script>
   <script src="https://cdn.jsdelivr.net/npm/lucide@1.46.0/dist/umd/lucide.js"></script>
-  <script>lucide.createIcons();</script>
+  <script src="/js/admin.js?v=20261025"></script>
 </body>
 </html>
