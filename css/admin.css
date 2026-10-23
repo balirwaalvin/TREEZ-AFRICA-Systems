@@ -949,6 +949,186 @@
   border-top: 1px solid var(--line);
 }
 
+/* ---- Shared status & notes ---- */
+.admin-status {
+  flex: none;
+  padding: 2px 7px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  color: var(--text-1);
+  font: 600 0.62rem var(--font-mono);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.admin-status-new {
+  border-color: rgba(255, 176, 32, 0.45);
+  color: var(--color-primary);
+}
+
+.admin-status-scheduled {
+  border-color: rgba(52, 211, 153, 0.45);
+  color: var(--color-secondary);
+}
+
+.admin-status-closed {
+  border-color: var(--line);
+  color: var(--text-2);
+}
+
+.admin-inbox-item-subject .admin-status {
+  margin-left: auto;
+}
+
+.admin-list-meta {
+  display: grid;
+  justify-items: end;
+  align-content: start;
+  gap: 8px;
+}
+
+.admin-detail-status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 14px;
+  margin-top: 20px;
+}
+
+.admin-detail-label {
+  color: var(--text-2);
+  font: 600 0.68rem var(--font-mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.admin-status-picker {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 4px;
+  background: var(--bg-1);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+}
+
+.admin-status-option {
+  padding: 7px 12px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-2);
+  font: 600 var(--fs-xs) var(--font-mono);
+  cursor: pointer;
+}
+
+.admin-status-option:hover {
+  color: var(--text-0);
+}
+
+.admin-status-option.active {
+  background: var(--bg-3);
+  border-color: currentColor;
+  color: var(--text-0);
+}
+
+.admin-status-option.admin-status-new.active { color: var(--color-primary); }
+.admin-status-option.admin-status-scheduled.active { color: var(--color-secondary); }
+.admin-status-option.admin-status-closed.active { color: var(--text-1); }
+
+.admin-detail-updated {
+  color: var(--text-2);
+  font: var(--fs-xs) var(--font-mono);
+}
+
+.admin-detail-notes {
+  margin-top: 24px;
+}
+
+.admin-detail-notes h3 {
+  margin: 0 0 10px;
+  color: var(--text-1);
+  font: 600 0.72rem var(--font-mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.admin-detail-notes textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  background: var(--bg-1);
+  color: var(--text-0);
+  font: inherit;
+  font-size: var(--fs-small);
+  line-height: 1.6;
+  resize: vertical;
+}
+
+.admin-detail-notes textarea:focus, .admin-select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(255, 176, 32, 0.12);
+}
+
+.admin-detail-notes-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+
+.admin-detail-notes-actions .admin-button {
+  padding: 9px 13px;
+  font-size: var(--fs-xs);
+}
+
+.admin-select {
+  padding: 10px 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  background: var(--bg-1);
+  color: var(--text-0);
+  font: 600 var(--fs-xs) var(--font-mono);
+  cursor: pointer;
+}
+
+.admin-setup-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 0 0 16px;
+  padding: 12px 16px;
+  border: 1px solid rgba(255, 176, 32, 0.3);
+  border-radius: var(--radius-md);
+  background: rgba(255, 176, 32, 0.06);
+  color: var(--text-1);
+  font-size: var(--fs-small);
+}
+
+.admin-setup-notice svg {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  margin-top: 2px;
+  color: var(--color-primary);
+}
+
+.admin-setup-notice code {
+  color: var(--text-0);
+  font-family: var(--font-mono);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
 .admin-hint {
   margin: 12px 0 0;
   color: var(--text-2);
@@ -1011,4 +1191,5 @@
   .admin-inbox-tools { width: 100%; }
   .admin-inbox-tools .admin-button { flex: 1; }
   .admin-search { flex-basis: 100%; }
+  .admin-select-wrap, .admin-select { width: 100%; }
 }

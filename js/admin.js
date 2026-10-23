@@ -21,7 +21,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   const READ_KEY = 'tz-admin-read';
   const desktop = window.matchMedia('(min-width: 901px)');
   const baseTitle = document.title;
-  const state = { messages: [], blogs: [], views: [], viewTotal: 0, filter: 'all', query: '', selectedId: null, pendingReadId: null, editingBlogId: null, syncedAt: 0 };
+  const STATUSES = [
+    { id: 'new', label: 'New' },
+    { id: 'contacted', label: 'Contacted' },
+    { id: 'scheduled', label: 'Scheduled' },
+    { id: 'closed', label: 'Closed' }
+  ];
+  const state = { messages: [], blogs: [], views: [], viewTotal: 0, filter: 'all', statusFilter: 'any', query: '', selectedId: null, pendingReadId: null, editingBlogId: null, syncedAt: 0 };
   const readIds = new Set(loadReadIds());
 
   const collection = (id) => [config.databaseId, id];
@@ -80,7 +86,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   document.querySelectorAll('.admin-tab').forEach((button) => button.addEventListener('click', () => switchTab(button.dataset.tab)));
-  document.querySelectorAll('[data-go-filter]').forEach((button) => button.addEventListener('click', () => { setFilter(button.dataset.goFilter); switchTab('inbox'); }));
+  document.querySelectorAll('[data-go-filter]').forEach((button) => button.addEventListener('click', () => {
+    const awaiting = button.dataset.goFilter === 'awaiting';
+    setStatusFilter(awaiting ? 'new' : 'any');
+    setFilter(awaiting ? 'all' : button.dataset.goFilter);
+    switchTab('inbox');
+  }));
+  document.getElementById('statusFilter').addEventListener('change', (event) => setStatusFilter(event.target.value));
   document.querySelectorAll('.admin-filter').forEach((button) => button.addEventListener('click', () => setFilter(button.dataset.filter)));
   document.getElementById('inboxSearch').addEventListener('input', (event) => { state.query = event.target.value.trim().toLowerCase(); renderInbox(); });
   document.getElementById('exportInbox').addEventListener('click', exportInbox);
@@ -100,6 +112,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.addEventListener('click', (event) => {
     const open = event.target.closest('[data-open-message]');
     if (open) { openMessage(open.dataset.openMessage); return; }
+    const status = event.target.closest('[data-set-status]');
+    if (status) { setStatus(status.dataset.setStatus); return; }
     const action = event.target.closest('[data-detail-action]');
     if (action) handleDetailAction(action.dataset.detailAction);
   });
@@ -158,6 +172,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   // ---- Message helpers ----
   const isBooking = (message) => message.subject === 'Consultation booking request';
   const isUnread = (message) => !readIds.has(message.$id);
+  // Documents created before the status attribute existed come back with null, which means "new".
+  const statusOf = (message) => (STATUSES.some((status) => status.id === message.status) ? message.status : 'new');
+  const statusLabel = (message) => STATUSES.find((status) => status.id === statusOf(message)).label;
+  const statusPill = (message) => `<span class="admin-status admin-status-${statusOf(message)}">${statusLabel(message)}</span>`;
+  // Appwrite returns every defined attribute (null when unset), so a missing key means the attribute was never added.
+  const hasSharedStatus = () => state.messages.some((message) => 'status' in message);
   const sourceBadge = (message) => isBooking(message)
     ? '<span class="badge-secondary admin-row-badge">Booking</span>'
     : '<span class="badge-primary admin-row-badge">Message</span>';
@@ -193,8 +213,10 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (state.filter === 'bookings' && !isBooking(message)) return false;
       if (state.filter === 'messages' && isBooking(message)) return false;
       if (state.filter === 'unread' && !isUnread(message)) return false;
+      if (state.statusFilter === 'open' && statusOf(message) === 'closed') return false;
+      if (!['any', 'open'].includes(state.statusFilter) && statusOf(message) !== state.statusFilter) return false;
       if (!state.query) return true;
-      return [message.name, message.email, message.phone, message.subject, message.message].some((value) => String(value || '').toLowerCase().includes(state.query));
+      return [message.name, message.email, message.phone, message.subject, message.message, message.notes].some((value) => String(value || '').toLowerCase().includes(state.query));
     });
   }
 
@@ -205,7 +227,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     const weekAgo = Date.now() - 7 * DAY;
     const thisWeek = (list) => list.filter((message) => new Date(message.$createdAt).getTime() > weekAgo).length;
 
-    document.getElementById('unreadCount').textContent = state.messages.filter(isUnread).length;
+    document.getElementById('awaitingCount').textContent = state.messages.filter((message) => statusOf(message) === 'new').length;
+    document.getElementById('awaitingNote').textContent = hasSharedStatus() || !state.messages.length ? 'Status: New' : 'Shared status not set up yet';
     document.getElementById('bookingCount').textContent = bookings.length;
     document.getElementById('messageCount').textContent = enquiries.length;
     document.getElementById('viewCount').textContent = state.viewTotal.toLocaleString();
@@ -222,7 +245,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   function overviewRow(message) {
     return `<button class="admin-list-item admin-list-button${isUnread(message) ? ' is-unread' : ''}" data-open-message="${message.$id}" type="button">
       <div><h3>${escapeHtml(message.name || 'Unknown')}</h3><p class="admin-list-headline">${escapeHtml(headline(message))}</p><p class="admin-clamp">${escapeHtml(bodyText(message))}</p></div>
-      <time datetime="${message.$createdAt}">${relativeTime(message.$createdAt)}</time>
+      <span class="admin-list-meta">${statusPill(message)}<time datetime="${message.$createdAt}">${relativeTime(message.$createdAt)}</time></span>
     </button>`;
   }
 
@@ -285,6 +308,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   // ---- Inbox ----
+  function setStatusFilter(value) {
+    state.statusFilter = value;
+    document.getElementById('statusFilter').value = value;
+    renderInbox();
+  }
+
   function setFilter(filter) {
     state.filter = filter;
     document.querySelectorAll('.admin-filter').forEach((button) => button.classList.toggle('active', button.dataset.filter === filter));
@@ -299,12 +328,13 @@ document.addEventListener('DOMContentLoaded', async () => {
       unread: state.messages.filter(isUnread).length
     };
     Object.entries(counts).forEach(([key, value]) => { document.querySelector(`[data-filter-count="${key}"]`).textContent = value; });
+    document.getElementById('statusSetupNotice').hidden = !state.messages.length || hasSharedStatus();
 
     const list = filteredMessages();
     document.getElementById('inboxList').innerHTML = list.length
       ? list.map((message) => `<button class="admin-inbox-item${isUnread(message) ? ' is-unread' : ''}${message.$id === state.selectedId ? ' is-selected' : ''}" data-open-message="${message.$id}" type="button">
           <span class="admin-inbox-item-top"><span class="admin-inbox-name">${escapeHtml(message.name || 'Unknown')}</span><time datetime="${message.$createdAt}">${relativeTime(message.$createdAt)}</time></span>
-          <span class="admin-inbox-item-subject">${sourceBadge(message)}<span>${escapeHtml(headline(message))}</span></span>
+          <span class="admin-inbox-item-subject">${sourceBadge(message)}<span>${escapeHtml(headline(message))}</span>${statusPill(message)}</span>
           <span class="admin-inbox-snippet">${escapeHtml(bodyText(message))}</span>
         </button>`).join('')
       : `<p class="admin-empty">${state.query ? 'No conversations match your search.' : 'Nothing here yet.'}</p>`;
@@ -342,6 +372,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   function renderDetail() {
     const detail = document.getElementById('inboxDetail');
     const message = state.messages.find((item) => item.$id === state.selectedId);
+    // Keep an unsaved note when the pane re-renders for the same conversation (status change, background refresh).
+    const draft = document.getElementById('detailNotes');
+    const keptDraft = draft && message && draft.dataset.id === message.$id ? draft.value : null;
     if (!message) {
       detail.innerHTML = '<div class="admin-detail-empty"><i data-lucide="mail-open"></i><p>Select a conversation to read it in full.</p></div>';
       return;
@@ -361,6 +394,13 @@ document.addEventListener('DOMContentLoaded', async () => {
           <p><time datetime="${message.$createdAt}">${fullDate(message.$createdAt)}</time> · ${relativeTime(message.$createdAt)}</p>
         </div>
       </header>
+      <section class="admin-detail-status">
+        <span class="admin-detail-label">Status</span>
+        <div class="admin-status-picker" role="radiogroup" aria-label="Conversation status">
+          ${STATUSES.map((status) => `<button class="admin-status-option admin-status-${status.id}${statusOf(message) === status.id ? ' active' : ''}" role="radio" aria-checked="${statusOf(message) === status.id}" data-set-status="${status.id}" type="button">${status.label}</button>`).join('')}
+        </div>
+        ${message.$updatedAt && message.$updatedAt !== message.$createdAt ? `<span class="admin-detail-updated">Updated ${relativeTime(message.$updatedAt)}</span>` : ''}
+      </section>
       <section class="admin-detail-contact">
         <div class="admin-avatar" aria-hidden="true">${escapeHtml(initials(message.name))}</div>
         <div class="admin-detail-person">
@@ -386,10 +426,16 @@ document.addEventListener('DOMContentLoaded', async () => {
         <h3>${booking ? 'Project description' : 'Message'}</h3>
         <div class="admin-detail-text">${escapeHtml(bodyText(message)) || '<span class="is-muted">No details were provided.</span>'}</div>
       </section>
+      <section class="admin-detail-notes">
+        <h3>Internal notes</h3>
+        <textarea id="detailNotes" data-id="${message.$id}" rows="4" placeholder="Only visible to admins, e.g. called Monday, meeting booked for Thursday 10am.">${escapeHtml(message.notes || '')}</textarea>
+        <div class="admin-detail-notes-actions"><button class="admin-button admin-button-quiet" data-detail-action="save-notes" type="button"><i data-lucide="save"></i> Save note</button></div>
+      </section>
       <footer class="admin-detail-footer">
         <button class="admin-button admin-button-quiet" data-detail-action="copy" type="button"><i data-lucide="copy"></i> Copy details</button>
         <button class="admin-button admin-button-quiet" data-detail-action="unread" type="button"><i data-lucide="mail"></i> Mark as unread</button>
       </footer>`;
+    if (keptDraft !== null) document.getElementById('detailNotes').value = keptDraft;
   }
 
   async function handleDetailAction(action) {
@@ -401,6 +447,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       showMessage(notice, `Marked “${message.name || 'conversation'}” as unread.`);
       renderInbox();
       renderOverview();
+    } else if (action === 'save-notes') {
+      const notes = document.getElementById('detailNotes').value.trim();
+      await updateMessage(message.$id, { notes }, 'Note saved for all admins.');
     } else if (action === 'copy') {
       try {
         await navigator.clipboard.writeText(messageAsText(message));
@@ -409,6 +458,39 @@ document.addEventListener('DOMContentLoaded', async () => {
         showMessage(notice, 'Your browser blocked clipboard access.', true);
       }
     }
+  }
+
+  function setStatus(status) {
+    const message = state.messages.find((item) => item.$id === state.selectedId);
+    if (!message || statusOf(message) === status) return;
+    updateMessage(message.$id, { status }, `Marked as ${STATUSES.find((item) => item.id === status).label}.`);
+  }
+
+  // Optimistic update: show the change at once, roll back if Appwrite refuses it.
+  async function updateMessage(id, changes, successText) {
+    const message = state.messages.find((item) => item.$id === id);
+    if (!message) return;
+    const previous = Object.fromEntries(Object.keys(changes).map((key) => [key, message[key]]));
+    Object.assign(message, changes);
+    renderOverview();
+    renderInbox();
+    try {
+      const updated = await service.databases.updateDocument(...collection(config.messagesCollectionId), id, changes);
+      Object.assign(message, updated);
+      showMessage(notice, successText);
+    } catch (error) {
+      Object.assign(message, previous);
+      showMessage(notice, updateErrorText(error), true);
+    }
+    renderOverview();
+    renderInbox();
+  }
+
+  function updateErrorText(error) {
+    const text = error?.message || '';
+    if (/unknown attribute|invalid document structure/i.test(text)) return 'Not saved: the messages collection in Appwrite is missing the status/notes attributes. See README → Admin Workspace.';
+    if (error?.code === 401 || /not authori[sz]ed|permission/i.test(text)) return 'Not saved: your account is not allowed to update messages. Give admins Update permission on messagescollection in Appwrite.';
+    return text || 'Could not save the change.';
   }
 
   function messageAsText(message) {
@@ -441,10 +523,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   function exportInbox() {
     const list = filteredMessages();
     if (!list.length) { showMessage(notice, 'There is nothing to export for this view.', true); return; }
-    const header = ['Received', 'Type', 'Name', 'Email', 'Phone', 'Subject', 'Company', 'Services', 'Budget', 'Timeline', 'Message'];
+    const header = ['Received', 'Type', 'Status', 'Name', 'Email', 'Phone', 'Subject', 'Company', 'Services', 'Budget', 'Timeline', 'Message', 'Notes'];
     const rows = list.map((message) => {
       const details = isBooking(message) ? parseBooking(message.message) : {};
-      return [message.$createdAt, isBooking(message) ? 'Booking' : 'Message', message.name, message.email, message.phone, message.subject, details.company, details.services, details.budget, details.timeline, bodyText(message)];
+      return [message.$createdAt, isBooking(message) ? 'Booking' : 'Message', statusLabel(message), message.name, message.email, message.phone, message.subject, details.company, details.services, details.budget, details.timeline, bodyText(message), message.notes];
     });
     const csv = [header, ...rows].map((row) => row.map((cell) => `"${String(cell ?? '').replace(/"/g, '""')}"`).join(',')).join('\r\n');
     const link = document.createElement('a');

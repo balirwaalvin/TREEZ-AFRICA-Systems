@@ -7,7 +7,7 @@
   <title>Admin Workspace | TREEZ AFRICA SYSTEMS</title>
   <link rel="icon" type="image/png" href="/favicon.png">
   <link rel="stylesheet" href="/css/global.css?v=20261024">
-  <link rel="stylesheet" href="/css/admin.css?v=20261025">
+  <link rel="stylesheet" href="/css/admin.css?v=20261026">
 </head>
 <body class="admin-page">
   <main class="admin-shell">
@@ -43,7 +43,7 @@
       <!-- Overview -->
       <section class="admin-view active" data-view="overview">
         <div class="admin-stat-grid">
-          <button class="admin-stat admin-stat-link" data-go-filter="unread" type="button"><span>Unread</span><strong id="unreadCount">0</strong><small>Not yet opened here</small></button>
+          <button class="admin-stat admin-stat-link" data-go-filter="awaiting" type="button"><span>Awaiting reply</span><strong id="awaitingCount">0</strong><small id="awaitingNote">Status: New</small></button>
           <button class="admin-stat admin-stat-secondary admin-stat-link" data-go-filter="bookings" type="button"><span>Bookings</span><strong id="bookingCount">0</strong><small id="bookingWeek">Consultation requests</small></button>
           <button class="admin-stat admin-stat-link" data-go-filter="messages" type="button"><span>Messages</span><strong id="messageCount">0</strong><small id="messageWeek">Contact enquiries</small></button>
           <article class="admin-stat"><span>Page views</span><strong id="viewCount">0</strong><small id="viewWindow">Last 30 days</small></article>
@@ -75,11 +75,13 @@
             <button class="admin-filter" data-filter="unread" type="button">Unread <span data-filter-count="unread">0</span></button>
           </div>
           <div class="admin-inbox-tools">
+            <label class="admin-select-wrap"><span class="sr-only">Filter by status</span><select id="statusFilter" class="admin-select"><option value="any">Any status</option><option value="open">Open (not closed)</option><option value="new">New</option><option value="contacted">Contacted</option><option value="scheduled">Scheduled</option><option value="closed">Closed</option></select></label>
             <label class="admin-search"><i data-lucide="search"></i><input id="inboxSearch" type="search" placeholder="Search name, email, company…" aria-label="Search inbox"></label>
             <button id="markAllRead" class="admin-button admin-button-quiet" type="button"><i data-lucide="check-check"></i> Mark all read</button>
             <button id="exportInbox" class="admin-button admin-button-quiet" type="button"><i data-lucide="download"></i> Export CSV</button>
           </div>
         </div>
+        <p id="statusSetupNotice" class="admin-setup-notice" hidden><i data-lucide="info"></i><span>Shared status and notes aren't switched on yet. Add the <code>status</code> and <code>notes</code> attributes to <code>messagescollection</code> in Appwrite (see README → Admin Workspace) so every admin sees the same progress.</span></p>
         <div id="inboxLayout" class="admin-inbox">
           <div id="inboxList" class="admin-inbox-list" aria-label="Conversations"></div>
           <article id="inboxDetail" class="admin-inbox-detail" aria-live="polite"></article>
@@ -113,6 +115,6 @@
   <script src="https://cdn.jsdelivr.net/npm/appwrite@27.0.0"></script>
   <script src="/js/appwrite-config.js?v=20261024"></script>
   <script src="https://cdn.jsdelivr.net/npm/lucide@1.46.0/dist/umd/lucide.js"></script>
-  <script src="/js/admin.js?v=20261025"></script>
+  <script src="/js/admin.js?v=20261026"></script>
 </body>
 </html>
