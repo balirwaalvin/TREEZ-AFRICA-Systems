@@ -1,0 +1,8 @@
+node_modules/
+.cloudflare/
+dist/
+.dev.vars
+.env*
+.wrangler/
+backups/
+worker-startup.cpuprofile

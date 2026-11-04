@@ -1,0 +1,2 @@
+# Cloudflare's published always-pass Turnstile test secret. Local development only.
+TURNSTILE_SECRET=1x0000000000000000000000000000000AA

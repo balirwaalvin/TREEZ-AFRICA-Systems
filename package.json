@@ -1,0 +1,22 @@
+{
+  "name": "treez-africa-systems",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "cf dev",
+    "build": "cf build",
+    "deploy": "cf deploy",
+    "typecheck": "tsc --noEmit",
+    "test": "node --test tests/*.test.mjs",
+    "db:migrate": "cf d1 migrations apply 0603466d-5476-40f9-969e-7c6c84eb82c3",
+    "db:migrate:local": "cf d1 migrations apply 0603466d-5476-40f9-969e-7c6c84eb82c3 --local --persist-to .cloudflare/state",
+    "admin:create": "node scripts/create-admin.mjs",
+    "backup": "node scripts/backup.mjs"
+  },
+  "devDependencies": {
+    "@cloudflare/vite-plugin": "^2.0.0-beta.v.11",
+    "cf": "^1.0.0-beta.27",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.5"
+  }
+}

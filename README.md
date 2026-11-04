@@ -53,7 +53,7 @@ This repository contains the official company website — a modern, animated, mu
 <td width="50%">
 
 ### ⚙️ Functionality
-- **Multi-step booking form** with validation, review, and real Appwrite submission
+- **Multi-step booking form** with validation, review, and spam-protected submission
 - **Partner showcase** — logo wall, story cards, landmark-project bento grid
 - **Testimonial carousel** with swipe/touch support
 - **FAQ accordion** with smooth transitions
@@ -94,59 +94,101 @@ refresh + JS) that bounce to the clean URL, so old bookmarks/links never 404.
 ```
 TREEZ-AFRICA-Systems/
 │
-├── index.html              # Homepage — served at /
-├── about/index.html        # About Us — served at /about/
-├── services/index.html     # Our Services — served at /services/
-├── portfolio/index.html    # Partners — served at /portfolio/
-├── booking/index.html      # Book a Consultation — served at /booking/
-├── blog/index.html         # Blog & Insights — served at /blog/
-├── blog-post/index.html    # Blog Article Template — served at /blog-post/?id=…
-├── contact/index.html      # Contact Us + FAQ — served at /contact/
-├── admin/index.html        # Private admin workspace — served at /admin/
-├── about.html, services.html, …   # Redirect stubs -> their /slug/ equivalent
-├── 404.html                # Custom not-found page (stays at root)
-├── favicon.png              # Brand favicon (amber circuit-tree mark)
-├── robots.txt
-├── sitemap.xml
+├── cloudflare.config.ts    # Worker, domain, database and asset settings
+├── src/                    # The API: runs on Cloudflare Workers
+│   ├── index.ts            # Routes for forms, blog, analytics and the admin workspace
+│   ├── auth.ts             # Admin passwords, sessions and sign-in limits
+│   └── http.ts             # JSON, validation and rate limiting helpers
+├── migrations/             # D1 (database) schema
+├── scripts/                # create-admin.mjs, backup.mjs
+├── tests/                  # End-to-end API tests
 │
-├── css/
-│   ├── global.css          # Reset, tokens, typography, buttons, command palette
-│   ├── animations.css      # Scroll-reveal, marquee, page transitions & reduced-motion rules
-│   ├── header.css          # Sticky navbar & mobile menu
-│   ├── footer.css          # Footer layout & newsletter
-│   ├── home.css            # Homepage-specific styles
-│   ├── about.css           # Shared inner-page chrome (page-hero, CTA banner, 404) + About sections
-│   ├── services.css        # Service panels, stack manifest, process pipeline
-│   ├── portfolio.css       # Partner wall, showcase cards, bento grid
-│   ├── booking.css         # Multi-step form & sidebar
-│   ├── blog.css            # Blog index & article typography
-│   └── contact.css         # Contact form, ledger & FAQ
-│
-├── js/
-│   ├── main.js              # Navbar, preloader, smooth scroll
-│   ├── animations.js        # IntersectionObserver scroll-reveal & stagger
-│   ├── hero.js              # Homepage network map (dot-matrix Africa) & headline decode
-│   ├── live-panels.js       # Live panels: metrics, transactions, terminals, CI run, partner graph, clock
-│   ├── command-palette.js   # Ctrl/Cmd K site-wide search
-│   ├── testimonials.js      # Auto-play carousel with swipe
-│   ├── booking.js           # Multi-step form logic, validation & Appwrite submission
-│   ├── contact.js           # Contact form validation, Appwrite submission & FAQ accordion
-│   ├── blog-public.js       # Blog index — Appwrite fetch with static fallback
-│   └── blog-post-public.js  # Blog post — Appwrite fetch with static fallback
-│
-└── assets/
-    └── images/              # Brand mark only — no stock/AI imagery
+└── public/                 # Everything visitors can load. Nothing outside it is served.
+    ├── index.html              # Homepage — served at /
+    ├── about/index.html        # About Us — served at /about/
+    ├── services/index.html     # Our Services — served at /services/
+    ├── portfolio/index.html    # Partners — served at /portfolio/
+    ├── booking/index.html      # Book a Consultation — served at /booking/
+    ├── blog/index.html         # Blog & Insights — served at /blog/
+    ├── blog-post/index.html    # Blog Article Template — served at /blog-post/?id=…
+    ├── contact/index.html      # Contact Us + FAQ — served at /contact/
+    ├── admin/index.html        # Private admin workspace — served at /admin/
+    ├── about.html, services.html, …   # Redirect stubs -> their /slug/ equivalent
+    ├── 404.html                # Custom not-found page (stays at root)
+    ├── favicon.png             # Brand favicon (amber circuit-tree mark)
+    ├── _headers                # Security headers for static files
+    ├── robots.txt
+    ├── sitemap.xml
+    │
+    ├── css/
+    │   ├── global.css          # Reset, tokens, typography, buttons, command palette
+    │   ├── animations.css      # Scroll-reveal, marquee, page transitions & reduced-motion rules
+    │   ├── header.css          # Sticky navbar & mobile menu
+    │   ├── footer.css          # Footer layout & newsletter
+    │   ├── home.css            # Homepage-specific styles
+    │   ├── about.css           # Shared inner-page chrome (page-hero, CTA banner, 404) + About sections
+    │   ├── services.css        # Service panels, stack manifest, process pipeline
+    │   ├── portfolio.css       # Partner wall, showcase cards, bento grid
+    │   ├── booking.css         # Multi-step form & sidebar
+    │   ├── blog.css            # Blog index & article typography
+    │   └── contact.css         # Contact form, ledger & FAQ
+    │
+    ├── js/
+    │   ├── api.js               # Client for the site's API and the spam check
+    │   ├── main.js              # Navbar, preloader, smooth scroll
+    │   ├── animations.js        # IntersectionObserver scroll-reveal & stagger
+    │   ├── hero.js              # Homepage network map (dot-matrix Africa) & headline decode
+    │   ├── live-panels.js       # Live panels: metrics, transactions, terminals, CI run, partner graph, clock
+    │   ├── command-palette.js   # Ctrl/Cmd K site-wide search
+    │   ├── testimonials.js      # Auto-play carousel with swipe
+    │   ├── booking.js           # Multi-step form logic, validation & submission
+    │   ├── contact.js           # Contact form validation, submission & FAQ accordion
+    │   ├── blog-public.js       # Blog index — API fetch with static fallback
+    │   └── blog-post-public.js  # Blog post — API fetch with static fallback
+    │
+    └── assets/
+        └── images/              # Brand mark only — no stock/AI imagery
 ```
+
+<br>
+
+## ☁️ Hosting & Backend
+
+The site runs on Cloudflare: static files from `public/`, a small Worker API in `src/`, and a D1 (SQLite) database. Requires Node.js 22.18+ and the `cf` CLI (`npm install -g cf`, then `cf auth login`).
+
+| Task | Command |
+|:-----|:--------|
+| Install dependencies | `npm install` |
+| Run locally | `npm run dev` |
+| Check types | `npm run typecheck` |
+| Deploy to treez.tech | `npm run deploy` |
+| Apply new database migrations | `npm run db:migrate` |
+| Save a backup to `backups/` | `npm run backup` |
+
+**Local setup:** copy `.dev.vars.example` to `.dev.vars`, then run `npm run db:migrate:local` and `npm run admin:create -- you@example.com --local`.
+
+**Tests** run against a local production build and refuse any other host. They use up rate limits, so start from a fresh local database (delete `.cloudflare/state`, then repeat the local setup):
+
+```sh
+npx cf build && npx vite preview --port 4173
+BASE_URL=http://localhost:4173 ADMIN_EMAIL=you@example.com ADMIN_PASSWORD=... npm test
+```
+
+**Spam protection:** public forms use [Cloudflare Turnstile](https://developers.cloudflare.com/turnstile/) plus a limit of 5 messages per IP every 10 minutes. The Worker's `TURNSTILE_SECRET` is stored in Cloudflare, never in this repo.
+
+**Backups:** D1 Time Travel keeps restore points automatically for a limited window. `npm run backup` makes a separate copy, so run it regularly. Backup files contain customer details and are ignored by git.
 
 ## 🔐 Admin Workspace
 
-The private admin workspace is available at `admin.html` and is intentionally linked only by a low-contrast key icon in the footer. It uses Appwrite email/password authentication and the IDs in `js/appwrite-config.js`.
+The private admin workspace is at `/admin/` and is intentionally linked only by a low-contrast key icon in the footer. There is no public sign-up: admins are created from the command line, and the password is typed at a hidden prompt.
 
-Do not open `admin.html` with a `file://` URL. Start a local server from the project folder with `python3 -m http.server 8000`, then open `http://localhost:8000/admin.html`. In the Appwrite console, add `localhost` as a Web platform (or add `http://localhost:8000` if the console asks for a full hostname) before testing login.
+```sh
+npm run admin:create -- you@example.com
+```
 
-Create an Appwrite collection named `analyticscollection` in the configured database with string attributes `page` and `path`. The existing `messagescollection` needs string attributes `name`, `email`, `phone`, `subject`, and `message`, plus two admin-only attributes: an enum `status` (elements `new`, `contacted`, `scheduled`, `closed`; default `new`; not required) and a string `notes` (size 5000; not required). Status and notes are shared by every admin; the inbox shows a setup notice until they exist. The `treez-systems` collection needs string attributes `title`, `category`, `author`, `date`, `readTime`, `excerpt`, `content`, plus a boolean `published` attribute.
+Running the same command for an existing admin resets their password and signs them out everywhere. Passwords need at least 12 characters. Sign-in attempts are limited to 10 per IP and 30 per email every 15 minutes, and sessions last 7 days.
 
-Allow unauthenticated users to create documents in the messages and analytics collections. Allow authenticated users to list, create, update, and delete documents in the blog collection list and update documents in the messages collection, and list documents in the analytics collection. Because these permissions use the Users role, disable public sign-ups (Auth → Settings → set a users limit equal to your number of admins) so nobody else can create an account and read the inbox. Create the admin user in Appwrite and use that account to sign in at `admin.html`.
+Conversation status and notes are shared by all admins. Read/unread is remembered per browser.
 
 <br>
 
