@@ -8,7 +8,7 @@ export default defineConfig({
     entrypoint,
     compatibilityDate: "2026-11-01",
     domains: ["treez.tech"],
-    workersDev: true,
+    workersDev: false,
     previewUrls: false,
     assets: {
       htmlHandling: "auto-trailing-slash",
