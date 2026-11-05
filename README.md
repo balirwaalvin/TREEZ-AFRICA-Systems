@@ -100,7 +100,7 @@ TREEZ-AFRICA-Systems/
 │   ├── auth.ts             # Admin passwords, sessions and sign-in limits
 │   └── http.ts             # JSON, validation and rate limiting helpers
 ├── migrations/             # D1 (database) schema
-├── scripts/                # create-admin.mjs, backup.mjs
+├── scripts/                # create-admin.mjs, backup.mjs, backup-schedule.sh
 ├── tests/                  # End-to-end API tests
 │
 └── public/                 # Everything visitors can load. Nothing outside it is served.
@@ -164,6 +164,8 @@ The site runs on Cloudflare: static files from `public/`, a small Worker API in 
 | Deploy to treez.tech | `npm run deploy` |
 | Apply new database migrations | `npm run db:migrate` |
 | Save a backup to `backups/` | `npm run backup` |
+| Turn the daily backup on or off | `npm run backup:schedule` / `npm run backup:unschedule` |
+| Check the daily backup | `npm run backup:status` |
 
 **Local setup:** copy `.dev.vars.example` to `.dev.vars`, then run `npm run db:migrate:local` and `npm run admin:create -- you@example.com --local`.
 
@@ -176,7 +178,7 @@ BASE_URL=http://localhost:4173 ADMIN_EMAIL=you@example.com ADMIN_PASSWORD=... np
 
 **Spam protection:** public forms use [Cloudflare Turnstile](https://developers.cloudflare.com/turnstile/) plus a limit of 5 messages per IP every 10 minutes. The Worker's `TURNSTILE_SECRET` is stored in Cloudflare, never in this repo.
 
-**Backups:** D1 Time Travel keeps restore points automatically for a limited window. `npm run backup` makes a separate copy, so run it regularly. Backup files contain customer details and are ignored by git.
+**Backups:** D1 Time Travel keeps restore points automatically for a limited window. `npm run backup:schedule` also saves a separate copy to `backups/daily/` once a day on this Linux computer, using a systemd user timer. It runs at midnight, or the next time you sign in if the computer was off, and keeps the newest 30. If a backup fails it retries, then shows a desktop notification; see the reason with `journalctl --user -u treez-backup`, and run `cf auth login` if the sign-in expired. If the project folder moves, run `npm run backup:schedule` again. `npm run backup` saves a one-off copy to `backups/` that is never deleted automatically. Backup files contain customer details and are ignored by git.
 
 ## 🔐 Admin Workspace
 
