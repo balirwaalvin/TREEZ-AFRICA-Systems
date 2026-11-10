@@ -43,6 +43,16 @@ const validPost = {
   readTime: '1 min', excerpt: 'Excerpt', content: 'Body text', published: true
 };
 
+// Amounts are cents: UGX 2,200,000.00 is 220000000.
+const runId = Date.now().toString().slice(-6);
+const validInvoice = {
+  number: `TEST-${runId}`, currency: 'UGX', clientName: 'Test Client Ltd', clientAddress: 'Plot 1\nKampala',
+  clientEmail: 'client@example.com', clientPhone: '+256700000000',
+  items: [{ description: 'Development:\nTest platform', quantity: 1, unitPrice: 220000000 }]
+};
+const payment = (number, paidOn, amount) => ({ number: `TEST ${runId} ${number}`, paidOn, amount, channel: 'ABSA Bank (U) Limited' });
+const tinyPdf = btoa('%PDF-1.7\n%test\n');
+
 test('pages are served and source files are not', async () => {
   assert.equal((await call('/')).status, 200);
   assert.equal((await call('/contact/')).status, 200);
@@ -65,7 +75,9 @@ test('every admin route refuses a request with no session', async () => {
     ['GET', '/api/admin/session'], ['GET', '/api/admin/messages'], ['GET', '/api/admin/posts'],
     ['GET', '/api/admin/views'], ['GET', '/api/admin/anything-else'],
     ['POST', '/api/admin/posts', validPost], ['PUT', '/api/admin/posts/x', validPost],
-    ['DELETE', '/api/admin/posts/x'], ['PATCH', '/api/admin/messages/x', { status: 'closed' }]
+    ['DELETE', '/api/admin/posts/x'], ['PATCH', '/api/admin/messages/x', { status: 'closed' }],
+    ['GET', '/api/admin/receipts'], ['POST', '/api/admin/receipts', {}], ['DELETE', '/api/admin/receipts/x'],
+    ['POST', '/api/admin/receipts/x/send', { pdf: 'JVBERi0=' }], ['PUT', '/api/admin/invoices/x', {}]
   ];
   for (const [method, path, body] of routes) {
     assert.equal((await call(path, { method, body })).status, 401, `${method} ${path}`);
@@ -183,6 +195,91 @@ test('quoted input is stored as text, not run as SQL', async () => {
   assert.equal(inbox.data.documents.find((item) => item.id === created.data.id).name, hostile);
   const encoded = encodeURIComponent("x' OR '1'='1");
   assert.equal((await call(`/api/posts/${encoded}`)).status, 404);
+});
+
+test('a receipt and its follow-up payment are recorded against one invoice', async () => {
+  const first = await call('/api/admin/receipts', { method: 'POST', session: true, body: { invoice: validInvoice, receipt: payment('0001', '2026-10-02', 120000000) } });
+  assert.equal(first.status, 201);
+  const invoiceId = first.data.invoice.id;
+  assert.equal(first.data.receipt.invoiceId, invoiceId);
+  assert.equal(first.data.receipt.amount, 120000000);
+  assert.equal(first.data.receipt.sentAt, null);
+
+  const next = (receipt, invoice = { ...validInvoice, id: invoiceId }) => call('/api/admin/receipts', { method: 'POST', session: true, body: { invoice, receipt } });
+  const over = await next(payment('0002', '2026-10-27', 100000001));
+  assert.equal(over.status, 400);
+  assert.match(over.data.error, /more than the balance of UGX1,000,000\.00/);
+  const backdated = await next(payment('0002', '2026-10-01', 100000000));
+  assert.equal(backdated.status, 400);
+  assert.match(backdated.data.error, /before the last payment/);
+  const reused = await next(payment('0001', '2026-10-27', 100000000));
+  assert.equal(reused.status, 409);
+  const future = await next(payment('0002', '2999-01-01', 100000000));
+  assert.equal(future.status, 400);
+
+  const second = await next(payment('0002', '2026-10-27', 100000000));
+  assert.equal(second.status, 201);
+  assert.equal(second.data.invoice.id, invoiceId, 'the follow-up joins the same invoice');
+  assert.equal((await next(payment('0003', '2026-10-28', 1))).data.error, 'This invoice is already paid in full.');
+
+  const list = await call('/api/admin/receipts', { session: true });
+  assert.equal(list.status, 200);
+  assert.equal(list.data.invoices.filter((invoice) => invoice.id === invoiceId).length, 1);
+  assert.deepEqual(list.data.invoices.find((invoice) => invoice.id === invoiceId).items, validInvoice.items);
+  assert.equal(list.data.receipts.filter((receipt) => receipt.invoiceId === invoiceId).length, 2);
+
+  const lowered = await call(`/api/admin/invoices/${invoiceId}`, { method: 'PUT', session: true, body: { ...validInvoice, items: [{ ...validInvoice.items[0], unitPrice: 100000000 }] } });
+  assert.equal(lowered.status, 400, "the total can't drop below what has been paid");
+  const renamed = await call(`/api/admin/invoices/${invoiceId}`, { method: 'PUT', session: true, body: { ...validInvoice, clientName: 'Renamed Client Ltd' } });
+  assert.equal(renamed.status, 200);
+  assert.equal(renamed.data.clientName, 'Renamed Client Ltd');
+});
+
+test('receipts and invoices are validated before anything is stored', async () => {
+  const bad = [
+    [{ ...validInvoice, clientEmail: 'not-an-email' }, payment('0101', '2026-10-02', 100)],
+    [{ ...validInvoice, currency: 'shillings' }, payment('0102', '2026-10-02', 100)],
+    [{ ...validInvoice, items: [] }, payment('0103', '2026-10-02', 100)],
+    [{ ...validInvoice, items: [{ description: 'x', quantity: 0.001, unitPrice: 100 }] }, payment('0104', '2026-10-02', 100)],
+    [{ ...validInvoice, items: [{ description: 'x', quantity: 1, unitPrice: 1.5 }] }, payment('0105', '2026-10-02', 100)],
+    [{ ...validInvoice, number: `TEST-${runId}-B` }, payment('0106', '2026-02-30', 100)],
+    [{ ...validInvoice, number: `TEST-${runId}-C` }, payment('0107', '2026-10-02', 0)],
+    [{ ...validInvoice, number: `TEST-${runId}-D` }, { ...payment('0108', '2026-10-02', 100), channel: '' }]
+  ];
+  for (const [invoice, receipt] of bad) {
+    assert.equal((await call('/api/admin/receipts', { method: 'POST', session: true, body: { invoice, receipt } })).status, 400, JSON.stringify({ invoice, receipt }).slice(0, 200));
+  }
+  const duplicateInvoice = await call('/api/admin/receipts', { method: 'POST', session: true, body: { invoice: validInvoice, receipt: payment('0109', '2026-10-02', 100) } });
+  assert.equal(duplicateInvoice.status, 409, 'a second invoice cannot reuse a number');
+  assert.equal((await call('/api/admin/receipts', { method: 'POST', session: true, body: { invoice: { ...validInvoice, id: 'missing' }, receipt: payment('0110', '2026-10-02', 100) } })).status, 404);
+});
+
+test('only unsent receipts can be deleted, and sending needs a real PDF', async () => {
+  const created = await call('/api/admin/receipts', { method: 'POST', session: true, body: { invoice: { ...validInvoice, number: `TEST-${runId}-E` }, receipt: payment('0201', '2026-10-02', 100) } });
+  assert.equal(created.status, 201);
+  const { id, invoiceId } = created.data.receipt;
+  const send = (body) => call(`/api/admin/receipts/${id}/send`, { method: 'POST', session: true, body });
+
+  assert.equal((await send({})).status, 400);
+  assert.equal((await send({ pdf: btoa('not a pdf') })).status, 400);
+  assert.equal((await send({ pdf: '***' })).status, 400);
+  assert.equal((await call('/api/admin/receipts/missing/send', { method: 'POST', session: true, body: { pdf: tinyPdf } })).status, 404);
+
+  // With `npm run dev:mail-test` the email reaches the local mail catcher; plain `npm run dev`
+  // has no mailbox password, so it is refused before anything is sent.
+  const sent = await send({ pdf: tinyPdf });
+  if (sent.status === 503) {
+    assert.match(sent.data.error, /Email isn't set up yet/);
+    assert.equal((await call(`/api/admin/receipts/${id}`, { method: 'DELETE', session: true })).status, 200);
+    const after = await call('/api/admin/receipts', { session: true });
+    assert.ok(!after.data.invoices.some((invoice) => invoice.id === invoiceId), 'an invoice left with no receipts is removed');
+    return;
+  }
+  assert.equal(sent.status, 200);
+  assert.ok(sent.data.sentAt);
+  assert.equal(sent.data.sentTo, validInvoice.clientEmail);
+  const refused = await call(`/api/admin/receipts/${id}`, { method: 'DELETE', session: true });
+  assert.equal(refused.status, 409, 'a sent receipt is the client\'s record and stays');
 });
 
 test('signing out revokes the session on the server', async () => {
