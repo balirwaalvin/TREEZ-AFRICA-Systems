@@ -8,6 +8,7 @@
   <link rel="icon" type="image/png" href="/favicon.png">
   <link rel="stylesheet" href="/css/global.css?v=20261024">
   <link rel="stylesheet" href="/css/admin.css?v=20261026">
+  <link rel="stylesheet" href="/css/admin-receipts.css?v=20261110">
 </head>
 <body class="admin-page">
   <main class="admin-shell">
@@ -37,6 +38,7 @@
         <button class="admin-tab active" data-tab="overview" type="button"><i data-lucide="layout-grid"></i> Overview</button>
         <button class="admin-tab" data-tab="inbox" type="button"><i data-lucide="inbox"></i> Inbox <span id="unreadTabCount" class="admin-tab-count" hidden></span></button>
         <button class="admin-tab" data-tab="blogs" type="button"><i data-lucide="pen-line"></i> Blog editor</button>
+        <button class="admin-tab" data-tab="receipts" type="button"><i data-lucide="receipt"></i> Receipts</button>
       </nav>
       <div id="adminNotice" class="admin-message" role="status"></div>
 
@@ -109,10 +111,99 @@
           </form>
         </div>
       </section>
+
+      <!-- Receipts -->
+      <section class="admin-view" data-view="receipts">
+        <div class="admin-section-heading"><div><p class="admin-kicker">Payments</p><h2>Receipts</h2></div><button id="newReceiptButton" class="admin-button admin-button-primary" type="button"><i data-lucide="plus"></i> New receipt</button></div>
+        <p id="receiptNotice" class="admin-message" role="status"></p>
+
+        <div id="receiptIndex">
+          <div class="admin-receipt-toolbar">
+            <p id="receiptTotals" class="admin-receipt-totals"></p>
+            <label class="admin-search"><i data-lucide="search"></i><input id="receiptSearch" type="search" placeholder="Search client, receipt or invoice…" aria-label="Search receipts"></label>
+          </div>
+          <div id="receiptList" class="admin-receipt-list" aria-label="Receipts"></div>
+        </div>
+
+        <div id="receiptWorkspace" class="admin-receipt-workspace" hidden>
+          <div class="admin-receipt-side">
+            <button class="admin-button admin-button-quiet admin-receipt-back" data-receipt-action="close" type="button"><i data-lucide="arrow-left"></i> All receipts</button>
+
+            <form id="receiptForm" class="admin-form admin-panel admin-receipt-form" novalidate hidden>
+              <h3 class="admin-panel-title">New receipt</h3>
+              <fieldset>
+                <legend>Invoice</legend>
+                <label>Choose invoice<select name="invoiceId" class="admin-select"></select></label>
+                <div class="admin-form-row">
+                  <label>Invoice number<input name="invoiceNumber" autocomplete="off" required></label>
+                  <label>Currency<select name="currency" class="admin-select"><option>UGX</option><option>USD</option><option>KES</option><option>TZS</option><option>RWF</option><option>EUR</option><option>GBP</option></select></label>
+                </div>
+              </fieldset>
+              <fieldset>
+                <legend>Bill to</legend>
+                <label>Client name<input name="clientName" autocomplete="off" required></label>
+                <label>Address<textarea name="clientAddress" rows="4" placeholder="One line per address line, e.g.&#10;Plot 5007, Valley Road&#10;Gayaza, Wakiso District&#10;Uganda"></textarea></label>
+                <div class="admin-form-row">
+                  <label>Email (receipt goes here)<input name="clientEmail" type="email" autocomplete="off" required></label>
+                  <label>Phone<input name="clientPhone" type="tel" autocomplete="off"></label>
+                </div>
+              </fieldset>
+              <fieldset>
+                <legend>Items</legend>
+                <div id="receiptItems" class="admin-receipt-items"></div>
+                <button class="admin-button admin-button-quiet" data-receipt-action="add-item" type="button"><i data-lucide="plus"></i> Add item</button>
+              </fieldset>
+              <fieldset>
+                <legend>This payment</legend>
+                <div class="admin-form-row">
+                  <label>Amount paid<input name="amount" inputmode="decimal" autocomplete="off" placeholder="1,200,000" required></label>
+                  <label>Date paid<input name="paidOn" type="date" required></label>
+                </div>
+                <div class="admin-form-row">
+                  <label>Payment channel<input name="channel" list="paymentChannels" autocomplete="off" placeholder="ABSA Bank (U) Limited" required></label>
+                  <label>Receipt number<input name="receiptNumber" autocomplete="off" required></label>
+                </div>
+                <datalist id="paymentChannels"></datalist>
+              </fieldset>
+              <dl id="receiptSummary" class="admin-receipt-summary"></dl>
+              <div class="admin-form-actions">
+                <button class="admin-button admin-button-quiet" data-receipt-action="save" type="button"><i data-lucide="save"></i> Save without sending</button>
+                <button class="admin-button admin-button-primary" type="submit"><i data-lucide="send"></i> Send to client</button>
+              </div>
+              <p id="receiptFormMessage" class="admin-message" role="alert"></p>
+            </form>
+
+            <article id="receiptDetail" class="admin-panel admin-receipt-detail" hidden></article>
+          </div>
+
+          <aside class="admin-receipt-preview" aria-label="Receipt preview">
+            <div class="admin-receipt-preview-bar"><span>Preview</span><span id="receiptPreviewStatus" aria-live="polite"></span></div>
+            <iframe id="receiptPreview" title="Receipt PDF preview"></iframe>
+            <div id="receiptPreviewFallback" class="admin-receipt-preview-fallback" hidden>
+              <i data-lucide="file-text"></i>
+              <p>This browser can't show PDFs inside the page.</p>
+              <button class="admin-button admin-button-quiet" data-receipt-action="open-preview" type="button"><i data-lucide="external-link"></i> Open preview</button>
+            </div>
+          </aside>
+        </div>
+
+        <dialog id="receiptDialog" class="admin-dialog">
+          <form method="dialog">
+            <h3 data-dialog-title></h3>
+            <div data-dialog-body></div>
+            <div class="admin-dialog-actions">
+              <button class="admin-button admin-button-quiet" value="cancel" type="submit">Cancel</button>
+              <button class="admin-button admin-button-primary" value="confirm" type="submit" data-dialog-confirm></button>
+            </div>
+          </form>
+        </dialog>
+      </section>
     </section>
   </main>
-  <script src="/js/api.js?v=20261104"></script>
+  <script src="/js/api.js?v=20261110"></script>
   <script src="https://cdn.jsdelivr.net/npm/lucide@1.46.0/dist/umd/lucide.js"></script>
-  <script src="/js/admin.js?v=20261104"></script>
+  <script src="/js/admin.js?v=20261110"></script>
+  <script src="/js/receipt-pdf.js?v=20261110"></script>
+  <script src="/js/admin-receipts.js?v=20261110"></script>
 </body>
 </html>
