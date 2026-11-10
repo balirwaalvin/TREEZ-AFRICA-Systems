@@ -21,6 +21,11 @@ export default defineConfig({
       TURNSTILE_SECRET: bindings.secret(),
       // Per-IP cap on page view writes, enforced without touching the database.
       VIEWS_LIMIT: bindings.rateLimit({ namespace: "1001", simple: { limit: 30, period: 60 } }),
+      // Receipts are emailed through this Titan mailbox, which also gets a copy of each one.
+      SMTP_HOST: bindings.text("smtp.titan.email"),
+      SMTP_PORT: bindings.text("465"),
+      SMTP_USER: bindings.text("receipts@treez.tech"),
+      SMTP_PASSWORD: bindings.secret(),
     },
     observability: { enabled: true },
   },
