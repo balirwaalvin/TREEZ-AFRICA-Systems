@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
     { label: 'Home', hint: 'Overview', href: '/', group: 'Pages' },
     { label: 'About', hint: 'History, team', href: '/about/', group: 'Pages' },
     { label: 'Services', hint: 'What we build', href: '/services/', group: 'Pages' },
+    { label: 'Projects', hint: 'What we have built', href: '/projects/', group: 'Pages' },
     { label: 'Partners', hint: 'Who we build with', href: '/portfolio/', group: 'Pages' },
     { label: 'Blog', hint: 'Insights & articles', href: '/blog/', group: 'Pages' },
     { label: 'Contact', hint: 'Get in touch', href: '/contact/', group: 'Pages' },
@@ -24,7 +25,11 @@ document.addEventListener('DOMContentLoaded', () => {
     { label: 'Enterprise Banking Systems', hint: 'Service', href: '/services/', group: 'Services' },
     { label: 'System Maintenance & Support', hint: 'Service', href: '/services/', group: 'Services' },
     { label: 'IT Consulting & Planning', hint: 'Service', href: '/services/', group: 'Services' },
-    { label: 'FAQ', hint: 'Common questions', href: '/contact/', group: 'Pages' }
+    { label: 'FAQ', hint: 'Common questions', href: '/contact/', group: 'Pages' },
+    { label: 'TREEZ Streaming Platform', hint: 'tv.treez.tech', href: '/projects/#live', group: 'Projects' },
+    { label: 'CDSU Official Portal', hint: 'cdsu.online', href: '/projects/#live', group: 'Projects' },
+    { label: 'TUNDA Business Assistant', hint: 'tunda.store', href: '/projects/#live', group: 'Projects' },
+    { label: 'Roomio Hostel Booking', hint: 'roomiohostels.com', href: '/projects/#live', group: 'Projects' }
   ];
 
   let activeIndex = 0;

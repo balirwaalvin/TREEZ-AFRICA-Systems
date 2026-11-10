@@ -183,8 +183,11 @@
 }
 
 /* ---- Featured Work Bento Grid ---- */
-.featured-work-section {
-  padding-top: 0;
+/* Centred "see more" link under a card grid (Partners and Projects pages) */
+.projects-cta {
+  display: flex;
+  justify-content: center;
+  margin-top: 48px;
 }
 
 .bento-grid {

@@ -1,0 +1,26 @@
+<!--
+  Roomio mark — a seal, not a shield: a four-colour ring, one quadrant per
+  UCU crest colour (blue, magenta, green, gold — clockwise from the top,
+  the same order as the hairline band used across the app), set around a
+  solid plate carrying the "R". The letter is white with a gold leg, gold
+  being the crest's own colour for lettering.
+  Flat fills throughout — no gradients — so it reads the same crisp shape
+  from a 96px header lockup down to a 16px favicon.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Roomio">
+  <path d="M32 2 A30 30 0 0 1 62 32 L56 32 A24 24 0 0 0 32 8 Z" fill="#0E4C96"/>
+  <path d="M62 32 A30 30 0 0 1 32 62 L32 56 A24 24 0 0 0 56 32 Z" fill="#C7046C"/>
+  <path d="M32 62 A30 30 0 0 1 2 32 L8 32 A24 24 0 0 0 32 56 Z" fill="#00A04E"/>
+  <path d="M2 32 A30 30 0 0 1 32 2 L32 8 A24 24 0 0 0 8 32 Z" fill="#FDB913"/>
+
+  <circle cx="32" cy="32" r="24" fill="#0F1B2D"/>
+  <circle cx="32" cy="32" r="24" fill="none" stroke="#FFFFFF" stroke-width="1"/>
+
+  <!-- stem + bowl (counter knocked out with even-odd) -->
+  <path fill="#FFFFFF" fill-rule="evenodd"
+        d="M19 17 H26 V45 H19 Z
+           M26 17 H33 A8 8 0 0 1 33 33 H26 Z
+           M26 23 H33 A2.5 2.5 0 0 1 33 28 H26 Z"/>
+  <!-- the leg, in gold -->
+  <path d="M27.5 31 H36 L45 45 H36.5 Z" fill="#FDB913"/>
+</svg>

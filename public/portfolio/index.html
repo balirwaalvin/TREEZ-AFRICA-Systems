@@ -12,7 +12,7 @@
   <link rel="stylesheet" href="/css/header.css?v=20261024">
   <link rel="stylesheet" href="/css/footer.css?v=20261024">
   <link rel="stylesheet" href="/css/about.css?v=20261024">
-  <link rel="stylesheet" href="/css/portfolio.css?v=20261024">
+  <link rel="stylesheet" href="/css/portfolio.css?v=20261110">
 </head>
 <body>
 
@@ -26,6 +26,7 @@
         <a href="/" class="nav-link">Home</a>
         <a href="/about/" class="nav-link">About</a>
         <a href="/services/" class="nav-link">Services</a>
+        <a href="/projects/" class="nav-link">Projects</a>
         <a href="/portfolio/" class="nav-link active">Partners</a>
         <a href="/blog/" class="nav-link">Blog</a>
         <a href="/contact/" class="nav-link">Contact</a>
@@ -40,6 +41,7 @@
     <a href="/" class="nav-link">Home</a>
     <a href="/about/" class="nav-link">About</a>
     <a href="/services/" class="nav-link">Services</a>
+    <a href="/projects/" class="nav-link">Projects</a>
     <a href="/portfolio/" class="nav-link active">Partners</a>
     <a href="/blog/" class="nav-link">Blog</a>
     <a href="/contact/" class="nav-link">Contact</a>
@@ -219,112 +221,10 @@
 
       </div>
 
-    </div>
-  </section>
-
-  <!-- Featured Work Bento Section -->
-  <section id="featured-work" class="section section-gray featured-work-section">
-    <div class="container">
-      <div class="section-header reveal">
-        <span class="label">Highlighted projects</span>
-        <h2>Work That Speaks for Itself</h2>
-        <p>A curated selection of landmark deliverables from across our partner network.</p>
+      <div class="projects-cta reveal">
+        <a href="/projects/" class="btn btn-secondary">See every project we've shipped <i data-lucide="arrow-right"></i></a>
       </div>
-      <div class="bento-grid">
 
-        <div class="bento-card bento-wide reveal">
-          <div class="bento-icon-wrap"><img src="https://tunda.store/icons/icon-512.png" alt="TUNDA Business Assistant"></div>
-          <div class="bento-content">
-            <span class="bento-partner">TUNDA &mdash; Uganda</span>
-            <h3>TUNDA Business Assistant</h3>
-            <p>Bookkeeping for Uganda's small businesses, kept by simply saying what happened. Shop owners type or speak a sale, purchase or expense in <strong>English or Luganda</strong>, and the Wanja assistant records it, tracks stock and who owes them, and shows their profit.</p>
-          </div>
-          <div class="bento-tag-row"><span>Next.js</span><span>Voice input</span><span>English + Luganda</span><span>PWA</span></div>
-          <a href="https://tunda.store" class="bento-link" target="_blank" rel="noopener">tunda.store <i data-lucide="arrow-up-right"></i></a>
-        </div>
-
-        <div class="bento-card reveal">
-          <div class="bento-icon-wrap"><img src="https://roomiohostels.com/brand/roomio-mark.svg" alt="Roomio"></div>
-          <div class="bento-content">
-            <span class="bento-partner">UCU 28th Guild Government</span>
-            <h3>Roomio Hostel Booking System</h3>
-            <p>Find, compare and book verified student hostels around Uganda Christian University, Mukono, with real prices, <strong>live room availability</strong> and roommate matching.</p>
-          </div>
-          <div class="bento-tag-row"><span>React</span><span>Supabase</span><span>Tailwind CSS</span></div>
-          <a href="https://roomiohostels.com" class="bento-link" target="_blank" rel="noopener">roomiohostels.com <i data-lucide="arrow-up-right"></i></a>
-        </div>
-
-        <div class="bento-card bento-wide reveal">
-          <div class="bento-icon-wrap"><img src="https://www.google.com/s2/favicons?domain=stanbicbank.co.ug&amp;sz=128" alt="Stanbic Bank Uganda"></div>
-          <div class="bento-content">
-            <span class="bento-partner">Stanbic Bank Uganda</span>
-            <h3>High-Volume Transaction Processing Engine</h3>
-            <p>A real-time banking middleware processing <strong>100,000+ daily transactions</strong> with 99.98% uptime — built on a microservices architecture hosted on Google Cloud.</p>
-          </div>
-          <div class="bento-tag-row"><span>Microservices</span><span>Google Cloud</span><span>Java Spring Boot</span><span>PostgreSQL</span></div>
-        </div>
-
-        <div class="bento-card reveal">
-          <div class="bento-icon-wrap"><img src="https://www.google.com/s2/favicons?domain=mtn.com&amp;sz=128" alt="MTN Uganda"></div>
-          <div class="bento-content">
-            <span class="bento-partner">MTN Uganda</span>
-            <h3>Rural USSD Payment Platform</h3>
-            <p>A USSD-based agri-payments app reaching <strong>50,000+ farmers</strong> in low-connectivity areas.</p>
-          </div>
-          <div class="bento-tag-row"><span>USSD</span><span>MoMo API</span><span>Python</span></div>
-        </div>
-
-        <div class="bento-card reveal">
-          <div class="bento-icon-wrap"><img src="https://www.google.com/s2/favicons?domain=safaricom.co.ke&amp;sz=128" alt="Safaricom Kenya"></div>
-          <div class="bento-content">
-            <span class="bento-partner">Safaricom &mdash; Kenya</span>
-            <h3>M-PESA ERP Reconciliation Module</h3>
-            <p>Automated M-PESA transaction reconciliation inside a client ERP, cutting manual workload by <strong>90%</strong>.</p>
-          </div>
-          <div class="bento-tag-row"><span>M-PESA Daraja</span><span>ERP</span><span>Node.js</span></div>
-        </div>
-
-        <div class="bento-card reveal">
-          <div class="bento-icon-wrap"><img src="https://www.google.com/s2/favicons?domain=oracle.com&amp;sz=128" alt="Oracle"></div>
-          <div class="bento-content">
-            <span class="bento-partner">Oracle &mdash; Healthcare</span>
-            <h3>National Health Records Database</h3>
-            <p>Oracle DB schema design powering a national e-health record system across <strong>200+ clinics</strong>.</p>
-          </div>
-          <div class="bento-tag-row"><span>Oracle DB</span><span>Healthcare IT</span><span>FHIR</span></div>
-        </div>
-
-        <div class="bento-card reveal">
-          <div class="bento-icon-wrap"><img src="https://www.google.com/s2/favicons?domain=airtel.africa&amp;sz=128" alt="Airtel Africa"></div>
-          <div class="bento-content">
-            <span class="bento-partner">Airtel Africa</span>
-            <h3>EdTech Mobile App &mdash; Airtel Money Payments</h3>
-            <p>A Flutter education platform for <strong>20,000+ students</strong> with Airtel Money-powered fee payment.</p>
-          </div>
-          <div class="bento-tag-row"><span>Flutter</span><span>Airtel Money</span><span>EdTech</span></div>
-        </div>
-
-        <div class="bento-card bento-wide reveal">
-          <div class="bento-icon-wrap"><img src="https://www.google.com/s2/favicons?domain=github.com&amp;sz=128" alt="GitHub"></div>
-          <div class="bento-content">
-            <span class="bento-partner">GitHub &mdash; DevOps</span>
-            <h3>Enterprise CI/CD Pipeline Rollout</h3>
-            <p>Implemented GitHub Actions-powered CI/CD pipelines across <strong>35+ client projects</strong>, reducing release cycles from weeks to hours and cutting deployment errors by 80%.</p>
-          </div>
-          <div class="bento-tag-row"><span>GitHub Actions</span><span>Docker</span><span>Kubernetes</span><span>DevOps</span></div>
-        </div>
-
-        <div class="bento-card reveal">
-          <div class="bento-icon-wrap"><img src="https://www.google.com/s2/favicons?domain=microsoft.com&amp;sz=128" alt="Microsoft Azure"></div>
-          <div class="bento-content">
-            <span class="bento-partner">Microsoft Azure</span>
-            <h3>Logistics ERP on Azure</h3>
-            <p>Full logistics management ERP deployed on Azure with real-time fleet tracking for <strong>3 countries</strong>.</p>
-          </div>
-          <div class="bento-tag-row"><span>Azure</span><span>ERP</span><span>.NET</span></div>
-        </div>
-
-      </div>
     </div>
   </section>
 
@@ -402,7 +302,7 @@
             <p>We design, build, and operate production software for African banks, enterprises, and mobile platforms — web, mobile, and the infrastructure underneath.</p>
             <div class="footer-socials"><a href="https://www.linkedin.com/company/treez-africa-systems" target="_blank" rel="noopener" aria-label="LinkedIn">in</a><a href="https://github.com/treezafricasystems" target="_blank" rel="noopener" aria-label="GitHub">gh</a><a href="https://www.youtube.com/@treezsystems" target="_blank" rel="noopener" aria-label="YouTube">yt</a></div>
           </div>
-          <div class="footer-col"><h4>Quick Links</h4><ul class="footer-links"><li><a href="/about/">About Us</a></li><li><a href="/services/">Services</a></li><li><a href="/portfolio/">Partners</a></li><li><a href="/blog/">Blog</a></li><li><a href="/booking/">Book Us</a></li><li><a href="/contact/">Contact</a></li></ul></div>
+          <div class="footer-col"><h4>Quick Links</h4><ul class="footer-links"><li><a href="/about/">About Us</a></li><li><a href="/services/">Services</a></li><li><a href="/projects/">Projects</a></li><li><a href="/portfolio/">Partners</a></li><li><a href="/blog/">Blog</a></li><li><a href="/booking/">Book Us</a></li><li><a href="/contact/">Contact</a></li></ul></div>
           <div class="footer-col"><h4>Services</h4><ul class="footer-links"><li><a href="/services/">Web Applications</a></li><li><a href="/services/">Mobile Apps</a></li><li><a href="/services/">Enterprise Banking</a></li><li><a href="/services/">System Maintenance</a></li><li><a href="/services/">IT Consulting</a></li></ul></div>
           <div class="footer-col footer-newsletter"><h4>Stay Updated</h4><p>Subscribe for tech insights.</p><form class="newsletter-form"><input type="email" placeholder="Your email"><button type="submit">Subscribe</button></form><div style="margin-top:24px;"><div class="footer-contact-item"><i data-lucide="map-pin"></i><span>Kampala, Uganda</span></div><div class="footer-contact-item"><i data-lucide="phone"></i><span>+256 782 607 351</span></div><div class="footer-contact-item"><i data-lucide="mail"></i><span>care@treez.tech</span></div></div></div>
         </div>
@@ -418,6 +318,6 @@
   <script src="/js/api.js?v=20261104"></script><script src="/js/analytics.js?v=20261104"></script>
   <script src="https://cdn.jsdelivr.net/npm/lucide@1.46.0/dist/umd/lucide.js"></script>
   <script>lucide.createIcons();</script>
-  <script src="/js/command-palette.js?v=20261024"></script>
+  <script src="/js/command-palette.js?v=20261110"></script>
 </body>
 </html>
