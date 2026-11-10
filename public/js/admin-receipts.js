@@ -220,8 +220,9 @@
     elements.clientEmail.value = invoice ? invoice.clientEmail : '';
     elements.clientPhone.value = invoice ? invoice.clientPhone : '';
     renderItems(invoice ? invoice.items : [{ description: '', quantity: 1, unitPrice: NaN }]);
-    // A follow-up payment usually settles the rest, so start from the balance.
+    // A follow-up payment usually settles the rest, the same way the last one was paid.
     elements.amount.value = invoice ? moneyInput(balanceOf(invoice)) : '';
+    elements.channel.value = invoice ? receiptsOf(invoice.id).at(-1)?.channel || '' : '';
     updateSummary();
     schedulePreview();
   }
@@ -451,8 +452,6 @@
 
   function renderDetail(receipt) {
     const invoice = invoiceById(receipt.invoiceId);
-    const history = historyFor(receipt);
-    const paid = history.reduce((sum, payment) => sum + payment.amount, 0);
     const balanceNow = balanceOf(invoice);
     const fact = (label, value) => `<div><dt>${label}</dt><dd>${escapeHtml(value)}</dd></div>`;
     els.detail.innerHTML = `
@@ -472,7 +471,6 @@
         ${fact('Amount paid', pdf.money(receipt.amount, invoice.currency))}
         ${fact('Date paid', pdf.longDate(receipt.paidOn))}
         ${fact('Payment channel', receipt.channel)}
-        ${fact('Paid to date on this receipt', pdf.money(paid, invoice.currency))}
         ${fact('Invoice balance now', balanceNow > 0 ? pdf.money(balanceNow, invoice.currency) : 'Paid in full')}
       </dl>
       <div class="admin-receipt-actions">
