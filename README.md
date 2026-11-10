@@ -98,9 +98,11 @@ TREEZ-AFRICA-Systems/
 ├── src/                    # The API: runs on Cloudflare Workers
 │   ├── index.ts            # Routes for forms, blog, analytics and the admin workspace
 │   ├── auth.ts             # Admin passwords, sessions and sign-in limits
-│   └── http.ts             # JSON, validation and rate limiting helpers
+│   ├── http.ts             # JSON, validation and rate limiting helpers
+│   ├── receipts.ts         # Invoices, receipts and the receipt email
+│   └── smtp.ts             # Sends mail through Titan over SMTP
 ├── migrations/             # D1 (database) schema
-├── scripts/                # create-admin.mjs, backup.mjs, backup-schedule.sh
+├── scripts/                # create-admin.mjs, backup.mjs, backup-schedule.sh, mail-catcher.mjs
 ├── tests/                  # End-to-end API tests
 │
 └── public/                 # Everything visitors can load. Nothing outside it is served.
@@ -160,6 +162,7 @@ The site runs on Cloudflare: static files from `public/`, a small Worker API in 
 |:-----|:--------|
 | Install dependencies | `npm install` |
 | Run locally | `npm run dev` |
+| Run locally, catching receipt emails | `npm run mail-catcher` + `npm run dev:mail-test` |
 | Check types | `npm run typecheck` |
 | Deploy to treez.tech | `npm run deploy` |
 | Apply new database migrations | `npm run db:migrate` |
@@ -191,6 +194,32 @@ npm run admin:create -- you@example.com
 Running the same command for an existing admin resets their password and signs them out everywhere. Passwords need at least 12 characters. Sign-in attempts are limited to 10 per IP and 30 per email every 15 minutes, and sessions last 7 days.
 
 Conversation status and notes are shared by all admins. Read/unread is remembered per browser.
+
+### Receipts
+
+The **Receipts** tab issues eReceipts in the TAH template and emails them to clients from `receipts@treez.tech`.
+
+- **Each receipt is one payment against an invoice.** For a first payment, choose *New invoice*. For a later payment, open the last receipt and choose **Record next payment**, or pick the invoice from the list. The invoice details, items and balance are filled in for you, and each receipt's payment history lists every payment up to it.
+- **Preview before sending.** The PDF on the right is redrawn as you type, and it is exactly what gets attached. **Send to client** asks for confirmation, then emails the client and copies `receipts@treez.tech`. **Save without sending** keeps it to send later.
+- **Safeguards.** A payment can't be more than the balance, or dated before the invoice's last payment. Receipt and invoice numbers must be unique. Sent receipts can't be deleted.
+- **Numbers** are suggested in the house formats (`TAH-YYYYMMDD-NNN` for invoices, `TAH 8989 NNNN` for receipts), and both can be edited.
+
+Sending goes through Titan's mail server (`smtp.titan.email`, port 465). The mailbox password is a Worker secret, set once and whenever it changes:
+
+```sh
+npx cf workers secrets update SMTP_PASSWORD
+```
+
+Until it is set, receipts still save, and sending reports that email isn't set up yet.
+
+To try the whole flow without emailing anyone, run the mail catcher and the site in mail-test mode in two terminals. Every email is saved to `mail-catcher/` as an `.eml` file:
+
+```sh
+npm run mail-catcher
+npm run dev:mail-test
+```
+
+Plain `npm run dev` has no mailbox password, so it can never reach the real mailbox.
 
 <br>
 
