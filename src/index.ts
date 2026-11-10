@@ -1,8 +1,8 @@
 import { currentAdmin, login, logout, requireAdmin } from "./auth.ts";
 import { HttpError, clientIp, json, rateLimit, readBody, sha256, text } from "./http.ts";
+import { createReceipt, deleteReceipt, listReceipts, sendReceipt, updateInvoice, type ReceiptEnv } from "./receipts.ts";
 
-interface Env {
-  DB: D1Database;
+interface Env extends ReceiptEnv {
   TURNSTILE_SECRET: string;
   VIEWS_LIMIT: RateLimit;
 }
@@ -220,6 +220,14 @@ async function route(request: Request, env: Env): Promise<Response> {
     const postMatch = path.match(/^\/api\/admin\/posts\/([^/]+)$/);
     if (postMatch && method === "PUT") return updatePost(request, env, decodeURIComponent(postMatch[1]!));
     if (postMatch && method === "DELETE") return deletePost(env, decodeURIComponent(postMatch[1]!));
+    if (path === "/api/admin/receipts" && method === "GET") return listReceipts(env);
+    if (path === "/api/admin/receipts" && method === "POST") return createReceipt(request, env);
+    const receiptMatch = path.match(/^\/api\/admin\/receipts\/([^/]+)$/);
+    if (receiptMatch && method === "DELETE") return deleteReceipt(env, decodeURIComponent(receiptMatch[1]!));
+    const sendMatch = path.match(/^\/api\/admin\/receipts\/([^/]+)\/send$/);
+    if (sendMatch && method === "POST") return sendReceipt(request, env, decodeURIComponent(sendMatch[1]!));
+    const invoiceMatch = path.match(/^\/api\/admin\/invoices\/([^/]+)$/);
+    if (invoiceMatch && method === "PUT") return updateInvoice(request, env, decodeURIComponent(invoiceMatch[1]!));
   }
 
   throw new HttpError(404, "Not found.");
