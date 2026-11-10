@@ -97,7 +97,12 @@ window.TREEZ_API = (() => {
       createPost: (post) => request('/admin/posts', { method: 'POST', body: post }),
       updatePost: (id, post) => request(`/admin/posts/${encodeURIComponent(id)}`, { method: 'PUT', body: post }),
       deletePost: (id) => request(`/admin/posts/${encodeURIComponent(id)}`, { method: 'DELETE' }),
-      views: (since) => request(`/admin/views?since=${encodeURIComponent(since)}`)
+      views: (since) => request(`/admin/views?since=${encodeURIComponent(since)}`),
+      receipts: () => request('/admin/receipts'),
+      createReceipt: (invoice, receipt) => request('/admin/receipts', { method: 'POST', body: { invoice, receipt } }),
+      deleteReceipt: (id) => request(`/admin/receipts/${encodeURIComponent(id)}`, { method: 'DELETE' }),
+      sendReceipt: (id, pdf) => request(`/admin/receipts/${encodeURIComponent(id)}/send`, { method: 'POST', body: { pdf } }),
+      updateInvoice: (id, invoice) => request(`/admin/invoices/${encodeURIComponent(id)}`, { method: 'PUT', body: invoice })
     }
   };
 })();
