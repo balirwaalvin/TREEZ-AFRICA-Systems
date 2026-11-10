@@ -6,3 +6,4 @@ dist/
 .wrangler/
 backups/
 worker-startup.cpuprofile
+mail-catcher/
