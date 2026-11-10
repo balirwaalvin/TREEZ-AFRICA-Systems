@@ -109,6 +109,7 @@ TREEZ-AFRICA-Systems/
     ├── index.html              # Homepage — served at /
     ├── about/index.html        # About Us — served at /about/
     ├── services/index.html     # Our Services — served at /services/
+    ├── projects/index.html     # Our Projects — served at /projects/
     ├── portfolio/index.html    # Partners — served at /portfolio/
     ├── booking/index.html      # Book a Consultation — served at /booking/
     ├── blog/index.html         # Blog & Insights — served at /blog/
