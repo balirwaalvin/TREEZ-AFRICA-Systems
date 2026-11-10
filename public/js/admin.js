@@ -134,6 +134,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       renderOverview();
       renderInbox();
       renderBlogs();
+      document.dispatchEvent(new CustomEvent('admin:refresh'));
     } catch (error) {
       // A session can expire while the dashboard is open.
       if (error.status === 401) {
@@ -582,15 +583,22 @@ document.addEventListener('DOMContentLoaded', async () => {
   function switchTab(tab) {
     document.querySelectorAll('.admin-tab').forEach((button) => button.classList.toggle('active', button.dataset.tab === tab));
     document.querySelectorAll('.admin-view').forEach((view) => view.classList.toggle('active', view.dataset.view === tab));
-    if (tab !== 'inbox' || !state.selectedId) history.replaceState(null, '', `#${tab}`);
-    if (tab === 'inbox') renderInbox();
+    if (tab === 'inbox') {
+      if (!state.selectedId) history.replaceState(null, '', '#inbox');
+      renderInbox();
+    } else if (tab !== 'receipts') {
+      history.replaceState(null, '', `#${tab}`);
+    }
+    // Sections kept in their own files (js/admin-receipts.js) load and manage their URL from here.
+    document.dispatchEvent(new CustomEvent('admin:tab', { detail: tab }));
   }
 
   function applyHash() {
     const [tab, id] = window.location.hash.slice(1).split('/');
-    if (id) { state.selectedId = id; state.pendingReadId = id; }
-    if (['overview', 'inbox', 'blogs'].includes(tab)) switchTab(tab);
-    if (id) document.getElementById('inboxLayout').classList.add('is-detail-open');
+    const inboxId = tab === 'inbox' ? id : null;
+    if (inboxId) { state.selectedId = inboxId; state.pendingReadId = inboxId; }
+    if (['overview', 'inbox', 'blogs', 'receipts'].includes(tab)) switchTab(tab);
+    if (inboxId) document.getElementById('inboxLayout').classList.add('is-detail-open');
   }
 
   const isTabActive = (tab) => document.querySelector(`.admin-view[data-view="${tab}"]`).classList.contains('active');
