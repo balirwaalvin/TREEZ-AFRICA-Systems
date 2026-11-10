@@ -234,7 +234,14 @@
 
 .admin-receipt-detail h3 {
   margin: 4px 0 0;
-  font-size: 1.25rem;
+  color: var(--text-0);
+  font: 600 1.35rem var(--font-mono);
+}
+
+.admin-receipt-detail .admin-kicker {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .admin-receipt-detail .admin-detail-facts {
@@ -336,6 +343,8 @@
 
 /* ---- Confirm dialog ---- */
 .admin-dialog {
+  /* The site's global reset zeroes margins, which un-centres a modal dialog. */
+  margin: auto;
   width: min(460px, calc(100vw - 32px));
   padding: 26px;
   border: 1px solid var(--line-strong);
@@ -350,6 +359,7 @@
 
 .admin-dialog h3 {
   margin: 0 0 12px;
+  color: var(--text-0);
   font-size: 1.15rem;
 }
 
