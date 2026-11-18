@@ -93,7 +93,8 @@ async function fileReceived(env: MailEnv, emailId: string, data: NonNullable<Web
   if (!addresses.size) return 0;
 
   const { results: accounts } = await env.DB.prepare(
-    `SELECT id FROM mail_accounts WHERE disabled = 0 AND address IN (SELECT value FROM json_each(?1))
+    `SELECT id FROM mail_accounts WHERE disabled = 0
+     AND (address IN (SELECT value FROM json_each(?1)) OR id IN (SELECT account_id FROM mail_aliases WHERE address IN (SELECT value FROM json_each(?1))))
      AND id NOT IN (SELECT account_id FROM mail_messages WHERE resend_id = ?2 AND direction = 'in')`,
   )
     .bind(JSON.stringify([...addresses]), emailId)
