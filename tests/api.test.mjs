@@ -77,7 +77,8 @@ test('every admin route refuses a request with no session', async () => {
     ['POST', '/api/admin/posts', validPost], ['PUT', '/api/admin/posts/x', validPost],
     ['DELETE', '/api/admin/posts/x'], ['PATCH', '/api/admin/messages/x', { status: 'closed' }],
     ['GET', '/api/admin/receipts'], ['POST', '/api/admin/receipts', {}], ['DELETE', '/api/admin/receipts/x'],
-    ['POST', '/api/admin/receipts/x/send', { pdf: 'JVBERi0=' }], ['PUT', '/api/admin/invoices/x', {}]
+    ['POST', '/api/admin/receipts/x/send', { pdf: 'JVBERi0=' }], ['PUT', '/api/admin/invoices/x', {}],
+    ['GET', '/api/admin/mailboxes'], ['POST', '/api/admin/mailboxes', {}], ['PATCH', '/api/admin/mailboxes/x', {}], ['DELETE', '/api/admin/mailboxes/x']
   ];
   for (const [method, path, body] of routes) {
     assert.equal((await call(path, { method, body })).status, 401, `${method} ${path}`);
