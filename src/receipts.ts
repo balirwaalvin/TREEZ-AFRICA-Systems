@@ -1,13 +1,12 @@
 import { HttpError, json, readBody, text } from "./http.ts";
-import { SmtpError, sendMail, type SmtpConfig } from "./smtp.ts";
+import { fileSentCopy } from "./mail/outbox.ts";
+import { ResendError, sendEmail } from "./mail/resend.ts";
+import type { MailEnv } from "./mail/store.ts";
 
-export interface ReceiptEnv {
-  DB: D1Database;
-  SMTP_HOST: string;
-  SMTP_PORT: string;
-  SMTP_USER: string;
-  SMTP_PASSWORD?: string;
-}
+/** Receipts are emailed through Resend, from receipts@ on the mail domain. */
+export type ReceiptEnv = MailEnv;
+const SENDER_NAME = "TREEZ AFRICA SYSTEMS";
+const receiptsAddress = (env: ReceiptEnv) => `receipts@${env.MAIL_DOMAIN}`;
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const DATE = /^\d{4}-\d{2}-\d{2}$/;
@@ -293,8 +292,9 @@ export async function deleteReceipt(env: ReceiptEnv, id: string): Promise<Respon
 }
 
 /**
- * Emails the receipt to the client with the PDF the admin previewed attached, and a copy to the
- * receipts mailbox. The PDF is made in the admin's browser; see public/js/receipt-pdf.js.
+ * Emails the receipt to the client with the PDF the admin previewed attached, and files a copy in
+ * the receipts mailbox's Sent folder at /mail/. The PDF is made in the admin's browser; see
+ * public/js/receipt-pdf.js.
  */
 export async function sendReceipt(request: Request, env: ReceiptEnv, id: string): Promise<Response> {
   const body = await readBody(request, Math.ceil((MAX_PDF_BYTES * 4) / 3) + 10_000);
@@ -303,38 +303,53 @@ export async function sendReceipt(request: Request, env: ReceiptEnv, id: string)
   const invoice = await findInvoice(env, receipt.invoiceId);
   const pdf = decodePdf(body.pdf);
 
-  if (!env.SMTP_PASSWORD) {
-    throw new HttpError(503, "Email isn't set up yet: the password for the receipts mailbox hasn't been added to Cloudflare. The receipt is saved, so you can send it once that's done.");
+  if (!env.RESEND_API_KEY) {
+    throw new HttpError(503, "Email isn't set up yet: the Resend API key hasn't been added to Cloudflare. The receipt is saved, so you can send it once that's done.");
   }
 
   const payments = await history(env, receipt);
   const paid = payments.reduce((sum, payment) => sum + payment.amount, 0);
   const balance = invoiceTotal(invoice.items) - paid;
-  const config: SmtpConfig = {
-    host: env.SMTP_HOST,
-    port: Number(env.SMTP_PORT),
-    user: env.SMTP_USER,
-    password: env.SMTP_PASSWORD,
-    // Only a local test server runs without TLS; Titan always uses it.
-    secure: !["localhost", "127.0.0.1"].includes(env.SMTP_HOST),
-  };
+  const from = receiptsAddress(env);
+  const subject = `Your receipt ${receipt.number} from ${SENDER_NAME}`;
+  const filename = `Receipt-${receipt.number.replace(/\s+/g, "-")}.pdf`;
+  const content = receiptEmail(invoice, receipt, paid, balance);
 
+  let sent: { id: string };
   try {
-    await sendMail(config, {
-      from: { name: "TREEZ AFRICA SYSTEMS", email: env.SMTP_USER },
-      to: invoice.clientEmail,
-      bcc: [env.SMTP_USER],
-      replyTo: env.SMTP_USER,
-      subject: `Your receipt ${receipt.number} from TREEZ AFRICA SYSTEMS`,
-      ...receiptEmail(invoice, receipt, paid, balance),
-      attachments: [{ filename: `Receipt-${receipt.number.replace(/\s+/g, "-")}.pdf`, contentType: "application/pdf", content: pdf }],
+    sent = await sendEmail(
+      env,
+      {
+        from: `${SENDER_NAME} <${from}>`,
+        to: [invoice.clientEmail],
+        subject,
+        ...content,
+        // The browser already sent the PDF as base64, so it goes to Resend as it is.
+        attachments: [{ filename, content_type: "application/pdf", content: (body.pdf as string).replace(/\s+/g, "") }],
+      },
+      `receipt-${receipt.id}-${crypto.randomUUID()}`,
+    );
+  } catch (error) {
+    if (!(error instanceof ResendError)) throw error;
+    console.error("Receipt email failed", error.status, error.message);
+    if (error.status === 0) throw new HttpError(502, "Couldn't reach Resend to send the receipt. It's saved; please try again.");
+    throw new HttpError(502, `Resend didn't accept the receipt email: ${error.message}`);
+  }
+
+  // A copy in receipts@'s Sent folder replaces the copy Titan used to keep. Failing to file it
+  // doesn't undo the send.
+  try {
+    await fileSentCopy(env, {
+      from,
+      fromName: SENDER_NAME,
+      to: [invoice.clientEmail],
+      subject,
+      text: content.text,
+      resendId: sent.id,
+      attachment: { filename, contentType: "application/pdf", bytes: pdf },
     });
   } catch (error) {
-    if (!(error instanceof SmtpError)) throw error;
-    console.error("Receipt email failed", error.code, error.message);
-    if (error.code === 535) throw new HttpError(502, "Titan refused to sign in to the receipts mailbox. Check that the mailbox password saved in Cloudflare is current.");
-    if (error.code === 0) throw new HttpError(502, `Couldn't reach Titan's mail server (${error.message}) Please try again.`);
-    throw new HttpError(502, `Titan didn't accept the email: ${error.message}`);
+    console.error("Could not file the sent receipt in the receipts mailbox", error);
   }
 
   const sentAt = new Date().toISOString();

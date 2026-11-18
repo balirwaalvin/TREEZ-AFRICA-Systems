@@ -2,8 +2,8 @@ import { bindings, defineConfig } from "cf/config";
 
 import * as entrypoint from "./src/index.ts" with { type: "cf-worker" };
 
-// `npm run dev:mail-test` sends receipts to a local mail catcher (scripts/mail-catcher.mjs)
-// instead of Titan, so the whole send can be tried without emailing anyone.
+// `npm run dev:mail-test` sends mailbox email and receipts to a local stand-in for Resend
+// (scripts/mail-catcher.mjs), so the whole flow can be tried without emailing anyone.
 export default defineConfig(({ mode }) => {
   const mailTest = mode === "mail-test";
   return {
@@ -25,14 +25,9 @@ export default defineConfig(({ mode }) => {
         TURNSTILE_SECRET: bindings.secret(),
         // Per-IP cap on page view writes, enforced without touching the database.
         VIEWS_LIMIT: bindings.rateLimit({ namespace: "1001", simple: { limit: 30, period: 60 } }),
-        // Receipts are emailed through this Titan mailbox, which also gets a copy of each one.
-        SMTP_HOST: bindings.text(mailTest ? "127.0.0.1" : "smtp.titan.email"),
-        SMTP_PORT: bindings.text(mailTest ? "2525" : "465"),
-        SMTP_USER: bindings.text("receipts@treez.tech"),
-        // The mailbox password lives only in Cloudflare. Plain `npm run dev` has none, so it never reaches Titan.
-        SMTP_PASSWORD: mailTest ? bindings.text("mail-test") : bindings.secret(),
-        // Mailboxes at /mail/ send and receive through Resend. In mail-test mode a local stand-in
-        // (scripts/mail-catcher.mjs) plays Resend, so nothing is ever really sent.
+        // Mailboxes at /mail/ and receipts (from receipts@) send and receive through Resend.
+        // In mail-test mode a local stand-in (scripts/mail-catcher.mjs) plays Resend, so nothing
+        // is ever really sent. Plain `npm run dev` has no API key, so it can't send either.
         MAIL_DOMAIN: bindings.text("treez.tech"),
         RESEND_API_URL: bindings.text(mailTest ? "http://127.0.0.1:2526" : "https://api.resend.com"),
         RESEND_API_KEY: mailTest ? bindings.text("re_mail_test") : bindings.secret(),
