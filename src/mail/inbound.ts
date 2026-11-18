@@ -66,10 +66,15 @@ export async function handleWebhook(request: Request, env: MailEnv): Promise<Res
 async function storeDownload(env: MailEnv, url: string, key: string, contentType: string): Promise<number> {
   const response = await fetch(url);
   if (!response.ok || !response.body) throw new Error(`Download for ${key} failed with ${response.status}`);
-  const length = Number(response.headers.get("Content-Length"));
-  const body = Number.isInteger(length) && length >= 0 ? response.body : await response.arrayBuffer();
-  const object = await env.MAIL_FILES.put(key, body, { httpMetadata: { contentType } });
-  return object?.size ?? 0;
+  const length = Number(response.headers.get("Content-Length") ?? NaN);
+  const encoded = !!response.headers.get("Content-Encoding");
+  if (!Number.isInteger(length) || length < 0 || encoded) {
+    const object = await env.MAIL_FILES.put(key, await response.arrayBuffer(), { httpMetadata: { contentType } });
+    return object?.size ?? 0;
+  }
+  const { readable, writable } = new FixedLengthStream(length);
+  const [object] = await Promise.all([env.MAIL_FILES.put(key, readable, { httpMetadata: { contentType } }), response.body.pipeTo(writable)]);
+  return object?.size ?? length;
 }
 
 const header = (headers: Record<string, unknown> | undefined, name: string): string => {
