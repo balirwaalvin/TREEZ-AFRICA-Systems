@@ -1,8 +1,12 @@
 import { currentAdmin, login, logout, requireAdmin } from "./auth.ts";
 import { HttpError, clientIp, json, rateLimit, readBody, sha256, text } from "./http.ts";
+import { createMailbox, deleteMailbox, listMailboxes, updateMailbox } from "./mail/accounts.ts";
+import { handleWebhook } from "./mail/inbound.ts";
+import { mailRoute } from "./mail/routes.ts";
+import type { MailEnv } from "./mail/store.ts";
 import { createReceipt, deleteReceipt, listReceipts, sendReceipt, updateInvoice, type ReceiptEnv } from "./receipts.ts";
 
-interface Env extends ReceiptEnv {
+interface Env extends ReceiptEnv, MailEnv {
   TURNSTILE_SECRET: string;
   VIEWS_LIMIT: RateLimit;
 }
@@ -188,6 +192,9 @@ async function route(request: Request, env: Env): Promise<Response> {
   const { method } = request;
   const path = url.pathname.replace(/\/+$/, "");
 
+  // Resend's webhook isn't a browser and has no Origin. It proves itself with a signature instead.
+  if (path === "/api/mail/inbound" && method === "POST") return handleWebhook(request, env);
+
   // Browsers always send Origin on these methods, so this blocks other sites from posting here
   // (the session cookie's SameSite=Strict is the second layer for admin routes).
   if (!["GET", "HEAD"].includes(method) && request.headers.get("Origin") !== url.origin) {
@@ -199,6 +206,8 @@ async function route(request: Request, env: Env): Promise<Response> {
   if (path === "/api/posts" && method === "GET") return publicPosts(env);
   const publicPostMatch = path.match(/^\/api\/posts\/([^/]+)$/);
   if (publicPostMatch && method === "GET") return publicPost(env, decodeURIComponent(publicPostMatch[1]!));
+
+  if (path === "/api/mail" || path.startsWith("/api/mail/")) return mailRoute(request, env, url, path);
 
   if (path === "/api/admin/login" && method === "POST") return login(request, env.DB);
   if (path === "/api/admin/logout" && method === "POST") return logout(request, env.DB);
@@ -220,6 +229,11 @@ async function route(request: Request, env: Env): Promise<Response> {
     const postMatch = path.match(/^\/api\/admin\/posts\/([^/]+)$/);
     if (postMatch && method === "PUT") return updatePost(request, env, decodeURIComponent(postMatch[1]!));
     if (postMatch && method === "DELETE") return deletePost(env, decodeURIComponent(postMatch[1]!));
+    if (path === "/api/admin/mailboxes" && method === "GET") return listMailboxes(env);
+    if (path === "/api/admin/mailboxes" && method === "POST") return createMailbox(request, env);
+    const mailboxMatch = path.match(/^\/api\/admin\/mailboxes\/([^/]+)$/);
+    if (mailboxMatch && method === "PATCH") return updateMailbox(request, env, decodeURIComponent(mailboxMatch[1]!));
+    if (mailboxMatch && method === "DELETE") return deleteMailbox(env, decodeURIComponent(mailboxMatch[1]!));
     if (path === "/api/admin/receipts" && method === "GET") return listReceipts(env);
     if (path === "/api/admin/receipts" && method === "POST") return createReceipt(request, env);
     const receiptMatch = path.match(/^\/api\/admin\/receipts\/([^/]+)$/);
