@@ -1,5 +1,5 @@
 import { HttpError, json, rateLimit, readBody, text } from "../http.ts";
-import type { MailAccount } from "./accounts.ts";
+import { aliasesOf, type MailAccount } from "./accounts.ts";
 import { formatAddress, recipients } from "./address.ts";
 import { NOT_SET_UP, ResendError, checkFileUrl, sendEmail, signedFileUrl } from "./resend.ts";
 import { filesOf, now, releaseFiles, type MailEnv } from "./store.ts";
@@ -349,9 +349,19 @@ function composed(body: Record<string, unknown>): Composed {
   };
 }
 
+/** The address an email goes out from: the mailbox's own, or one of the extra addresses delivered to it. */
+async function senderOf(env: MailEnv, account: MailAccount, body: Record<string, unknown>): Promise<string> {
+  const wanted = typeof body.from === "string" ? body.from.trim().toLowerCase() : "";
+  if (!wanted || wanted === account.address.toLowerCase()) return account.address;
+  if ((await aliasesOf(env.DB, account.id)).includes(wanted)) return wanted;
+  throw new HttpError(403, `This mailbox can't send as ${wanted.slice(0, 254)}.`);
+}
+
 /** Saves (or updates) a draft. Its attachments are returned with new ids that belong to the draft. */
 export async function saveDraft(request: Request, env: MailEnv, account: MailAccount, id: string | null): Promise<Response> {
-  const mail = composed(await readBody(request, 256_000));
+  const body = await readBody(request, 256_000);
+  const mail = composed(body);
+  const from = await senderOf(env, account, body);
   const attachments = await chosenAttachments(env, account, mail.attachmentIds);
   const time = now();
   const draftId = id ?? crypto.randomUUID();
@@ -363,8 +373,8 @@ export async function saveDraft(request: Request, env: MailEnv, account: MailAcc
     statements.push(
       env.DB.prepare(
         `UPDATE mail_messages SET to_list = ?3, cc_list = ?4, bcc_list = ?5, subject = ?6, snippet = ?7, text_body = ?8, in_reply_to = ?9,
-           has_attachments = ?10, date = ?11, updated_at = ?11 WHERE id = ?1 AND account_id = ?2 AND folder = 'drafts'`,
-      ).bind(draftId, account.id, ...fields, attachments.length ? 1 : 0, time),
+           has_attachments = ?10, date = ?11, updated_at = ?11, from_address = ?12 WHERE id = ?1 AND account_id = ?2 AND folder = 'drafts'`,
+      ).bind(draftId, account.id, ...fields, attachments.length ? 1 : 0, time, from),
     );
   } else {
     statements.push(
@@ -372,7 +382,7 @@ export async function saveDraft(request: Request, env: MailEnv, account: MailAcc
         `INSERT INTO mail_messages (id, account_id, folder, direction, from_name, from_address, to_list, cc_list, bcc_list, subject, snippet,
            text_body, in_reply_to, has_attachments, is_read, date, created_at, updated_at)
          VALUES (?1, ?2, 'drafts', 'out', ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, 1, ?13, ?13, ?13)`,
-      ).bind(draftId, account.id, account.displayName, account.address, ...fields, attachments.length ? 1 : 0, time),
+      ).bind(draftId, account.id, account.displayName, from, ...fields, attachments.length ? 1 : 0, time),
     );
   }
   // The draft's attachment list is replaced: fresh uploads move onto it, others are copied.
@@ -400,7 +410,9 @@ export async function saveDraft(request: Request, env: MailEnv, account: MailAcc
 /** Sends an email through Resend and files a copy in Sent. A draft being sent is removed. */
 export async function sendMessage(request: Request, env: MailEnv, account: MailAccount, origin: string): Promise<Response> {
   if (!env.RESEND_API_KEY) throw new HttpError(503, NOT_SET_UP);
-  const mail = composed(await readBody(request, 256_000));
+  const body = await readBody(request, 256_000);
+  const mail = composed(body);
+  const from = await senderOf(env, account, body);
   if (!mail.to.length && !mail.cc.length && !mail.bcc.length) throw new HttpError(400, "Add at least one recipient.");
   if (mail.to.length + mail.cc.length + mail.bcc.length > 50) throw new HttpError(400, "An email can go to at most 50 people.");
   if (!mail.subject && !mail.text.trim()) throw new HttpError(400, "Write a subject or a message before sending.");
@@ -427,7 +439,7 @@ export async function sendMessage(request: Request, env: MailEnv, account: MailA
     sent = await sendEmail(
       env,
       {
-        from: formatAddress({ name: account.displayName, address: account.address }),
+        from: formatAddress({ name: account.displayName, address: from }),
         to: mail.to,
         cc: mail.cc.length ? mail.cc : undefined,
         bcc: mail.bcc.length ? mail.bcc : undefined,
@@ -462,7 +474,7 @@ export async function sendMessage(request: Request, env: MailEnv, account: MailA
       headers["In-Reply-To"] ?? "",
       headers.References ?? "",
       account.displayName,
-      account.address,
+      from,
       JSON.stringify(mail.to),
       JSON.stringify(mail.cc),
       JSON.stringify(mail.bcc),
