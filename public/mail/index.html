@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>TREEZ Mail</title>
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="stylesheet" href="/css/global.css?v=20261024">
+  <link rel="stylesheet" href="/css/mail.css?v=20261118">
+</head>
+<body class="mail-page">
+  <!-- Sign in -->
+  <main id="mailLogin" class="mail-login" hidden>
+    <section class="mail-login-panel">
+      <div class="mail-brand"><img src="/assets/images/logo-mark.png" alt=""><span>TREEZ<b>_mail</b></span></div>
+      <p class="mail-kicker">treez.tech mailboxes</p>
+      <h1>Sign in to your mailbox</h1>
+      <form id="mailLoginForm" class="mail-form" novalidate>
+        <label>Email address
+          <span class="mail-address-input">
+            <input name="address" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="you" required>
+            <span class="mail-address-domain" aria-hidden="true">@treez.tech</span>
+          </span>
+        </label>
+        <label>Password<input name="password" type="password" autocomplete="current-password" required></label>
+        <button class="mail-button mail-button-primary" type="submit"><i data-lucide="log-in"></i> Sign in</button>
+        <p id="loginMessage" class="mail-message" role="alert"></p>
+      </form>
+      <p class="mail-muted">Your mailbox is set up by a TREEZ administrator. Ask them if you've forgotten your password.</p>
+    </section>
+  </main>
+
+  <!-- Mailbox -->
+  <div id="mailApp" class="mail-app" hidden>
+    <header class="mail-topbar">
+      <button class="mail-icon-button mail-menu-toggle" data-action="toggle-sidebar" type="button" aria-label="Folders" aria-expanded="false" aria-controls="mailSidebar"><i data-lucide="menu"></i></button>
+      <a class="mail-brand" href="#inbox"><img src="/assets/images/logo-mark.png" alt=""><span>TREEZ<b>_mail</b></span></a>
+      <form id="searchForm" class="mail-search" role="search">
+        <i data-lucide="search"></i>
+        <input id="searchInput" type="search" placeholder="Search mail" aria-label="Search mail" autocomplete="off">
+      </form>
+      <div class="mail-account">
+        <button id="accountButton" class="mail-account-button" type="button" aria-haspopup="menu" aria-expanded="false">
+          <span id="accountAvatar" class="mail-avatar"></span>
+          <span class="mail-account-text"><strong id="accountName"></strong><small id="accountAddress"></small></span>
+          <i data-lucide="chevron-down"></i>
+        </button>
+        <div id="accountMenu" class="mail-menu" role="menu" hidden>
+          <button role="menuitem" data-action="settings" type="button"><i data-lucide="settings"></i> Settings</button>
+          <button role="menuitem" data-action="logout" type="button"><i data-lucide="log-out"></i> Sign out</button>
+        </div>
+      </div>
+    </header>
+
+    <div id="mailLayout" class="mail-layout">
+      <nav id="mailSidebar" class="mail-sidebar" aria-label="Folders">
+        <button class="mail-button mail-button-primary mail-compose-button" data-action="compose" type="button"><i data-lucide="pen-square"></i> Compose</button>
+        <ul class="mail-folders">
+          <li><a href="#inbox" data-folder="inbox"><i data-lucide="inbox"></i><span>Inbox</span><b data-count="inbox"></b></a></li>
+          <li><a href="#starred" data-folder="starred"><i data-lucide="star"></i><span>Starred</span><b data-count="starred"></b></a></li>
+          <li><a href="#sent" data-folder="sent"><i data-lucide="send"></i><span>Sent</span><b data-count="sent"></b></a></li>
+          <li><a href="#drafts" data-folder="drafts"><i data-lucide="file-pen-line"></i><span>Drafts</span><b data-count="drafts"></b></a></li>
+          <li><a href="#archive" data-folder="archive"><i data-lucide="archive"></i><span>Archive</span><b data-count="archive"></b></a></li>
+          <li><a href="#spam" data-folder="spam"><i data-lucide="shield-alert"></i><span>Junk</span><b data-count="spam"></b></a></li>
+          <li><a href="#trash" data-folder="trash"><i data-lucide="trash-2"></i><span>Bin</span><b data-count="trash"></b></a></li>
+        </ul>
+        <p class="mail-sidebar-hint">Press <kbd>?</kbd> for keyboard shortcuts</p>
+      </nav>
+      <div class="mail-scrim" data-action="toggle-sidebar"></div>
+
+      <section class="mail-list-pane" aria-label="Emails">
+        <div class="mail-list-toolbar">
+          <label class="mail-check" title="Select all"><input id="selectAll" type="checkbox" aria-label="Select all"><span></span></label>
+          <h2 id="listTitle">Inbox</h2>
+          <div class="mail-toolbar-actions" id="bulkActions" hidden>
+            <button class="mail-icon-button" data-bulk="read" type="button" title="Mark as read" aria-label="Mark as read"><i data-lucide="mail-open"></i></button>
+            <button class="mail-icon-button" data-bulk="unread" type="button" title="Mark as unread" aria-label="Mark as unread"><i data-lucide="mail"></i></button>
+            <button class="mail-icon-button" data-bulk="archive" type="button" title="Archive" aria-label="Archive"><i data-lucide="archive"></i></button>
+            <button class="mail-icon-button" data-bulk="restore" type="button" title="Move back" aria-label="Move back" hidden><i data-lucide="undo-2"></i></button>
+            <button class="mail-icon-button" data-bulk="trash" type="button" title="Move to Bin" aria-label="Move to Bin"><i data-lucide="trash-2"></i></button>
+            <button class="mail-icon-button" data-bulk="delete" type="button" title="Delete forever" aria-label="Delete forever" hidden><i data-lucide="trash"></i></button>
+          </div>
+          <div class="mail-toolbar-actions">
+            <button class="mail-button mail-button-quiet mail-button-small" id="emptyFolder" type="button" hidden></button>
+            <button class="mail-icon-button" data-action="refresh" type="button" title="Refresh" aria-label="Refresh"><i data-lucide="refresh-cw"></i></button>
+          </div>
+        </div>
+        <div id="messageList" class="mail-list" role="list"></div>
+        <button id="loadMore" class="mail-button mail-button-quiet mail-load-more" type="button" hidden>Load older emails</button>
+      </section>
+
+      <article id="reader" class="mail-reader" aria-live="polite"></article>
+    </div>
+    <button class="mail-compose-fab" data-action="compose" type="button" aria-label="Compose"><i data-lucide="pen-square"></i></button>
+  </div>
+
+  <!-- Compose -->
+  <section id="compose" class="mail-compose" aria-label="New email" hidden>
+    <header class="mail-compose-bar">
+      <h2 id="composeTitle">New email</h2>
+      <span id="composeStatus" class="mail-compose-status" aria-live="polite"></span>
+      <button class="mail-icon-button" data-compose="minimize" type="button" aria-label="Minimise" title="Minimise"><i data-lucide="minus"></i></button>
+      <button class="mail-icon-button" data-compose="close" type="button" aria-label="Close (saves a draft)" title="Close (saves a draft)"><i data-lucide="x"></i></button>
+    </header>
+    <form id="composeForm" class="mail-compose-form" novalidate>
+      <div class="mail-compose-field">
+        <label for="composeTo">To</label>
+        <input id="composeTo" name="to" type="text" autocomplete="off" list="knownAddresses" spellcheck="false" placeholder="name@example.com, another@example.com">
+        <span class="mail-compose-toggles">
+          <button type="button" data-compose="show-cc">Cc</button>
+          <button type="button" data-compose="show-bcc">Bcc</button>
+        </span>
+      </div>
+      <div class="mail-compose-field" data-field="cc" hidden><label for="composeCc">Cc</label><input id="composeCc" name="cc" type="text" autocomplete="off" list="knownAddresses" spellcheck="false"></div>
+      <div class="mail-compose-field" data-field="bcc" hidden><label for="composeBcc">Bcc</label><input id="composeBcc" name="bcc" type="text" autocomplete="off" list="knownAddresses" spellcheck="false"></div>
+      <div class="mail-compose-field"><label for="composeSubject">Subject</label><input id="composeSubject" name="subject" type="text" autocomplete="off"></div>
+      <textarea id="composeBody" name="text" aria-label="Message"></textarea>
+      <ul id="composeAttachments" class="mail-compose-attachments"></ul>
+      <p id="composeMessage" class="mail-message" role="alert"></p>
+      <footer class="mail-compose-footer">
+        <button class="mail-button mail-button-primary" type="submit"><i data-lucide="send"></i> Send</button>
+        <label class="mail-icon-button" title="Attach files" aria-label="Attach files"><i data-lucide="paperclip"></i><input id="composeFiles" type="file" multiple hidden></label>
+        <span class="mail-compose-spacer"></span>
+        <button class="mail-icon-button" data-compose="discard" type="button" title="Discard draft" aria-label="Discard draft"><i data-lucide="trash-2"></i></button>
+      </footer>
+    </form>
+    <datalist id="knownAddresses"></datalist>
+  </section>
+
+  <!-- Settings -->
+  <dialog id="settingsDialog" class="mail-dialog">
+    <form id="settingsForm" class="mail-form" method="dialog">
+      <h2>Settings</h2>
+      <label>Your name, as recipients see it<input name="displayName" required maxlength="120"></label>
+      <label>Signature<textarea name="signature" rows="4" maxlength="2000" placeholder="Added to the end of new emails and replies"></textarea></label>
+      <button class="mail-button mail-button-primary" value="save" type="submit"><i data-lucide="save"></i> Save</button>
+      <p id="settingsMessage" class="mail-message" role="status"></p>
+    </form>
+    <form id="passwordForm" class="mail-form" novalidate>
+      <h3>Change password</h3>
+      <label>Current password<input name="current" type="password" autocomplete="current-password" required></label>
+      <label>New password (12+ characters)<input name="password" type="password" autocomplete="new-password" minlength="12" required></label>
+      <label>New password again<input name="confirm" type="password" autocomplete="new-password" minlength="12" required></label>
+      <button class="mail-button" type="submit"><i data-lucide="key-round"></i> Change password</button>
+      <p id="passwordMessage" class="mail-message" role="status"></p>
+    </form>
+    <button class="mail-icon-button mail-dialog-close" data-action="close-dialog" type="button" aria-label="Close"><i data-lucide="x"></i></button>
+  </dialog>
+
+  <!-- Shortcuts -->
+  <dialog id="shortcutsDialog" class="mail-dialog mail-dialog-narrow">
+    <h2>Keyboard shortcuts</h2>
+    <dl class="mail-shortcuts">
+      <dt><kbd>c</kbd></dt><dd>Compose</dd>
+      <dt><kbd>j</kbd> / <kbd>k</kbd></dt><dd>Next / previous email</dd>
+      <dt><kbd>r</kbd> / <kbd>a</kbd> / <kbd>f</kbd></dt><dd>Reply / reply all / forward</dd>
+      <dt><kbd>e</kbd></dt><dd>Archive</dd>
+      <dt><kbd>#</kbd></dt><dd>Move to Bin</dd>
+      <dt><kbd>s</kbd></dt><dd>Star</dd>
+      <dt><kbd>u</kbd></dt><dd>Mark unread</dd>
+      <dt><kbd>/</kbd></dt><dd>Search</dd>
+      <dt><kbd>Esc</kbd></dt><dd>Back to the list</dd>
+    </dl>
+    <button class="mail-icon-button mail-dialog-close" data-action="close-dialog" type="button" aria-label="Close"><i data-lucide="x"></i></button>
+  </dialog>
+
+  <!-- Confirmations -->
+  <dialog id="confirmDialog" class="mail-dialog mail-dialog-narrow">
+    <form method="dialog">
+      <h2 data-confirm-title></h2>
+      <p data-confirm-body></p>
+      <div class="mail-dialog-actions">
+        <button class="mail-button mail-button-quiet" value="cancel" type="submit">Cancel</button>
+        <button class="mail-button mail-button-danger" value="confirm" type="submit" data-confirm-button></button>
+      </div>
+    </form>
+  </dialog>
+
+  <div id="toast" class="mail-toast" role="status" aria-live="polite" hidden><span data-toast-text></span><button type="button" data-toast-undo hidden>Undo</button></div>
+
+  <script src="/js/api.js?v=20261118"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@1.46.0/dist/umd/lucide.js"></script>
+  <script src="/js/mail.js?v=20261118"></script>
+</body>
+</html>
