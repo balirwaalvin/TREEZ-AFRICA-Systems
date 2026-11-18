@@ -43,6 +43,7 @@ CREATE TABLE mail_messages (
   snippet         TEXT NOT NULL DEFAULT '',
   text_body       TEXT NOT NULL DEFAULT '',
   html_key        TEXT,                           -- R2 key of the HTML body, if it has one
+  raw_key         TEXT,                           -- R2 key of the original .eml, for received mail
   has_attachments INTEGER NOT NULL DEFAULT 0,
   is_read         INTEGER NOT NULL DEFAULT 0 CHECK (is_read IN (0, 1)),
   is_starred      INTEGER NOT NULL DEFAULT 0 CHECK (is_starred IN (0, 1)),
