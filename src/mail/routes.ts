@@ -33,7 +33,7 @@ export async function mailRoute(request: Request, env: MailEnv, url: URL, path: 
 
   // Everything else needs a signed-in mailbox, including unknown paths.
   const account = await requireAccount(request, env.DB);
-  if (path === "/api/mail/session" && method === "GET") return session(account);
+  if (path === "/api/mail/session" && method === "GET") return session(env.DB, account);
   if (path === "/api/mail/account" && method === "PUT") return updateSettings(request, env, account);
   if (path === "/api/mail/account/password" && method === "POST") return changePassword(request, env, account);
   if (path === "/api/mail/folders" && method === "GET") return folderCounts(env, account);

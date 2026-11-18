@@ -46,14 +46,23 @@ export async function requireAccount(request: Request, db: D1Database): Promise<
   return account;
 }
 
-const publicAccount = (account: MailAccount) => ({
-  address: account.address,
-  displayName: account.displayName,
-  signature: account.signature,
-});
+/** The extra addresses delivered to a mailbox, which it can also send as. */
+export async function aliasesOf(db: D1Database, accountId: string): Promise<string[]> {
+  const { results } = await db.prepare("SELECT address FROM mail_aliases WHERE account_id = ?1 ORDER BY address").bind(accountId).all<{ address: string }>();
+  return results.map((row) => row.address);
+}
 
-export function session(account: MailAccount): Response {
-  return json(publicAccount(account));
+async function publicAccount(db: D1Database, account: MailAccount) {
+  return {
+    address: account.address,
+    displayName: account.displayName,
+    signature: account.signature,
+    aliases: await aliasesOf(db, account.id),
+  };
+}
+
+export async function session(db: D1Database, account: MailAccount): Promise<Response> {
+  return json(await publicAccount(db, account));
 }
 
 export async function mailLogin(request: Request, env: MailEnv): Promise<Response> {
@@ -81,7 +90,7 @@ export async function mailLogin(request: Request, env: MailEnv): Promise<Respons
     env.DB.prepare("DELETE FROM mail_sessions WHERE expires_at <= ?1").bind(seconds),
     env.DB.prepare("DELETE FROM rate_limits WHERE key = ?1 OR reset_at <= ?2").bind(ipKey, seconds),
   ]);
-  return json(publicAccount(account), { headers: { "Set-Cookie": sessionCookie(COOKIE, token, SESSION_SECONDS) } });
+  return json(await publicAccount(env.DB, account), { headers: { "Set-Cookie": sessionCookie(COOKIE, token, SESSION_SECONDS) } });
 }
 
 export async function mailLogout(request: Request, db: D1Database): Promise<Response> {
@@ -106,7 +115,7 @@ export async function updateSettings(request: Request, env: MailEnv, account: Ma
   await env.DB.prepare("UPDATE mail_accounts SET display_name = ?2, signature = ?3, updated_at = ?4 WHERE id = ?1")
     .bind(account.id, displayName, signature, now())
     .run();
-  return json({ ...publicAccount(account), displayName, signature });
+  return json({ ...(await publicAccount(env.DB, account)), displayName, signature });
 }
 
 export async function changePassword(request: Request, env: MailEnv, account: MailAccount): Promise<Response> {
@@ -129,10 +138,22 @@ export async function changePassword(request: Request, env: MailEnv, account: Ma
 
 const MAILBOX_COLUMNS = `id, address, display_name AS displayName, disabled, last_login_at AS lastLoginAt, created_at AS createdAt,
   (SELECT COUNT(*) FROM mail_messages WHERE account_id = mail_accounts.id) AS messages,
-  (SELECT COUNT(*) FROM mail_messages WHERE account_id = mail_accounts.id AND folder = 'inbox' AND is_read = 0) AS unread`;
+  (SELECT COUNT(*) FROM mail_messages WHERE account_id = mail_accounts.id AND folder = 'inbox' AND is_read = 0) AS unread,
+  (SELECT json_group_array(address) FROM (SELECT address FROM mail_aliases WHERE account_id = mail_accounts.id ORDER BY address)) AS aliases`;
 
-type MailboxRow = { disabled: number } & Record<string, unknown>;
-const toMailbox = (row: MailboxRow) => ({ ...row, disabled: row.disabled === 1 });
+type MailboxRow = { disabled: number; aliases: string } & Record<string, unknown>;
+const toMailbox = (row: MailboxRow) => ({ ...row, disabled: row.disabled === 1, aliases: JSON.parse(row.aliases || "[]") as string[] });
+
+/** "care" or "care@treez.tech" → "care@treez.tech", refusing other domains and odd local parts. */
+function domainAddress(value: string, env: MailEnv): string {
+  const address = fullAddress(value, env.MAIL_DOMAIN);
+  const [local, domain] = address.split("@");
+  if (domain !== env.MAIL_DOMAIN.toLowerCase()) throw new HttpError(400, `Addresses must end in @${env.MAIL_DOMAIN}.`);
+  if (!local || !LOCAL_PART.test(local) || /\.\./.test(local)) {
+    throw new HttpError(400, `"${address}": use letters, numbers, dots, dashes or underscores before the @, starting and ending with a letter or number.`);
+  }
+  return address;
+}
 
 export async function listMailboxes(env: MailEnv): Promise<Response> {
   const { results } = await env.DB.prepare(`SELECT ${MAILBOX_COLUMNS} FROM mail_accounts ORDER BY address`).all<MailboxRow>();
@@ -141,11 +162,9 @@ export async function listMailboxes(env: MailEnv): Promise<Response> {
 
 export async function createMailbox(request: Request, env: MailEnv): Promise<Response> {
   const body = await readBody(request, 4_000);
-  const address = fullAddress(text(body, "address", "Address", { required: true, max: 254 }), env.MAIL_DOMAIN);
-  const [local, domain] = address.split("@");
-  if (domain !== env.MAIL_DOMAIN.toLowerCase()) throw new HttpError(400, `Mailboxes must be @${env.MAIL_DOMAIN} addresses.`);
-  if (!local || !LOCAL_PART.test(local) || /\.\./.test(local)) {
-    throw new HttpError(400, "Use letters, numbers, dots, dashes or underscores before the @, starting and ending with a letter or number.");
+  const address = domainAddress(text(body, "address", "Address", { required: true, max: 254 }), env);
+  if (await env.DB.prepare("SELECT 1 FROM mail_aliases WHERE address = ?1").bind(address).first()) {
+    throw new HttpError(409, `${address} is already delivered to another mailbox. Remove it there first.`);
   }
   const displayName = text(body, "displayName", "Name", { required: true, max: 120 }).replace(/[\r\n]/g, " ");
   const passwordHash = await hashPassword(newPassword(body, "password"));
@@ -178,6 +197,28 @@ export async function updateMailbox(request: Request, env: MailEnv, id: string):
     if (typeof body.disabled !== "boolean") throw new HttpError(400, "That setting is not valid.");
     statements.push(env.DB.prepare("UPDATE mail_accounts SET disabled = ?2, updated_at = ?3 WHERE id = ?1").bind(id, body.disabled ? 1 : 0, time));
     if (body.disabled) statements.push(env.DB.prepare("DELETE FROM mail_sessions WHERE account_id = ?1").bind(id));
+  }
+  // The extra addresses delivered to this mailbox, replacing the old list.
+  if ("aliases" in body) {
+    const raw = body.aliases;
+    if (!Array.isArray(raw) || raw.length > 50 || raw.some((value) => typeof value !== "string" || value.length > 254)) {
+      throw new HttpError(400, "That list of addresses is not valid.");
+    }
+    const aliases = [...new Set((raw as string[]).map((value) => value.trim()).filter(Boolean).map((value) => domainAddress(value, env)))];
+    const list = JSON.stringify(aliases);
+    const taken = await env.DB.prepare(
+      `SELECT address FROM mail_accounts WHERE address IN (SELECT value FROM json_each(?1))
+       UNION SELECT address FROM mail_aliases WHERE account_id != ?2 AND address IN (SELECT value FROM json_each(?1))`,
+    )
+      .bind(list, id)
+      .first<{ address: string }>();
+    if (taken) throw new HttpError(409, `${taken.address} already belongs to another mailbox.`);
+    statements.push(env.DB.prepare("DELETE FROM mail_aliases WHERE account_id = ?1").bind(id));
+    statements.push(
+      env.DB.prepare(
+        "INSERT INTO mail_aliases (address, account_id, created_at) SELECT value, ?2, ?3 FROM json_each(?1) WHERE EXISTS (SELECT 1 FROM mail_accounts WHERE id = ?2)",
+      ).bind(list, id, time),
+    );
   }
   if (!statements.length) throw new HttpError(400, "There is nothing to update.");
   await env.DB.batch(statements);
