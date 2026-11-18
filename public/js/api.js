@@ -81,8 +81,68 @@ window.TREEZ_API = (() => {
     };
   }
 
+  // Raw responses (an email's HTML) come back as text rather than JSON.
+  async function requestText(path) {
+    let response;
+    try {
+      response = await fetch(`/api${path}`, { credentials: 'same-origin' });
+    } catch {
+      throw new Error('We could not reach the server. Please check your connection and try again.');
+    }
+    if (!response.ok) {
+      const data = await response.json().catch(() => null);
+      const error = new Error(data?.error || 'Something went wrong. Please try again.');
+      error.status = response.status;
+      throw error;
+    }
+    return response.text();
+  }
+
+  /** Sends one file as the raw request body, reporting progress from 0 to 1. */
+  function upload(path, file, onProgress) {
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', `/api${path}`);
+      xhr.setRequestHeader('Content-Type', file.type || 'application/octet-stream');
+      xhr.setRequestHeader('X-Filename', encodeURIComponent(file.name));
+      xhr.upload.onprogress = (event) => { if (event.lengthComputable) onProgress?.(event.loaded / event.total); };
+      xhr.onload = () => {
+        let data = null;
+        try { data = JSON.parse(xhr.responseText); } catch { /* not JSON */ }
+        if (xhr.status >= 200 && xhr.status < 300) return resolve(data);
+        const error = new Error(data?.error || 'The file could not be attached.');
+        error.status = xhr.status;
+        reject(error);
+      };
+      xhr.onerror = () => reject(new Error('We could not reach the server. Please check your connection and try again.'));
+      xhr.send(file);
+    });
+  }
+
+  const id = encodeURIComponent;
+
   return {
     createSpamCheck,
+    mail: {
+      session: () => request('/mail/session'),
+      login: (address, password) => request('/mail/login', { method: 'POST', body: { address, password } }),
+      logout: () => request('/mail/logout', { method: 'POST', body: {} }),
+      updateAccount: (settings) => request('/mail/account', { method: 'PUT', body: settings }),
+      changePassword: (current, password) => request('/mail/account/password', { method: 'POST', body: { current, password } }),
+      folders: () => request('/mail/folders'),
+      list: ({ folder, q, before }) => request(`/mail/messages?${new URLSearchParams({ folder, ...(q ? { q } : {}), ...(before ? { before } : {}) })}`),
+      get: (messageId) => request(`/mail/messages/${id(messageId)}`),
+      html: (messageId) => requestText(`/mail/messages/${id(messageId)}/html`),
+      attachmentUrl: (attachmentId) => `/api/mail/attachments/${id(attachmentId)}`,
+      originalUrl: (messageId) => `/api/mail/messages/${id(messageId)}/original`,
+      update: (ids, changes) => request('/mail/messages', { method: 'PATCH', body: { ids, ...changes } }),
+      remove: (ids) => request('/mail/messages/delete', { method: 'POST', body: { ids } }),
+      empty: (folder) => request(`/mail/folders/${id(folder)}/empty`, { method: 'POST', body: {} }),
+      upload: (file, onProgress) => upload('/mail/uploads', file, onProgress),
+      removeUpload: (uploadId) => request(`/mail/uploads/${id(uploadId)}`, { method: 'DELETE' }),
+      saveDraft: (draftId, mail) => request(draftId ? `/mail/drafts/${id(draftId)}` : '/mail/drafts', { method: draftId ? 'PUT' : 'POST', body: mail }),
+      send: (mail) => request('/mail/send', { method: 'POST', body: mail })
+    },
     sendMessage: (fields) => request('/messages', { method: 'POST', body: fields }),
     recordView: (fields) => request('/views', { method: 'POST', body: fields }),
     listPosts: () => request('/posts'),
@@ -102,7 +162,11 @@ window.TREEZ_API = (() => {
       createReceipt: (invoice, receipt) => request('/admin/receipts', { method: 'POST', body: { invoice, receipt } }),
       deleteReceipt: (id) => request(`/admin/receipts/${encodeURIComponent(id)}`, { method: 'DELETE' }),
       sendReceipt: (id, pdf) => request(`/admin/receipts/${encodeURIComponent(id)}/send`, { method: 'POST', body: { pdf } }),
-      updateInvoice: (id, invoice) => request(`/admin/invoices/${encodeURIComponent(id)}`, { method: 'PUT', body: invoice })
+      updateInvoice: (id, invoice) => request(`/admin/invoices/${encodeURIComponent(id)}`, { method: 'PUT', body: invoice }),
+      mailboxes: () => request('/admin/mailboxes'),
+      createMailbox: (mailbox) => request('/admin/mailboxes', { method: 'POST', body: mailbox }),
+      updateMailbox: (id, changes) => request(`/admin/mailboxes/${encodeURIComponent(id)}`, { method: 'PATCH', body: changes }),
+      deleteMailbox: (id) => request(`/admin/mailboxes/${encodeURIComponent(id)}`, { method: 'DELETE' })
     }
   };
 })();
