@@ -1,10 +1,9 @@
 #!/usr/bin/env node
-// Local stand-ins for the mail services, for trying receipts and mailboxes without emailing anyone.
+// A local stand-in for Resend, for trying mailboxes and receipts without emailing anyone.
 //   npm run mail-catcher        (terminal 1)
-//   npm run dev:mail-test       (terminal 2: the site, sending here instead of Titan and Resend)
+//   npm run dev:mail-test       (terminal 2: the site, sending here instead of Resend)
 //
-// 127.0.0.1:2525 plays Titan's SMTP server: every receipt is saved to mail-catcher/<time>.eml.
-// 127.0.0.1:2526 plays Resend's API: every mailbox email is saved to mail-catcher/<time>-sent.json.
+// 127.0.0.1:2526 plays Resend's API: every email (receipts included) is saved to mail-catcher/<time>-sent.json.
 //   Sent mail addressed to @treez.tech comes straight back in, as if received.
 //   To pretend someone emailed a mailbox:
 //     curl -X POST http://127.0.0.1:2526/inject -H 'Content-Type: application/json' \
@@ -13,10 +12,8 @@
 import { createHmac, randomUUID } from 'node:crypto';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { createServer as createHttpServer } from 'node:http';
-import { createServer } from 'node:net';
 import { join } from 'node:path';
 
-const SMTP_PORT = 2525;
 const RESEND_PORT = 2526;
 const RESEND_KEY = 're_mail_test';
 // Matches RESEND_WEBHOOK_SECRET in mail-test mode (cloudflare.config.ts).
@@ -26,47 +23,6 @@ const SITE_URL = process.env.SITE_URL ?? 'http://localhost:5173';
 const OUT = join(process.cwd(), 'mail-catcher');
 mkdirSync(OUT, { recursive: true });
 const stamp = () => new Date().toISOString().replace(/[:.]/g, '-');
-
-// ---- SMTP (receipts) ----
-
-createServer((socket) => {
-  let buffer = '';
-  let data = null; // collecting a message body after DATA
-  const reply = (line) => socket.write(`${line}\r\n`);
-  reply('220 mail-catcher ready');
-
-  socket.on('data', (chunk) => {
-    buffer += chunk.toString('latin1');
-    for (;;) {
-      if (data !== null) {
-        const end = buffer.indexOf('\r\n.\r\n');
-        if (end === -1) return;
-        data += buffer.slice(0, end);
-        buffer = buffer.slice(end + 5);
-        const file = join(OUT, `${stamp()}.eml`);
-        // Undo the sender's dot-stuffing.
-        writeFileSync(file, Buffer.from(data.replace(/^\.\./gm, '.'), 'latin1'));
-        console.log(`saved ${file}`);
-        data = null;
-        reply('250 Queued');
-        continue;
-      }
-      const end = buffer.indexOf('\r\n');
-      if (end === -1) return;
-      const line = buffer.slice(0, end);
-      buffer = buffer.slice(end + 2);
-      const command = line.toUpperCase();
-      console.log(`> ${command.startsWith('AUTH') ? 'AUTH …' : line}`);
-      if (command.startsWith('EHLO')) { reply('250-mail-catcher'); reply('250 AUTH PLAIN'); }
-      else if (command.startsWith('AUTH')) reply('235 Accepted');
-      else if (command.startsWith('MAIL FROM') || command.startsWith('RCPT TO')) reply('250 OK');
-      else if (command === 'DATA') { data = ''; reply('354 Send the message, end with .'); }
-      else if (command === 'QUIT') { reply('221 Bye'); socket.end(); return; }
-      else reply('502 Not supported');
-    }
-  });
-  socket.on('error', () => {});
-}).listen(SMTP_PORT, '127.0.0.1', () => console.log(`SMTP catcher on 127.0.0.1:${SMTP_PORT}, saving to ${OUT}`));
 
 // ---- Resend API ----
 
@@ -192,6 +148,11 @@ createHttpServer(async (request, response) => {
       // Resend fetches each attachment from its link, so this checks the site's signed links work.
       const fetched = [];
       for (const attachment of email.attachments ?? []) {
+        if (attachment.content !== undefined) {
+          const content = Buffer.from(attachment.content, 'base64');
+          fetched.push({ filename: attachment.filename, content_type: attachment.content_type, status: 200, size: content.length, content: attachment.content });
+          continue;
+        }
         const file = await fetch(attachment.path);
         const content = Buffer.from(await file.arrayBuffer());
         fetched.push({ filename: attachment.filename, content_type: attachment.content_type, status: file.status, size: content.length, content: content.toString('base64') });
@@ -202,7 +163,8 @@ createHttpServer(async (request, response) => {
       if (fetched.some((attachment) => attachment.status !== 200)) return send(422, { message: 'An attachment link could not be downloaded.' });
 
       // Mail to our own domain loops back in, as Resend would deliver it to the MX.
-      const site = email.attachments?.[0]?.path ? new URL(email.attachments[0].path).origin : (request.headers['x-site'] ?? SITE_URL);
+      const linked = (email.attachments ?? []).find((attachment) => attachment.path);
+      const site = linked ? new URL(linked.path).origin : (request.headers['x-site'] ?? SITE_URL);
       const local = [...list(email.to), ...list(email.cc), ...list(email.bcc)].filter((address) => new RegExp(`@${MAIL_DOMAIN.replace('.', '\\.')}>?$`, 'i').test(address));
       setTimeout(async () => {
         try {
