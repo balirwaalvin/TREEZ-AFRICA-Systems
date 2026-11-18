@@ -1,0 +1,43 @@
+/* ============================================
+   TREEZ AFRICA SYSTEMS — Admin: Mailboxes
+   ============================================ */
+
+.admin-mailbox-intro { max-width: 70ch; margin: -6px 0 14px; line-height: 1.6; }
+.admin-mailbox-intro a { color: var(--color-primary); }
+.admin-mailbox-form { margin: 0 0 20px; }
+.admin-mailbox-form .admin-muted { margin: -6px 0 0; }
+
+.admin-mailbox-address, .admin-mailbox-password { display: flex; align-items: center; gap: 8px; }
+.admin-mailbox-address input, .admin-mailbox-password input { flex: 1; min-width: 0; }
+.admin-mailbox-address span { color: var(--text-2); font-family: var(--font-sans); font-size: 0.95rem; font-weight: 400; text-transform: none; letter-spacing: normal; }
+.admin-mailbox-password input { font-family: var(--font-mono); }
+
+.admin-mailbox-list { display: grid; gap: 10px; }
+.admin-mailbox-row {
+  display: grid;
+  grid-template-columns: minmax(200px, 1.2fr) minmax(260px, 1fr) auto;
+  gap: 12px 20px;
+  align-items: center;
+  padding: 16px 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--bg-2);
+}
+.admin-mailbox-row.is-disabled { opacity: 0.7; }
+.admin-mailbox-who { display: grid; gap: 3px; min-width: 0; }
+.admin-mailbox-who strong { overflow: hidden; color: var(--text-0); font-family: var(--font-mono); text-overflow: ellipsis; }
+.admin-mailbox-who span { color: var(--text-2); font-size: var(--fs-small); }
+.admin-mailbox-who em { color: var(--status-red); font-style: normal; }
+.admin-mailbox-facts { display: flex; gap: 22px; margin: 0; }
+.admin-mailbox-facts dt { color: var(--text-2); font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.05em; text-transform: uppercase; }
+.admin-mailbox-facts dd { margin: 2px 0 0; color: var(--text-0); font-size: 0.9rem; }
+.admin-mailbox-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 4px; }
+#mailboxDialog .admin-form { margin-top: 0; }
+#mailboxDialog [data-dialog-body] { display: grid; gap: 12px; }
+#mailboxDialog .admin-message:empty { display: none; }
+
+@media (max-width: 900px) {
+  .admin-mailbox-row { grid-template-columns: 1fr; }
+  .admin-mailbox-actions { justify-content: flex-start; }
+  .admin-mailbox-facts { flex-wrap: wrap; }
+}
