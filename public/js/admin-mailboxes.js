@@ -58,6 +58,7 @@
         <div class="admin-mailbox-who">
           <strong>${escapeHtml(mailbox.address)}</strong>
           <span>${escapeHtml(mailbox.displayName)}${mailbox.disabled ? ' · <em>Switched off</em>' : ''}</span>
+          ${mailbox.aliases.length ? `<span class="admin-mailbox-aliases">Also receives ${mailbox.aliases.map((alias) => `<code>${escapeHtml(alias)}</code>`).join(' ')}</span>` : ''}
         </div>
         <dl class="admin-mailbox-facts">
           <div><dt>Emails</dt><dd>${mailbox.messages}</dd></div>
@@ -66,6 +67,7 @@
         </dl>
         <div class="admin-mailbox-actions">
           <button class="admin-button admin-button-quiet" data-mailbox-action="rename" data-id="${escapeHtml(mailbox.id)}" type="button"><i data-lucide="pencil"></i> Rename</button>
+          <button class="admin-button admin-button-quiet" data-mailbox-action="aliases" data-id="${escapeHtml(mailbox.id)}" type="button"><i data-lucide="at-sign"></i> Extra addresses</button>
           <button class="admin-button admin-button-quiet" data-mailbox-action="password" data-id="${escapeHtml(mailbox.id)}" type="button"><i data-lucide="key-round"></i> New password</button>
           <button class="admin-button admin-button-quiet" data-mailbox-action="toggle" data-id="${escapeHtml(mailbox.id)}" type="button"><i data-lucide="${mailbox.disabled ? 'power' : 'power-off'}"></i> ${mailbox.disabled ? 'Switch on' : 'Switch off'}</button>
           ${mailbox.disabled ? `<button class="admin-button admin-button-danger" data-mailbox-action="delete" data-id="${escapeHtml(mailbox.id)}" type="button"><i data-lucide="trash-2"></i> Delete</button>` : ''}
@@ -155,6 +157,17 @@
         body: `<label>Name shown to recipients<input name="displayName" value="${escapeHtml(mailbox.displayName)}" required maxlength="120"></label>`,
         confirm: 'Save',
         run: async (form) => replace(await api.updateMailbox(mailbox.id, { displayName: form.elements.displayName.value.trim() }))
+      });
+    } else if (action === 'aliases') {
+      ask({
+        title: 'Extra addresses',
+        body: `<p>Mail to these addresses lands in ${who}'s inbox, and it can send as them too. One per line, for example <code>care</code> or <code>care@${escapeHtml(state.domain)}</code>.</p><label>Addresses<textarea name="aliases" rows="5" spellcheck="false" autocapitalize="none">${escapeHtml(mailbox.aliases.join('\n'))}</textarea></label>`,
+        confirm: 'Save addresses',
+        run: async (form) => {
+          const aliases = form.elements.aliases.value.split(/[\s,;]+/).map((value) => value.trim()).filter(Boolean);
+          replace(await api.updateMailbox(mailbox.id, { aliases }));
+          showMessage(els.notice, aliases.length ? `${mailbox.address} now also receives ${aliases.length} other ${aliases.length === 1 ? 'address' : 'addresses'}.` : `${mailbox.address} only receives its own address now.`);
+        }
       });
     } else if (action === 'password') {
       ask({

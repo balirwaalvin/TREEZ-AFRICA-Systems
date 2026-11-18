@@ -41,3 +41,15 @@
   .admin-mailbox-actions { justify-content: flex-start; }
   .admin-mailbox-facts { flex-wrap: wrap; }
 }
+
+.admin-mailbox-aliases { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; margin-top: 2px; }
+.admin-mailbox-aliases code {
+  padding: 1px 6px;
+  border: 1px solid var(--line-strong);
+  border-radius: 4px;
+  color: var(--text-1);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+}
+#mailboxDialog textarea { font-family: var(--font-mono); }
+#mailboxDialog code { color: var(--color-primary); font-family: var(--font-mono); }
