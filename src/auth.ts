@@ -24,9 +24,9 @@ async function derive(password: string, salt: Uint8Array, iterations: number): P
 }
 
 // Compared against when an email isn't found, so unknown emails take as long as wrong passwords.
-const DUMMY_HASH = `pbkdf2-sha256$${PBKDF2_ITERATIONS}$AAAAAAAAAAAAAAAAAAAAAA==$AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=`;
+export const DUMMY_HASH = `pbkdf2-sha256$${PBKDF2_ITERATIONS}$AAAAAAAAAAAAAAAAAAAAAA==$AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=`;
 
-async function verifyPassword(password: string, stored: string): Promise<boolean> {
+export async function verifyPassword(password: string, stored: string): Promise<boolean> {
   const [scheme, iterations, salt, expected] = stored.split("$");
   if (scheme !== "pbkdf2-sha256" || !iterations || !salt || !expected) return false;
   const actual = await derive(password, fromBase64(salt), Number(iterations));
@@ -34,21 +34,33 @@ async function verifyPassword(password: string, stored: string): Promise<boolean
   return actual.length === wanted.length && crypto.subtle.timingSafeEqual(actual, wanted);
 }
 
-function sessionCookie(value: string, maxAge: number): string {
-  return `${COOKIE}=${value}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=${maxAge}`;
+/** Hashes a password in the same format the create-admin and create-mailbox scripts write. */
+export async function hashPassword(password: string): Promise<string> {
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+  const hash = await derive(password, salt, PBKDF2_ITERATIONS);
+  return `pbkdf2-sha256$${PBKDF2_ITERATIONS}$${toBase64(salt)}$${toBase64(hash)}`;
 }
 
-function readCookie(request: Request): string | null {
+/** A random, URL-safe session token. Only its SHA-256 is ever stored. */
+export function newToken(): string {
+  return toBase64(crypto.getRandomValues(new Uint8Array(32))).replace(/[+/=]/g, (c) => ({ "+": "-", "/": "_", "=": "" })[c] ?? "");
+}
+
+export function sessionCookie(name: string, value: string, maxAge: number): string {
+  return `${name}=${value}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=${maxAge}`;
+}
+
+export function readCookie(request: Request, cookie: string): string | null {
   for (const part of (request.headers.get("Cookie") ?? "").split(";")) {
     const [name, value] = part.trim().split("=");
-    if (name === COOKIE && value) return value;
+    if (name === cookie && value) return value;
   }
   return null;
 }
 
 /** Returns the signed-in admin, or null when the session is missing, unknown or expired. */
 export async function currentAdmin(request: Request, db: D1Database): Promise<Admin | null> {
-  const token = readCookie(request);
+  const token = readCookie(request, COOKIE);
   if (!token) return null;
   return db
     .prepare(
@@ -86,18 +98,18 @@ export async function login(request: Request, db: D1Database): Promise<Response>
   const valid = await verifyPassword(password, admin?.password_hash ?? DUMMY_HASH);
   if (!admin || !valid) throw new HttpError(401, INVALID_LOGIN);
 
-  const token = toBase64(crypto.getRandomValues(new Uint8Array(32))).replace(/[+/=]/g, (c) => ({ "+": "-", "/": "_", "=": "" })[c] ?? "");
+  const token = newToken();
   const now = Math.floor(Date.now() / 1000);
   await db.batch([
     db.prepare("INSERT INTO sessions (token_hash, admin_id, expires_at) VALUES (?1, ?2, ?3)").bind(await sha256(token), admin.id, now + SESSION_SECONDS),
     db.prepare("DELETE FROM sessions WHERE expires_at <= ?1").bind(now),
     db.prepare("DELETE FROM rate_limits WHERE key = ?1 OR reset_at <= ?2").bind(ipKey, now),
   ]);
-  return json({ email: admin.email }, { headers: { "Set-Cookie": sessionCookie(token, SESSION_SECONDS) } });
+  return json({ email: admin.email }, { headers: { "Set-Cookie": sessionCookie(COOKIE, token, SESSION_SECONDS) } });
 }
 
 export async function logout(request: Request, db: D1Database): Promise<Response> {
-  const token = readCookie(request);
+  const token = readCookie(request, COOKIE);
   if (token) await db.prepare("DELETE FROM sessions WHERE token_hash = ?1").bind(await sha256(token)).run();
-  return json({ ok: true }, { headers: { "Set-Cookie": sessionCookie("", 0) } });
+  return json({ ok: true }, { headers: { "Set-Cookie": sessionCookie(COOKIE, "", 0) } });
 }
