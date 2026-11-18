@@ -282,6 +282,71 @@ test('replies thread, attach files, and arrive in the other mailbox', { skip: !M
   assert.equal((await call(`/api/mail/attachments/${sent.data.attachments[0].id}`, { as: 'bob' })).text, 'quote body');
 });
 
+const aliasA = `care-${runId}@treez.tech`;
+const aliasB = `help-${runId}@treez.tech`;
+const mailboxId = async (address) => (await call('/api/admin/mailboxes', { as: 'admin' })).data.documents.find((mailbox) => mailbox.address === address)?.id;
+
+test('extra addresses can be given to one mailbox only', async () => {
+  const aliceId = await mailboxId(alice);
+  const bobId = await mailboxId(bob);
+  const set = (id, aliases) => call(`/api/admin/mailboxes/${id}`, { method: 'PATCH', body: { aliases }, as: 'admin' });
+  // "care-…" without the domain is fine; the domain is added.
+  const saved = await set(aliceId, [aliasA.split('@')[0], aliasB.toUpperCase(), aliasA]);
+  assert.equal(saved.status, 200);
+  assert.deepEqual(saved.data.aliases, [aliasA, aliasB]);
+  assert.equal((await set(bobId, [aliasA])).status, 409, 'already delivered to Alice');
+  assert.equal((await set(bobId, [alice])).status, 409, 'a mailbox address can\'t be an extra address');
+  assert.equal((await set(bobId, [`x-${runId}@example.com`])).status, 400);
+  const clash = await call('/api/admin/mailboxes', { method: 'POST', body: { address: aliasA, displayName: 'Clash', password: MAILBOX_PASSWORD }, as: 'admin' });
+  assert.equal(clash.status, 409, 'no mailbox can be created at an extra address');
+  assert.deepEqual((await call('/api/mail/session', { as: 'alice' })).data.aliases, [aliasA, aliasB]);
+});
+
+test('mail to an extra address lands in its mailbox, and replies can come from it', { skip: !MAIL_TEST }, async () => {
+  const injected = await inject({ from: 'Visitor <visitor@example.com>', to: [aliasA], subject: `Via alias ${runId}`, text: 'Hello care' });
+  assert.equal(JSON.parse(injected.webhook.body).filed, 1);
+  const received = (await inbox('alice')).find((item) => item.subject === `Via alias ${runId}`);
+  assert.ok(received, 'filed in Alice\'s inbox');
+  const reply = await call('/api/mail/send', { method: 'POST', body: { from: aliasA, to: ['visitor@example.com'], subject: `Re: Via alias ${runId}`, text: 'Hi!', inReplyTo: received.id }, as: 'alice' });
+  assert.equal(reply.status, 201);
+  assert.equal(reply.data.fromAddress, aliasA);
+  const spoof = await call('/api/mail/send', { method: 'POST', body: { from: `ceo-${runId}@treez.tech`, to: ['visitor@example.com'], subject: 'x', text: 'x' }, as: 'alice' });
+  assert.equal(spoof.status, 403, 'a mailbox can only send as its own addresses');
+  assert.equal((await call('/api/mail/send', { method: 'POST', body: { from: aliasA, to: ['visitor@example.com'], subject: 'x', text: 'x' }, as: 'bob' })).status, 403);
+});
+
+test('receipts are sent through Resend and filed in receipts@\'s Sent folder', { skip: !MAIL_TEST }, async () => {
+  const receiptsAddress = 'receipts@treez.tech';
+  const existing = await mailboxId(receiptsAddress);
+  const ready = existing
+    ? await call(`/api/admin/mailboxes/${existing}`, { method: 'PATCH', body: { password: MAILBOX_PASSWORD, disabled: false }, as: 'admin' })
+    : await call('/api/admin/mailboxes', { method: 'POST', body: { address: 'receipts', displayName: 'Receipts', password: MAILBOX_PASSWORD }, as: 'admin' });
+  assert.ok([200, 201].includes(ready.status));
+  const created = await call('/api/admin/receipts', {
+    method: 'POST',
+    as: 'admin',
+    body: {
+      invoice: { number: `MAIL-${runId}`, currency: 'UGX', clientName: 'Mail Client', clientAddress: '', clientEmail: 'client@example.com', clientPhone: '', items: [{ description: 'Work', quantity: 1, unitPrice: 100000 }] },
+      receipt: { number: `MAIL ${runId}`, paidOn: '2026-11-18', amount: 100000, channel: 'Cash' }
+    }
+  });
+  assert.equal(created.status, 201);
+  const pdf = Buffer.from('%PDF-1.7\n%receipt\n').toString('base64');
+  const sent = await call(`/api/admin/receipts/${created.data.receipt.id}/send`, { method: 'POST', body: { pdf }, as: 'admin' });
+  assert.equal(sent.status, 200);
+  assert.equal(sent.data.sentTo, 'client@example.com');
+
+  const login = await call('/api/mail/login', { method: 'POST', body: { address: receiptsAddress, password: MAILBOX_PASSWORD } });
+  const cookie = cookieOf(login);
+  const sentFolder = (await call('/api/mail/messages?folder=sent', { headers: { Cookie: cookie } })).data.documents;
+  const copy = sentFolder.find((item) => item.subject === `Your receipt MAIL ${runId} from TREEZ AFRICA SYSTEMS`);
+  assert.ok(copy, 'a copy is in receipts@\'s Sent folder');
+  assert.equal(copy.hasAttachments, true);
+  const full = (await call(`/api/mail/messages/${copy.id}`, { headers: { Cookie: cookie } })).data;
+  assert.equal((await call(`/api/mail/attachments/${full.attachments[0].id}`, { headers: { Cookie: cookie } })).text, '%PDF-1.7\n%receipt\n');
+  await call('/api/mail/logout', { method: 'POST', body: {}, headers: { Cookie: cookie } });
+});
+
 test('folders only allow moves that make sense, and only the bin deletes for good', async () => {
   const draft = (await call('/api/mail/drafts', { method: 'POST', body: { to: [], subject: `Folder ${runId}`, text: 'x', attachments: [] }, as: 'alice' })).data;
   // Drafts never move.

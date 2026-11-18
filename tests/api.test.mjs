@@ -266,8 +266,8 @@ test('only unsent receipts can be deleted, and sending needs a real PDF', async 
   assert.equal((await send({ pdf: '***' })).status, 400);
   assert.equal((await call('/api/admin/receipts/missing/send', { method: 'POST', session: true, body: { pdf: tinyPdf } })).status, 404);
 
-  // With `npm run dev:mail-test` the email reaches the local mail catcher; plain `npm run dev`
-  // has no mailbox password, so it is refused before anything is sent.
+  // With `npm run dev:mail-test` the email reaches the local Resend stand-in; plain `npm run dev`
+  // has no Resend API key, so it is refused before anything is sent.
   const sent = await send({ pdf: tinyPdf });
   if (sent.status === 503) {
     assert.match(sent.data.error, /Email isn't set up yet/);
