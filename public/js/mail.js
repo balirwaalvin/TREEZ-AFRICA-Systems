@@ -91,7 +91,15 @@
   }
   const formatAddress = (name, address) => (name ? `${/[,;"<>@]/.test(name) ? `"${name.replace(/"/g, '')}"` : name} <${address}>` : address);
   const shortName = (value) => { const { name, address } = parseAddress(value); return name || address; };
-  const isMe = (value) => parseAddress(value).address.toLowerCase() === state.account.address.toLowerCase();
+  const myAddresses = () => [state.account.address, ...(state.account.aliases ?? [])].map((address) => address.toLowerCase());
+  const isMe = (value) => myAddresses().includes(parseAddress(value).address.toLowerCase());
+  /** The extra address (care@…) an incoming email came in through, when it wasn't sent to the mailbox's own address. */
+  function viaAlias(message) {
+    if (message.direction !== 'in' || !state.account.aliases?.length) return null;
+    const to = [...(message.toList ?? []), ...(message.ccList ?? [])].map((value) => parseAddress(value).address.toLowerCase());
+    if (to.includes(state.account.address.toLowerCase())) return null;
+    return state.account.aliases.find((alias) => to.includes(alias)) ?? null;
+  }
 
   /** Splits "a@x.com, \"Doe, Jane\" <j@x.com>; b@y.com" on commas and semicolons outside quotes and <>. */
   function splitAddresses(value) {
@@ -319,6 +327,8 @@
   function rowTags(message) {
     const tags = [];
     if (message.folder === 'drafts') tags.push('<span class="mail-tag mail-tag-draft">Draft</span>');
+    const alias = viaAlias(message);
+    if (alias) tags.push(`<span class="mail-tag">${escapeHtml(alias.split('@')[0])}@</span>`);
     if (state.query && message.folder !== 'inbox') tags.push(`<span class="mail-tag">${escapeHtml(FOLDERS[message.folder])}</span>`);
     if (message.delivery === 'bounced') tags.push('<span class="mail-tag mail-tag-bad">Bounced</span>');
     if (message.delivery === 'complained') tags.push('<span class="mail-tag mail-tag-bad">Marked as spam</span>');
@@ -588,8 +598,8 @@
   }
 
   function senderLine(message) {
-    const from = message.direction === 'out' ? state.account.displayName : message.fromName || message.fromAddress;
-    const fromAddress = message.direction === 'out' ? state.account.address : message.fromAddress;
+    const from = message.direction === 'out' ? message.fromName || state.account.displayName : message.fromName || message.fromAddress;
+    const fromAddress = message.fromAddress || state.account.address;
     const list = (label, values) => (values?.length ? `<div class="mail-sender-to">${label}: ${values.map((value) => escapeHtml(value)).join(', ')}</div>` : '');
     return `<div class="mail-sender">
       ${avatar(from, fromAddress)}
@@ -795,7 +805,7 @@
   const signatureBlock = () => (state.account.signature ? `\n\n--\n${state.account.signature}` : '');
 
   function quoteOf(message) {
-    const who = message.direction === 'out' ? formatAddress(state.account.displayName, state.account.address) : formatAddress(message.fromName, message.fromAddress);
+    const who = formatAddress(message.fromName || state.account.displayName, message.fromAddress || state.account.address);
     const quoted = String(message.text || '').split('\n').map((line) => (line.startsWith('>') ? `>${line}` : `> ${line}`)).join('\n');
     return `On ${fullDate(message.date)}, ${who} wrote:\n${quoted}`;
   }
@@ -821,12 +831,13 @@
       cc: unique(cc).filter((value) => !unique(to).some((other) => parseAddress(other).address.toLowerCase() === parseAddress(value).address.toLowerCase())),
       subject: prefixed('Re', message.subject),
       text: `${signatureBlock()}\n\n${quoteOf(message)}`,
-      inReplyTo: message.id
+      inReplyTo: message.id,
+      from: message.direction === 'out' ? message.fromAddress : viaAlias(message)
     });
   }
 
   function openForward(message) {
-    const from = message.direction === 'out' ? formatAddress(state.account.displayName, state.account.address) : formatAddress(message.fromName, message.fromAddress);
+    const from = formatAddress(message.fromName || state.account.displayName, message.fromAddress || state.account.address);
     const header = ['---------- Forwarded message ----------', `From: ${from}`, `Date: ${fullDate(message.date)}`, `Subject: ${message.subject}`, `To: ${message.toList.join(', ')}`, ...(message.ccList.length ? [`Cc: ${message.ccList.join(', ')}`] : [])].join('\n');
     const attachments = (message.attachments ?? []).filter((attachment) => !(attachment.inline && message.hasHtml));
     openCompose({
@@ -850,6 +861,7 @@
         subject: draft.subject,
         text: draft.text,
         inReplyTo: draft.draftReplyTo,
+        from: draft.fromAddress,
         attachments: draft.attachments.map((attachment) => ({ id: attachment.id, filename: attachment.filename, size: attachment.size, status: 'done' })),
         focus: draft.toList.length ? 'text' : 'to'
       });
@@ -869,6 +881,11 @@
     field('to').value = (options.to ?? []).join(', ');
     field('cc').value = (options.cc ?? []).join(', ');
     field('bcc').value = (options.bcc ?? []).join(', ');
+    // Mailboxes with extra addresses (care@…) choose which one the email comes from.
+    const senders = [state.account.address, ...(state.account.aliases ?? [])];
+    field('from').innerHTML = senders.map((address) => `<option value="${escapeHtml(address)}">${escapeHtml(formatAddress(state.account.displayName, address))}</option>`).join('');
+    field('from').value = senders.includes(options.from) ? options.from : state.account.address;
+    els.composeForm.querySelector('[data-field="from"]').hidden = senders.length < 2;
     field('subject').value = options.subject ?? '';
     field('text').value = options.text ?? signatureBlock();
     els.composeForm.querySelector('[data-field="cc"]').hidden = !field('cc').value;
@@ -895,7 +912,8 @@
       subject: field('subject').value.replace(/[\r\n]+/g, ' ').trim(),
       text: field('text').value,
       attachments: compose.attachments.filter((attachment) => attachment.status === 'done').map((attachment) => attachment.id),
-      inReplyTo: compose.inReplyTo || undefined
+      inReplyTo: compose.inReplyTo || undefined,
+      from: field('from').value || state.account.address
     };
   }
 

@@ -104,6 +104,7 @@
       <button class="mail-icon-button" data-compose="close" type="button" aria-label="Close (saves a draft)" title="Close (saves a draft)"><i data-lucide="x"></i></button>
     </header>
     <form id="composeForm" class="mail-compose-form" novalidate>
+      <div class="mail-compose-field" data-field="from" hidden><label for="composeFrom">From</label><select id="composeFrom" name="from"></select></div>
       <div class="mail-compose-field">
         <label for="composeTo">To</label>
         <input id="composeTo" name="to" type="text" autocomplete="off" list="knownAddresses" spellcheck="false" placeholder="name@example.com, another@example.com">
