@@ -597,7 +597,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const [tab, id] = window.location.hash.slice(1).split('/');
     const inboxId = tab === 'inbox' ? id : null;
     if (inboxId) { state.selectedId = inboxId; state.pendingReadId = inboxId; }
-    if (['overview', 'inbox', 'blogs', 'receipts'].includes(tab)) switchTab(tab);
+    if (['overview', 'inbox', 'blogs', 'receipts', 'mailboxes'].includes(tab)) switchTab(tab);
     if (inboxId) document.getElementById('inboxLayout').classList.add('is-detail-open');
   }
 

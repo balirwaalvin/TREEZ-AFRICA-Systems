@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="/css/global.css?v=20261024">
   <link rel="stylesheet" href="/css/admin.css?v=20261026">
   <link rel="stylesheet" href="/css/admin-receipts.css?v=20261110">
+  <link rel="stylesheet" href="/css/admin-mailboxes.css?v=20261118">
 </head>
 <body class="admin-page">
   <main class="admin-shell">
@@ -39,6 +40,7 @@
         <button class="admin-tab" data-tab="inbox" type="button"><i data-lucide="inbox"></i> Inbox <span id="unreadTabCount" class="admin-tab-count" hidden></span></button>
         <button class="admin-tab" data-tab="blogs" type="button"><i data-lucide="pen-line"></i> Blog editor</button>
         <button class="admin-tab" data-tab="receipts" type="button"><i data-lucide="receipt"></i> Receipts</button>
+        <button class="admin-tab" data-tab="mailboxes" type="button"><i data-lucide="mail"></i> Mailboxes</button>
       </nav>
       <div id="adminNotice" class="admin-message" role="status"></div>
 
@@ -198,12 +200,50 @@
           </form>
         </dialog>
       </section>
+
+      <!-- Mailboxes -->
+      <section class="admin-view" data-view="mailboxes">
+        <div class="admin-section-heading"><div><p class="admin-kicker">Email</p><h2>Mailboxes</h2></div><button id="newMailboxButton" class="admin-button admin-button-primary" type="button"><i data-lucide="plus"></i> New mailbox</button></div>
+        <p class="admin-muted admin-mailbox-intro">Each mailbox is one <strong id="mailboxDomainNote">@treez.tech</strong> address with its own password. People sign in at <a href="/mail/" target="_blank" rel="noopener">treez.tech/mail/</a> to read and send mail, which goes through Resend.</p>
+        <p id="mailboxNotice" class="admin-message" role="status"></p>
+
+        <form id="mailboxForm" class="admin-form admin-panel admin-mailbox-form" novalidate hidden>
+          <h3 class="admin-panel-title">New mailbox</h3>
+          <div class="admin-form-row">
+            <label>Address<span class="admin-mailbox-address"><input name="address" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="jane" required><span data-mailbox-domain>@treez.tech</span></span></label>
+            <label>Name shown to recipients<input name="displayName" autocomplete="off" placeholder="Jane Doe" required></label>
+          </div>
+          <label>Password (12+ characters)
+            <span class="admin-mailbox-password"><input name="password" type="text" autocomplete="off" spellcheck="false" minlength="12" required><button class="admin-button admin-button-quiet" data-mailbox-action="generate" type="button"><i data-lucide="dices"></i> Generate</button></span>
+          </label>
+          <p class="admin-muted">Share the password with the person privately. They can change it in their mailbox settings.</p>
+          <div class="admin-form-actions">
+            <div class="admin-form-actions-group"><button class="admin-button admin-button-primary" type="submit"><i data-lucide="mail-plus"></i> Create mailbox</button><button class="admin-button admin-button-quiet" data-mailbox-action="cancel" type="button">Cancel</button></div>
+          </div>
+          <p id="mailboxFormMessage" class="admin-message" role="alert"></p>
+        </form>
+
+        <div id="mailboxList" class="admin-mailbox-list" aria-label="Mailboxes"></div>
+
+        <dialog id="mailboxDialog" class="admin-dialog">
+          <form method="dialog" class="admin-form">
+            <h3 data-dialog-title></h3>
+            <div data-dialog-body></div>
+            <p class="admin-message" data-dialog-message role="alert"></p>
+            <div class="admin-dialog-actions">
+              <button class="admin-button admin-button-quiet" type="button" data-dialog-cancel>Cancel</button>
+              <button class="admin-button admin-button-primary" value="confirm" type="submit" data-dialog-confirm></button>
+            </div>
+          </form>
+        </dialog>
+      </section>
     </section>
   </main>
-  <script src="/js/api.js?v=20261110"></script>
+  <script src="/js/api.js?v=20261118"></script>
   <script src="https://cdn.jsdelivr.net/npm/lucide@1.46.0/dist/umd/lucide.js"></script>
   <script src="/js/admin.js?v=20261110"></script>
   <script src="/js/receipt-pdf.js?v=20261110"></script>
   <script src="/js/admin-receipts.js?v=20261110"></script>
+  <script src="/js/admin-mailboxes.js?v=20261118"></script>
 </body>
 </html>
