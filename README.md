@@ -100,9 +100,10 @@ TREEZ-AFRICA-Systems/
 │   ├── auth.ts             # Admin passwords, sessions and sign-in limits
 │   ├── http.ts             # JSON, validation and rate limiting helpers
 │   ├── receipts.ts         # Invoices, receipts and the receipt email
-│   └── smtp.ts             # Sends mail through Titan over SMTP
+│   ├── smtp.ts             # Sends mail through Titan over SMTP
+│   └── mail/               # Mailboxes at /mail/: sign-in, messages, Resend client and webhook
 ├── migrations/             # D1 (database) schema
-├── scripts/                # create-admin.mjs, backup.mjs, backup-schedule.sh, mail-catcher.mjs
+├── scripts/                # create-admin.mjs, create-mailbox.mjs, backup.mjs, backup-schedule.sh, mail-catcher.mjs
 ├── tests/                  # End-to-end API tests
 │
 └── public/                 # Everything visitors can load. Nothing outside it is served.
@@ -116,6 +117,7 @@ TREEZ-AFRICA-Systems/
     ├── blog-post/index.html    # Blog Article Template — served at /blog-post/?id=…
     ├── contact/index.html      # Contact Us + FAQ — served at /contact/
     ├── admin/index.html        # Private admin workspace — served at /admin/
+    ├── mail/index.html         # treez.tech mailboxes — served at /mail/
     ├── about.html, services.html, …   # Redirect stubs -> their /slug/ equivalent
     ├── 404.html                # Custom not-found page (stays at root)
     ├── favicon.png             # Brand favicon (amber circuit-tree mark)
@@ -163,7 +165,8 @@ The site runs on Cloudflare: static files from `public/`, a small Worker API in 
 |:-----|:--------|
 | Install dependencies | `npm install` |
 | Run locally | `npm run dev` |
-| Run locally, catching receipt emails | `npm run mail-catcher` + `npm run dev:mail-test` |
+| Run locally, catching receipt and mailbox emails | `npm run mail-catcher` + `npm run dev:mail-test` |
+| Create a mailbox, or reset its password | `npm run mail:create -- name@treez.tech "Full Name"` |
 | Check types | `npm run typecheck` |
 | Deploy to treez.tech | `npm run deploy` |
 | Apply new database migrations | `npm run db:migrate` |
@@ -178,6 +181,14 @@ The site runs on Cloudflare: static files from `public/`, a small Worker API in 
 ```sh
 npx cf build && npx vite preview --port 4173
 BASE_URL=http://localhost:4173 ADMIN_EMAIL=you@example.com ADMIN_PASSWORD=... npm test
+```
+
+The mailbox tests (`tests/mail.test.mjs`) also cover sending and receiving when the build is in mail-test mode, with the Resend stand-in running:
+
+```sh
+npx cf build --mode mail-test && npx vite preview --port 4173
+SITE_URL=http://localhost:4173 npm run mail-catcher
+MAIL_TEST=1 BASE_URL=http://localhost:4173 ADMIN_EMAIL=you@example.com ADMIN_PASSWORD=... node --test tests/mail.test.mjs
 ```
 
 **Spam protection:** public forms use [Cloudflare Turnstile](https://developers.cloudflare.com/turnstile/) plus a limit of 5 messages per IP every 10 minutes. The Worker's `TURNSTILE_SECRET` is stored in Cloudflare, never in this repo.
@@ -221,6 +232,50 @@ npm run dev:mail-test
 ```
 
 Plain `npm run dev` has no mailbox password, so it can never reach the real mailbox.
+
+## 📬 Mail (`/mail/`)
+
+`treez.tech/mail/` is a webmail client for `@treez.tech` addresses. Each address is a **mailbox** with its own password, separate from admin accounts: a mailbox password never opens the admin workspace, and an admin can't read anyone's mail. Mail is sent and received through [Resend](https://resend.com).
+
+**What people can do:** read mail in Inbox, Starred, Sent, Drafts, Archive, Junk and Bin; write, reply, reply all and forward, with attachments up to 15 MB each (25 MB per email); search everything; star, archive, mark read or unread, and select several emails at once; change their name, signature and password under Settings. Drafts save as you type. Keyboard shortcuts are listed under <kbd>?</kbd>.
+
+**Issuing mailboxes:** in the admin workspace, open **Mailboxes** → **New mailbox**, or use the command line (the password is typed at a hidden prompt):
+
+```sh
+npm run mail:create -- jane@treez.tech "Jane Doe"
+```
+
+From the Mailboxes tab an admin can rename a mailbox, set a new password, switch it off (signs it out and stops filing its mail, keeping everything) or, once switched off, delete it with all its mail. People can also sign in with just the part before the `@`.
+
+### How mail flows
+
+- **Sending:** the Worker calls Resend's API from the signed-in address. Attachments are uploaded to the `treez-mail` R2 bucket first, and Resend fetches them from a signed link that expires after a day, so large files never pass through the Worker's memory. Replies carry `In-Reply-To` and `References`, so they thread in the recipient's mail app. Each mailbox can send 100 emails a day.
+- **Receiving:** Resend calls `POST /api/mail/inbound` (signed with the webhook secret) for each `email.received` event. The Worker fetches the email, stores its HTML, attachments and original `.eml` in R2, and files a copy in every addressed mailbox (To, Cc, Bcc). Mail to an address with no mailbox is dropped. Mail that fails DMARC goes to Junk. Retries never file the same email twice.
+- **Delivery status:** subscribe the same webhook to `email.delivered`, `email.bounced`, `email.complained` and `email.delivery_delayed`, and the Sent folder shows whether each email arrived.
+- **Reading safely:** email HTML is shown in a sandboxed frame that can't run scripts or reach the page, and pictures from the web stay hidden until you choose **Show pictures**, because they can tell the sender you opened the email. Attachments always download rather than open on the site.
+
+### Setting up Resend
+
+1. In Resend, add the domain `treez.tech`. Add the DNS records Resend shows: the `resend._domainkey` TXT record (DKIM), and the `send` MX and TXT records (bounces and SPF). These sit beside Titan's records and don't affect Titan.
+2. Turn on **receiving** for the domain. Receiving needs an MX record pointing at Resend, and **`treez.tech`'s MX records currently point at Titan**, which serves `receipts@` and the other Titan mailboxes. Choose one:
+   - **Move `treez.tech`'s mail to Resend:** replace Titan's MX records with Resend's. Every `@treez.tech` address then arrives in `/mail/`, and Titan's mailboxes stop receiving new mail. Create a mailbox for each address that should keep working (for example `receipts@`, which receipts copy to) before switching.
+   - **Keep Titan and receive on a subdomain:** add Resend's MX record on a subdomain such as `in.treez.tech`. Mail to `jane@in.treez.tech` (or forwarded there from Titan) is filed in `jane@treez.tech`'s mailbox, because any subdomain of `MAIL_DOMAIN` counts.
+3. Create a Resend API key with sending access, and a webhook to `https://treez.tech/api/mail/inbound` for the events above. Store both in the Worker:
+
+   ```sh
+   npx cf workers secrets update --worker treez-africa-systems --type secret_text RESEND_API_KEY
+   npx cf workers secrets update --worker treez-africa-systems --type secret_text RESEND_WEBHOOK_SECRET
+   ```
+
+   Deploys fail until both exist. Until then, the API reports that email isn't set up.
+4. Create the R2 bucket once (`npx cf r2 buckets create treez-mail`) and apply the migration (`npm run db:migrate`).
+
+To try everything locally without Resend, run `npm run mail-catcher` and `npm run dev:mail-test`. The catcher plays Resend on port 2526: sent mail is saved to `mail-catcher/*-sent.json`, mail to `@treez.tech` comes straight back in as received, and you can pretend someone emailed a mailbox:
+
+```sh
+curl -X POST http://127.0.0.1:2526/inject -H 'Content-Type: application/json' \
+  -d '{"from":"Jane <jane@example.com>","to":["care@treez.tech"],"subject":"Hello","text":"Hi there"}'
+```
 
 <br>
 
