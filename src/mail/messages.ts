@@ -221,9 +221,9 @@ export async function emptyFolder(env: MailEnv, account: MailAccount, folder: st
 
 async function purge(env: MailEnv, where: string, ...values: unknown[]): Promise<number> {
   const files = await filesOf(env, where, ...values);
-  const { meta } = await env.DB.prepare(`DELETE FROM mail_messages WHERE ${where}`).bind(...values).run();
+  const { results } = await env.DB.prepare(`DELETE FROM mail_messages WHERE ${where} RETURNING id`).bind(...values).all();
   await releaseFiles(env, files);
-  return meta.changes;
+  return results.length;
 }
 
 // ---- Attachments being written ----
