@@ -132,7 +132,8 @@ function fileHeaders(contentType: string, disposition: string): Headers {
   });
 }
 
-const downloadName = (filename: string) => `attachment; filename*=UTF-8''${encodeURIComponent(filename)}`;
+const downloadName = (filename: string) =>
+  `attachment; filename*=UTF-8''${encodeURIComponent(filename).replace(/['()*]/g, (c) => `%${c.charCodeAt(0).toString(16).toUpperCase()}`)}`;
 
 /** The HTML body, as text: the page shows it inside a sandboxed frame. */
 export async function messageHtml(env: MailEnv, account: MailAccount, id: string): Promise<Response> {
