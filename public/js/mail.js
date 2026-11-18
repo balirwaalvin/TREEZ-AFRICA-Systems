@@ -723,7 +723,8 @@
     body.innerHTML = '<p class="mail-muted">Loading…</p>';
     let html;
     try {
-      html = await inlineImages(await api.html(message.id), message);
+      // A refresh tag could send the frame to another page; the page's own policy blocks that too.
+      html = (await inlineImages(await api.html(message.id), message)).replace(/<meta\b[^>]*http-equiv\s*=\s*["']?\s*refresh[^>]*>/gi, '');
     } catch {
       if (state.open?.id === message.id) body.replaceChildren(textNode(message.text));
       return;
