@@ -57,8 +57,11 @@ export interface OutgoingEmail {
   text: string;
   html: string;
   headers?: Record<string, string>;
-  /** Resend downloads each file from `path`, so nothing large passes through the Worker. */
-  attachments?: { filename: string; path: string; content_type: string }[];
+  /**
+   * Resend downloads a file from `path`, so nothing large passes through the Worker. `content`
+   * (base64) suits small files that are already in hand, like a receipt's PDF.
+   */
+  attachments?: ({ filename: string; content_type: string } & ({ path: string } | { content: string }))[];
 }
 
 export function sendEmail(env: ResendEnv, email: OutgoingEmail, idempotencyKey: string) {
