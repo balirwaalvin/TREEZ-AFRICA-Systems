@@ -99,8 +99,7 @@ TREEZ-AFRICA-Systems/
 │   ├── index.ts            # Routes for forms, blog, analytics and the admin workspace
 │   ├── auth.ts             # Admin passwords, sessions and sign-in limits
 │   ├── http.ts             # JSON, validation and rate limiting helpers
-│   ├── receipts.ts         # Invoices, receipts and the receipt email
-│   ├── smtp.ts             # Sends mail through Titan over SMTP
+│   ├── receipts.ts         # Invoices, receipts and the receipt email (sent through Resend)
 │   └── mail/               # Mailboxes at /mail/: sign-in, messages, Resend client and webhook
 ├── migrations/             # D1 (database) schema
 ├── scripts/                # create-admin.mjs, create-mailbox.mjs, backup.mjs, backup-schedule.sh, mail-catcher.mjs
@@ -212,26 +211,20 @@ Conversation status and notes are shared by all admins. Read/unread is remembere
 The **Receipts** tab issues eReceipts in the TAH template and emails them to clients from `receipts@treez.tech`.
 
 - **Each receipt is one payment against an invoice.** For a first payment, choose *New invoice*. For a later payment, open the last receipt and choose **Record next payment**, or pick the invoice from the list. The invoice details, items and balance are filled in for you, and each receipt's payment history lists every payment up to it.
-- **Preview before sending.** The PDF on the right is redrawn as you type, and it is exactly what gets attached. **Send to client** asks for confirmation, then emails the client and copies `receipts@treez.tech`. **Save without sending** keeps it to send later.
+- **Preview before sending.** The PDF on the right is redrawn as you type, and it is exactly what gets attached. **Send to client** asks for confirmation, then emails the client and files a copy, PDF included, in `receipts@treez.tech`'s Sent folder at `/mail/`. **Save without sending** keeps it to send later.
 - **Safeguards.** A payment can't be more than the balance, or dated before the invoice's last payment. Receipt and invoice numbers must be unique. Sent receipts can't be deleted.
 - **Numbers** are suggested in the house formats (`TAH-YYYYMMDD-NNN` for invoices, `TAH 8989 NNNN` for receipts), and both can be edited.
 
-Sending goes through Titan's mail server (`smtp.titan.email`, port 465). The mailbox password is a Worker secret, set once and whenever it changes:
+Receipts are sent through Resend, like the rest of the site's mail (see [Mail](#-mail-mail) below), using the same `RESEND_API_KEY`. Until it is set, receipts still save, and sending reports that email isn't set up yet. Clients who reply to a receipt reach the `receipts@treez.tech` mailbox.
 
-```sh
-npx cf workers secrets update SMTP_PASSWORD
-```
-
-Until it is set, receipts still save, and sending reports that email isn't set up yet.
-
-To try the whole flow without emailing anyone, run the mail catcher and the site in mail-test mode in two terminals. Every email is saved to `mail-catcher/` as an `.eml` file:
+To try the whole flow without emailing anyone, run the Resend stand-in and the site in mail-test mode in two terminals. Every email, receipts included, is saved to `mail-catcher/` as a `-sent.json` file:
 
 ```sh
 npm run mail-catcher
 npm run dev:mail-test
 ```
 
-Plain `npm run dev` has no mailbox password, so it can never reach the real mailbox.
+Plain `npm run dev` has no Resend API key, so it can never send real email.
 
 ## 📬 Mail (`/mail/`)
 
@@ -247,6 +240,8 @@ npm run mail:create -- jane@treez.tech "Jane Doe"
 
 From the Mailboxes tab an admin can rename a mailbox, set a new password, switch it off (signs it out and stops filing its mail, keeping everything) or, once switched off, delete it with all its mail. People can also sign in with just the part before the `@`.
 
+**Extra addresses:** a mailbox can also receive mail for other addresses, under **Mailboxes** → **Extra addresses**. Today `care@`, `helpdesk@` and `support@` land in `balirwa@treez.tech`'s inbox. Those emails carry a small tag (`care@`) in the list, replies go out from the address the email was sent to, and **From** in Compose lets you pick any of the mailbox's addresses. An extra address can't have its own sign-in, and belongs to one mailbox at a time.
+
 ### How mail flows
 
 - **Sending:** the Worker calls Resend's API from the signed-in address. Attachments are uploaded to the `treez-mail` R2 bucket first, and Resend fetches them from a signed link that expires after a day, so large files never pass through the Worker's memory. Replies carry `In-Reply-To` and `References`, so they thread in the recipient's mail app. Each mailbox can send 100 emails a day.
@@ -256,19 +251,21 @@ From the Mailboxes tab an admin can rename a mailbox, set a new password, switch
 
 ### Setting up Resend
 
-1. In Resend, add the domain `treez.tech`. Add the DNS records Resend shows: the `resend._domainkey` TXT record (DKIM), and the `send` MX and TXT records (bounces and SPF). These sit beside Titan's records and don't affect Titan.
-2. Turn on **receiving** for the domain. Receiving needs an MX record pointing at Resend, and **`treez.tech`'s MX records currently point at Titan**, which serves `receipts@` and the other Titan mailboxes. Choose one:
-   - **Move `treez.tech`'s mail to Resend:** replace Titan's MX records with Resend's. Every `@treez.tech` address then arrives in `/mail/`, and Titan's mailboxes stop receiving new mail. Create a mailbox for each address that should keep working (for example `receipts@`, which receipts copy to) before switching.
-   - **Keep Titan and receive on a subdomain:** add Resend's MX record on a subdomain such as `in.treez.tech`. Mail to `jane@in.treez.tech` (or forwarded there from Titan) is filed in `jane@treez.tech`'s mailbox, because any subdomain of `MAIL_DOMAIN` counts.
-3. Create a Resend API key with sending access, and a webhook to `https://treez.tech/api/mail/inbound` for the events above. Store both in the Worker:
+This is done for treez.tech (since November 2026). To set it up again:
+
+1. In Resend, add the domain `treez.tech` and the DNS records it shows: the `resend._domainkey` TXT record (DKIM) and the `send` MX and TXT records (bounces and SPF).
+2. Turn on **receiving** and point `treez.tech`'s MX record at Resend (`receive-euw1.forge.rmta.net`). Every `@treez.tech` address then arrives in `/mail/`. Mail for an address with no mailbox or extra address is dropped, so set those up first. (Mail can also be received on a subdomain such as `in.treez.tech`: any subdomain of `MAIL_DOMAIN` files into the matching `@treez.tech` mailbox.)
+3. Create a Resend API key with sending access, and a webhook to `https://treez.tech/api/mail/inbound` for the events above. Store both in the Worker. Each command waits for you to paste the value, and neither shows it nor saves it in your shell history:
 
    ```sh
-   npx cf workers secrets update --worker treez-africa-systems --type secret_text RESEND_API_KEY
-   npx cf workers secrets update --worker treez-africa-systems --type secret_text RESEND_WEBHOOK_SECRET
+   read -rs VALUE && npx cf workers secrets update RESEND_API_KEY --worker treez-africa-systems --type secret_text --text "$VALUE"; unset VALUE
+   read -rs VALUE && npx cf workers secrets update RESEND_WEBHOOK_SECRET --worker treez-africa-systems --type secret_text --text "$VALUE"; unset VALUE
    ```
 
-   Deploys fail until both exist. Until then, the API reports that email isn't set up.
-4. Create the R2 bucket once (`npx cf r2 buckets create treez-mail`) and apply the migration (`npm run db:migrate`).
+   Deploys fail until both exist.
+4. Create the R2 bucket once (`npx cf r2 buckets create --name treez-mail`) and apply the migrations (`npm run db:migrate`).
+
+If an email arrived before its mailbox or extra address existed, replay its `email.received` delivery from the webhook's log in Resend, and it's filed.
 
 To try everything locally without Resend, run `npm run mail-catcher` and `npm run dev:mail-test`. The catcher plays Resend on port 2526: sent mail is saved to `mail-catcher/*-sent.json`, mail to `@treez.tech` comes straight back in as received, and you can pretend someone emailed a mailbox:
 
