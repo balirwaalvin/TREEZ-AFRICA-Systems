@@ -11,21 +11,24 @@ export default defineConfig(({ mode }) => {
       name: "treez-africa-systems",
       entrypoint,
       compatibilityDate: "2026-11-01",
-      domains: ["treez.tech"],
+      // The site, and the mailboxes on their own subdomain.
+      domains: ["treez.tech", "mail.treez.tech"],
       workersDev: false,
       previewUrls: false,
       assets: {
         htmlHandling: "auto-trailing-slash",
         notFoundHandling: "404-page",
-        // Only the API runs code; every page and file is served straight from the edge.
-        runWorkerFirst: ["/api/*"],
+        // Only the API, and the paths the mail subdomain answers differently, run code. Every
+        // other page and file is served straight from the edge, on both hostnames.
+        runWorkerFirst: ["/api/*", "/", "/mail", "/mail/*"],
       },
       env: {
+        ASSETS: bindings.assets(),
         DB: bindings.d1({ id: "0603466d-5476-40f9-969e-7c6c84eb82c3", name: "treez-db" }),
         TURNSTILE_SECRET: bindings.secret(),
         // Per-IP cap on page view writes, enforced without touching the database.
         VIEWS_LIMIT: bindings.rateLimit({ namespace: "1001", simple: { limit: 30, period: 60 } }),
-        // Mailboxes at /mail/ and receipts (from receipts@) send and receive through Resend.
+        // Mailboxes at mail.treez.tech and receipts (from receipts@) send and receive through Resend.
         // In mail-test mode a local stand-in (scripts/mail-catcher.mjs) plays Resend, so nothing
         // is ever really sent. Plain `npm run dev` has no API key, so it can't send either.
         MAIL_DOMAIN: bindings.text("treez.tech"),

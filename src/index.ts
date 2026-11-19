@@ -7,6 +7,7 @@ import type { MailEnv } from "./mail/store.ts";
 import { createReceipt, deleteReceipt, listReceipts, sendReceipt, updateInvoice, type ReceiptEnv } from "./receipts.ts";
 
 interface Env extends ReceiptEnv, MailEnv {
+  ASSETS: Fetcher;
   TURNSTILE_SECRET: string;
   VIEWS_LIMIT: RateLimit;
 }
@@ -247,8 +248,42 @@ async function route(request: Request, env: Env): Promise<Response> {
   throw new HttpError(404, "Not found.");
 }
 
+// Same as the /mail/* rules in public/_headers, which don't reach pages the Worker serves.
+const MAIL_PAGE_HEADERS = {
+  "X-Robots-Tag": "noindex, nofollow",
+  "Cache-Control": "no-store",
+  "Referrer-Policy": "no-referrer",
+  "Content-Security-Policy":
+    "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https: http:; connect-src 'self'; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'",
+  "X-Content-Type-Options": "nosniff",
+  "X-Frame-Options": "SAMEORIGIN",
+};
+
+/**
+ * Pages the Worker sees (see runWorkerFirst in cloudflare.config.ts). The mailboxes live at the
+ * root of mail.treez.tech, and treez.tech/mail/ sends people there. Locally, mail.localhost
+ * plays the subdomain and /mail/ keeps working, so dev and tests need no extra hostnames.
+ */
+async function page(request: Request, env: Env, url: URL): Promise<Response> {
+  const mailPath = url.pathname === "/mail" || url.pathname.startsWith("/mail/");
+  if (url.hostname.startsWith("mail.")) {
+    if (mailPath) return Response.redirect(new URL("/", url).href, 301);
+    if (url.pathname === "/") {
+      const asset = await env.ASSETS.fetch(new Request(new URL("/mail/", url), request));
+      const response = new Response(asset.body, asset);
+      for (const [name, value] of Object.entries(MAIL_PAGE_HEADERS)) response.headers.set(name, value);
+      return response;
+    }
+  } else if (mailPath && (url.hostname === env.MAIL_DOMAIN || url.hostname === `www.${env.MAIL_DOMAIN}`)) {
+    return Response.redirect(`https://mail.${env.MAIL_DOMAIN}/`, 301);
+  }
+  return env.ASSETS.fetch(request);
+}
+
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
+    const url = new URL(request.url);
+    if (!url.pathname.startsWith("/api/")) return page(request, env, url);
     try {
       return await route(request, env);
     } catch (error) {
