@@ -193,6 +193,9 @@ async function route(request: Request, env: Env): Promise<Response> {
   const { method } = request;
   const path = url.pathname.replace(/\/+$/, "");
 
+  // The mail subdomain answers only the mailbox's own API.
+  if (onMailHost(url) && !isMailApi(path)) throw new HttpError(404, "Not found.");
+
   // Resend's webhook isn't a browser and has no Origin. It proves itself with a signature instead.
   if (path === "/api/mail/inbound" && method === "POST") return handleWebhook(request, env);
 
@@ -208,7 +211,7 @@ async function route(request: Request, env: Env): Promise<Response> {
   const publicPostMatch = path.match(/^\/api\/posts\/([^/]+)$/);
   if (publicPostMatch && method === "GET") return publicPost(env, decodeURIComponent(publicPostMatch[1]!));
 
-  if (path === "/api/mail" || path.startsWith("/api/mail/")) return mailRoute(request, env, url, path);
+  if (isMailApi(path)) return mailRoute(request, env, url, path);
 
   if (path === "/api/admin/login" && method === "POST") return login(request, env.DB);
   if (path === "/api/admin/logout" && method === "POST") return logout(request, env.DB);
@@ -259,21 +262,27 @@ const MAIL_PAGE_HEADERS = {
   "X-Frame-Options": "SAMEORIGIN",
 };
 
+const onMailHost = (url: URL) => url.hostname.startsWith("mail.");
+const isMailApi = (path: string) => path === "/api/mail" || path.startsWith("/api/mail/");
+
 /**
- * Pages the Worker sees (see runWorkerFirst in cloudflare.config.ts). The mailboxes live at the
- * root of mail.treez.tech, and treez.tech/mail/ sends people there. Locally, mail.localhost
- * plays the subdomain and /mail/ keeps working, so dev and tests need no extra hostnames.
+ * Pages the Worker sees (see runWorkerFirst in cloudflare.config.ts). mail.treez.tech shows only
+ * the mailbox, at its root; any other page there, and treez.tech/mail/, sends people to the right
+ * place. Locally, mail.localhost plays the subdomain and /mail/ keeps working, so dev and tests
+ * need no extra hostnames.
  */
 async function page(request: Request, env: Env, url: URL): Promise<Response> {
   const mailPath = url.pathname === "/mail" || url.pathname.startsWith("/mail/");
-  if (url.hostname.startsWith("mail.")) {
-    if (mailPath) return Response.redirect(new URL("/", url).href, 301);
+  if (onMailHost(url)) {
     if (url.pathname === "/") {
       const asset = await env.ASSETS.fetch(new Request(new URL("/mail/", url), request));
       const response = new Response(asset.body, asset);
       for (const [name, value] of Object.entries(MAIL_PAGE_HEADERS)) response.headers.set(name, value);
       return response;
     }
+    if (mailPath) return Response.redirect(new URL("/", url).href, 301);
+    const site = new URL(url.pathname + url.search, `${url.protocol}//${url.host.slice("mail.".length)}`);
+    return Response.redirect(site.href, 301);
   } else if (mailPath && (url.hostname === env.MAIL_DOMAIN || url.hostname === `www.${env.MAIL_DOMAIN}`)) {
     return Response.redirect(`https://mail.${env.MAIL_DOMAIN}/`, 301);
   }

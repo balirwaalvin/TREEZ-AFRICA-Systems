@@ -18,9 +18,10 @@ export default defineConfig(({ mode }) => {
       assets: {
         htmlHandling: "auto-trailing-slash",
         notFoundHandling: "404-page",
-        // Only the API, and the paths the mail subdomain answers differently, run code. Every
-        // other page and file is served straight from the edge, on both hostnames.
-        runWorkerFirst: ["/api/*", "/", "/mail", "/mail/*"],
+        // Pages and the API run code, so mail.treez.tech can show only the mailbox (on treez.tech
+        // the Worker just hands pages to the static files). Styles, scripts, images and fonts are
+        // served straight from the edge on both hostnames, without running the Worker.
+        runWorkerFirst: ["/*", "!/css/*", "!/js/*", "!/assets/*", "!/favicon.png"],
       },
       env: {
         ASSETS: bindings.assets(),
