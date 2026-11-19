@@ -1,5 +1,6 @@
 import { HttpError, json } from "../http.ts";
 import { addressesOf, mailboxFor, parseAddress } from "./address.ts";
+import { notify } from "./push.ts";
 import { receivedAttachments, receivedEmail, verifyWebhook } from "./resend.ts";
 import { now, type MailEnv } from "./store.ts";
 import { htmlToText, snippetOf } from "./text.ts";
@@ -31,7 +32,7 @@ interface WebhookEvent {
   };
 }
 
-export async function handleWebhook(request: Request, env: MailEnv): Promise<Response> {
+export async function handleWebhook(request: Request, env: MailEnv, ctx: ExecutionContext): Promise<Response> {
   if (!env.RESEND_WEBHOOK_SECRET) throw new HttpError(503, "Receiving isn't set up yet.");
   const declared = Number(request.headers.get("Content-Length") ?? 0);
   if (declared > MAX_WEBHOOK_BYTES) throw new HttpError(413, "Too large.");
@@ -48,7 +49,7 @@ export async function handleWebhook(request: Request, env: MailEnv): Promise<Res
   const emailId = event.data?.email_id;
   if (typeof emailId !== "string" || !emailId) return json({ ok: true, ignored: true });
 
-  if (event.type === "email.received") return json({ ok: true, filed: await fileReceived(env, emailId, event.data!) });
+  if (event.type === "email.received") return json({ ok: true, filed: await fileReceived(env, ctx, emailId, event.data!) });
   const delivery = DELIVERY[event.type ?? ""];
   if (delivery) {
     // A later "delayed" or "delivered" never hides a bounce or complaint.
@@ -82,7 +83,7 @@ const header = (headers: Record<string, unknown> | undefined, name: string): str
   return (Array.isArray(value) ? value.join(" ") : typeof value === "string" ? value : "").slice(0, 4_000);
 };
 
-async function fileReceived(env: MailEnv, emailId: string, data: NonNullable<WebhookEvent["data"]>): Promise<number> {
+async function fileReceived(env: MailEnv, ctx: ExecutionContext, emailId: string, data: NonNullable<WebhookEvent["data"]>): Promise<number> {
   // Everyone the email was addressed to, including Bcc and the envelope recipients.
   const addresses = new Set(
     [data.to, data.cc, data.bcc, data.received_for]
@@ -129,8 +130,10 @@ async function fileReceived(env: MailEnv, emailId: string, data: NonNullable<Web
   const time = now();
 
   const statements: D1PreparedStatement[] = [];
+  const filed: { accountId: string; messageId: string }[] = [];
   for (const account of accounts) {
     const messageId = crypto.randomUUID();
+    filed.push({ accountId: account.id, messageId });
     statements.push(
       env.DB.prepare(
         `INSERT OR IGNORE INTO mail_messages (id, account_id, folder, direction, resend_id, message_id, in_reply_to, refs,
@@ -182,5 +185,36 @@ async function fileReceived(env: MailEnv, emailId: string, data: NonNullable<Web
     }
   }
   await env.DB.batch(statements);
+  // Junk stays quiet. Notifying happens after Resend gets its answer.
+  if (folder === "inbox") ctx.waitUntil(notifyNewMail(env, filed, { from, subject, snippet: snippetOf(textBody) }));
   return accounts.length;
+}
+
+/** Tells each mailbox's devices about the email just filed in its inbox. */
+async function notifyNewMail(
+  env: MailEnv,
+  filed: { accountId: string; messageId: string }[],
+  email: { from: { name: string; address: string }; subject: string; snippet: string },
+): Promise<void> {
+  try {
+    // Only rows that were really inserted (a retry racing this one inserts nothing), with each inbox's unread count.
+    const { results } = await env.DB.prepare(
+      `SELECT m.id, m.account_id AS accountId,
+         (SELECT COUNT(*) FROM mail_messages u WHERE u.account_id = m.account_id AND u.folder = 'inbox' AND u.is_read = 0) AS unread
+       FROM mail_messages m WHERE m.id IN (SELECT value FROM json_each(?1))`,
+    )
+      .bind(JSON.stringify(filed.map((item) => item.messageId)))
+      .all<{ id: string; accountId: string; unread: number }>();
+    const title = (email.from.name || email.from.address || "New email").slice(0, 120);
+    const body = [email.subject || "(no subject)", email.snippet].filter(Boolean).join("\n").slice(0, 400);
+    await notify(
+      env,
+      results.map((row) => ({
+        accountId: row.accountId,
+        message: { title, body, url: `#inbox/${encodeURIComponent(row.id)}`, tag: row.id, unread: row.unread },
+      })),
+    );
+  } catch (error) {
+    console.error("New mail notifications failed", error);
+  }
 }

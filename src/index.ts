@@ -188,7 +188,7 @@ async function adminViews(url: URL, env: Env): Promise<Response> {
   return json({ total: count?.results[0]?.total ?? 0, documents: rows?.results ?? [] });
 }
 
-async function route(request: Request, env: Env): Promise<Response> {
+async function route(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
   const url = new URL(request.url);
   const { method } = request;
   const path = url.pathname.replace(/\/+$/, "");
@@ -197,7 +197,7 @@ async function route(request: Request, env: Env): Promise<Response> {
   if (onMailHost(url) && !isMailApi(path)) throw new HttpError(404, "Not found.");
 
   // Resend's webhook isn't a browser and has no Origin. It proves itself with a signature instead.
-  if (path === "/api/mail/inbound" && method === "POST") return handleWebhook(request, env);
+  if (path === "/api/mail/inbound" && method === "POST") return handleWebhook(request, env, ctx);
 
   // Browsers always send Origin on these methods, so this blocks other sites from posting here
   // (the session cookie's SameSite=Strict is the second layer for admin routes).
@@ -290,11 +290,11 @@ async function page(request: Request, env: Env, url: URL): Promise<Response> {
 }
 
 export default {
-  async fetch(request: Request, env: Env): Promise<Response> {
+  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
     if (!url.pathname.startsWith("/api/")) return page(request, env, url);
     try {
-      return await route(request, env);
+      return await route(request, env, ctx);
     } catch (error) {
       if (error instanceof HttpError) return json({ error: error.message }, { status: error.status, headers: error.headers });
       console.error("Unhandled API error", error);
