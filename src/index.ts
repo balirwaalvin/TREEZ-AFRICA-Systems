@@ -262,6 +262,17 @@ const MAIL_PAGE_HEADERS = {
   "X-Frame-Options": "SAMEORIGIN",
 };
 
+// What mail.treez.tech serves itself, from public/mail/. The service worker has to sit at the root
+// so it can look after the whole app.
+const MAIL_HOST_FILES: Record<string, { from: string; headers: Record<string, string> }> = {
+  "/": { from: "/mail/", headers: MAIL_PAGE_HEADERS },
+  "/sw.js": { from: "/mail/sw.js", headers: { "Cache-Control": "no-cache", "X-Content-Type-Options": "nosniff" } },
+  "/manifest.webmanifest": {
+    from: "/mail/manifest.webmanifest",
+    headers: { "Content-Type": "application/manifest+json", "Cache-Control": "no-cache", "X-Content-Type-Options": "nosniff" },
+  },
+};
+
 const onMailHost = (url: URL) => url.hostname.startsWith("mail.");
 const isMailApi = (path: string) => path === "/api/mail" || path.startsWith("/api/mail/");
 
@@ -274,10 +285,11 @@ const isMailApi = (path: string) => path === "/api/mail" || path.startsWith("/ap
 async function page(request: Request, env: Env, url: URL): Promise<Response> {
   const mailPath = url.pathname === "/mail" || url.pathname.startsWith("/mail/");
   if (onMailHost(url)) {
-    if (url.pathname === "/") {
-      const asset = await env.ASSETS.fetch(new Request(new URL("/mail/", url), request));
+    const file = MAIL_HOST_FILES[url.pathname];
+    if (file) {
+      const asset = await env.ASSETS.fetch(new Request(new URL(file.from, url), request));
       const response = new Response(asset.body, asset);
-      for (const [name, value] of Object.entries(MAIL_PAGE_HEADERS)) response.headers.set(name, value);
+      for (const [name, value] of Object.entries(file.headers)) response.headers.set(name, value);
       return response;
     }
     if (mailPath) return Response.redirect(new URL("/", url).href, 301);
