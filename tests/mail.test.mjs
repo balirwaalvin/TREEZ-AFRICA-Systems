@@ -7,6 +7,7 @@
 // Without MAIL_TEST, they check that sending and receiving refuse to run with no Resend keys.
 import assert from 'node:assert/strict';
 import { createHmac } from 'node:crypto';
+import { request as httpRequest } from 'node:http';
 import { test } from 'node:test';
 
 const BASE = process.env.BASE_URL ?? 'http://localhost:5173';
@@ -60,6 +61,35 @@ const wait = (ms) => new Promise((resolve) => { setTimeout(resolve, ms); });
 async function inbox(as, folder = 'inbox') {
   return (await call(`/api/mail/messages?folder=${folder}`, { as })).data.documents;
 }
+
+// fetch() won't let a test pick the Host header, so these page checks use node:http.
+function page(path, host) {
+  const base = new URL(BASE);
+  return new Promise((resolve, reject) => {
+    httpRequest({ hostname: base.hostname, port: base.port, path, headers: { Host: `${host}:${base.port}` } }, (response) => {
+      let body = '';
+      response.on('data', (chunk) => { body += chunk; });
+      response.on('end', () => resolve({ status: response.statusCode, headers: response.headers, body }));
+    }).on('error', reject).end();
+  });
+}
+
+test('the mail subdomain serves the mailbox at its root, locked down like /mail/', async () => {
+  const root = await page('/', 'mail.localhost');
+  assert.equal(root.status, 200);
+  assert.match(root.body, /<title>TREEZ Mail<\/title>/);
+  assert.match(root.headers['content-security-policy'], /frame-ancestors 'none'/);
+  assert.equal(root.headers['cache-control'], 'no-store');
+  assert.equal(root.headers['x-robots-tag'], 'noindex, nofollow');
+  for (const path of ['/mail', '/mail/', '/mail/anything']) {
+    const moved = await page(path, 'mail.localhost');
+    assert.equal(moved.status, 301, path);
+    assert.equal(new URL(moved.headers.location).pathname, '/', path);
+  }
+  // The site itself is unchanged, and locally /mail/ still opens the mailbox.
+  assert.doesNotMatch((await page('/', 'localhost')).body, /<title>TREEZ Mail<\/title>/);
+  assert.match((await page('/mail/', 'localhost')).body, /<title>TREEZ Mail<\/title>/);
+});
 
 test('admins sign in for the mailbox tests', async () => {
   const result = await call('/api/admin/login', { method: 'POST', body: { email: EMAIL, password: PASSWORD } });
