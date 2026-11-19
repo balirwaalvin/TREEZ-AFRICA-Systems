@@ -293,7 +293,7 @@ export async function deleteReceipt(env: ReceiptEnv, id: string): Promise<Respon
 
 /**
  * Emails the receipt to the client with the PDF the admin previewed attached, and files a copy in
- * the receipts mailbox's Sent folder at /mail/. The PDF is made in the admin's browser; see
+ * the receipts mailbox's Sent folder at mail.treez.tech. The PDF is made in the admin's browser; see
  * public/js/receipt-pdf.js.
  */
 export async function sendReceipt(request: Request, env: ReceiptEnv, id: string): Promise<Response> {

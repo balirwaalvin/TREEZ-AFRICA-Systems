@@ -3,7 +3,7 @@ import { now, type MailEnv } from "./store.ts";
 
 /**
  * Files a copy of an email the site sent by itself (a receipt, say) in the Sent folder of the
- * mailbox it came from, so it can be found at /mail/ like any other sent email. Nothing is
+ * mailbox it came from, so it can be found at mail.treez.tech like any other sent email. Nothing is
  * filed when no mailbox owns the address.
  */
 export async function fileSentCopy(

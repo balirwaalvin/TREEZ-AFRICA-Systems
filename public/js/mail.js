@@ -1,5 +1,5 @@
 /* ============================================
-   TREEZ AFRICA SYSTEMS — Mail (/mail/)
+   TREEZ AFRICA SYSTEMS — Mail (mail.treez.tech)
    A mailbox for one treez.tech address: read, organise, write and send.
    The API is src/mail/; email HTML is shown in a sandboxed frame that can't run scripts.
    ============================================ */
