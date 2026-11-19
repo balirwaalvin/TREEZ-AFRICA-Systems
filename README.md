@@ -102,7 +102,7 @@ TREEZ-AFRICA-Systems/
 │   ├── receipts.ts         # Invoices, receipts and the receipt email (sent through Resend)
 │   └── mail/               # Mailboxes at mail.treez.tech: sign-in, messages, Resend client and webhook
 ├── migrations/             # D1 (database) schema
-├── scripts/                # create-admin.mjs, create-mailbox.mjs, backup.mjs, backup-schedule.sh, mail-catcher.mjs
+├── scripts/                # create-admin.mjs, create-mailbox.mjs, backup.mjs, backup-schedule.sh, mail-catcher.mjs, push-keys.mjs
 ├── tests/                  # End-to-end API tests
 │
 └── public/                 # Everything visitors can load. Nothing outside it is served.
@@ -166,6 +166,7 @@ The site runs on Cloudflare: static files from `public/`, a small Worker API in 
 | Run locally | `npm run dev` |
 | Run locally, catching receipt and mailbox emails | `npm run mail-catcher` + `npm run dev:mail-test` |
 | Create a mailbox, or reset its password | `npm run mail:create -- name@treez.tech "Full Name"` |
+| Make the keys for new-mail notifications (once) | `npm run push:keys` |
 | Check types | `npm run typecheck` |
 | Deploy to treez.tech | `npm run deploy` |
 | Apply new database migrations | `npm run db:migrate` |
@@ -251,12 +252,24 @@ From the Mailboxes tab an admin can rename a mailbox, set a new password, switch
 - **Delivery status:** subscribe the same webhook to `email.delivered`, `email.bounced`, `email.complained` and `email.delivery_delayed`, and the Sent folder shows whether each email arrived.
 - **Reading safely:** email HTML is shown in a sandboxed frame that can't run scripts or reach the page, and pictures from the web stay hidden until you choose **Show pictures**, because they can tell the sender you opened the email. Attachments always download rather than open on the site.
 
+### The app and notifications
+
+`mail.treez.tech` is an installable app (a PWA). In Chrome, Edge and on Android, **Install app** appears in the account menu; on iPhone and iPad, use Share → **Add to Home Screen**. Installed, it opens in its own window with the TREEZ icon, shows the unread count on the icon where the system supports it, and still opens without a connection (mail itself is never stored on the device, so reading needs a connection).
+
+**New-mail notifications** reach the phone's or computer's notification panel even when the app is closed. People turn them on per device from the prompt above the inbox or under **Settings → Notifications**, which also has **Send a test**. On iPhone and iPad they work once TREEZ Mail has been added to the Home Screen (iOS 16.4 or later). Tapping a notification opens that email.
+
+- **How they're sent:** after an email is filed in an inbox (not Junk), the Worker sends a Web Push message to each device that turned notifications on, through that browser's own push service (Google, Mozilla, Apple or Microsoft). Each message is encrypted for that device and signed with the site's key (VAPID), in `src/mail/push.ts`. It holds the sender, the subject and the first line.
+- **Which devices:** a device belongs to the sign-in it was turned on from, in `mail_push_subscriptions`. Signing out, a password change on another device, or the mailbox being switched off or deleted ends its notifications. Devices the browser has dropped are forgotten the first time a push to them fails. Each mailbox can have up to 20 devices.
+- **Keys:** `npm run push:keys` makes the key pair once and stores it as the Worker secrets `VAPID_PUBLIC_KEY` and `VAPID_PRIVATE_KEY`, keeping a copy in `.env.local`. Until then, Settings says notifications aren't set up. Making new keys later (`npm run push:keys -- --replace`) is safe: each device signs up again by itself the next time the app is opened.
+- **Files:** `public/mail/manifest.webmanifest` and `public/mail/sw.js` (the service worker: notifications, opening emails, the offline copy of the app), served at the root of `mail.treez.tech`. Icons are in `public/assets/images/mail/`.
+- **Trying it locally:** in mail-test mode the Resend stand-in also plays the push service, and `tests/mail.test.mjs` decrypts each push and checks its signature, as a browser would.
+
 ### Setting up Resend
 
 This is done for treez.tech (since November 2026). To set it up again:
 
 1. In Resend, add the domain `treez.tech` and the DNS records it shows: the `resend._domainkey` TXT record (DKIM) and the `send` MX and TXT records (bounces and SPF).
-2. Turn on **receiving** and point `treez.tech`'s MX record at Resend (`receive-euw1.forge.rmta.net`). Every `@treez.tech` address then arrives in `/mail/`. Mail for an address with no mailbox or extra address is dropped, so set those up first. (Mail can also be received on a subdomain such as `in.treez.tech`: any subdomain of `MAIL_DOMAIN` files into the matching `@treez.tech` mailbox.)
+2. Turn on **receiving** and point `treez.tech`'s MX record at Resend (`receive-euw1.forge.rmta.net`). Every `@treez.tech` address then arrives at `mail.treez.tech`. Mail for an address with no mailbox or extra address is dropped, so set those up first. (Mail can also be received on a subdomain such as `in.treez.tech`: any subdomain of `MAIL_DOMAIN` files into the matching `@treez.tech` mailbox.)
 3. Create a Resend API key with sending access, and a webhook to `https://treez.tech/api/mail/inbound` for the events above. Store both in the Worker. Each command waits for you to paste the value, and neither shows it nor saves it in your shell history:
 
    ```sh
