@@ -40,6 +40,11 @@ export async function currentAccount(request: Request, db: D1Database): Promise<
     .first<MailAccount>();
 }
 
+/** Identifies this sign-in, the same way mail_sessions stores it. */
+export async function sessionHash(request: Request): Promise<string> {
+  return sha256(readCookie(request, COOKIE) ?? "");
+}
+
 export async function requireAccount(request: Request, db: D1Database): Promise<MailAccount> {
   const account = await currentAccount(request, db);
   if (!account) throw new HttpError(401, "Please sign in.");

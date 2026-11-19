@@ -1,6 +1,7 @@
+import type { PushEnv } from "./push.ts";
 import type { ResendEnv } from "./resend.ts";
 
-export interface MailEnv extends ResendEnv {
+export interface MailEnv extends ResendEnv, PushEnv {
   DB: D1Database;
   MAIL_FILES: R2Bucket;
   MAIL_DOMAIN: string;

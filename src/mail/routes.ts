@@ -1,5 +1,5 @@
 import { HttpError } from "../http.ts";
-import { changePassword, mailLogin, mailLogout, requireAccount, session, updateSettings } from "./accounts.ts";
+import { changePassword, mailLogin, mailLogout, requireAccount, session, sessionHash, updateSettings } from "./accounts.ts";
 import {
   attachmentFile,
   deleteMessages,
@@ -16,6 +16,7 @@ import {
   updateMessages,
   uploadAttachment,
 } from "./messages.ts";
+import { pushSettings, subscribe, testPush, unsubscribe } from "./push.ts";
 import type { MailEnv } from "./store.ts";
 
 /** Routes under /api/mail. The webhook (/api/mail/inbound) is routed before the same-origin check. */
@@ -36,6 +37,10 @@ export async function mailRoute(request: Request, env: MailEnv, url: URL, path: 
   if (path === "/api/mail/session" && method === "GET") return session(env.DB, account);
   if (path === "/api/mail/account" && method === "PUT") return updateSettings(request, env, account);
   if (path === "/api/mail/account/password" && method === "POST") return changePassword(request, env, account);
+  if (path === "/api/mail/push" && method === "GET") return pushSettings(env);
+  if (path === "/api/mail/push" && method === "POST") return subscribe(request, env, account, await sessionHash(request));
+  if (path === "/api/mail/push/delete" && method === "POST") return unsubscribe(request, env, account);
+  if (path === "/api/mail/push/test" && method === "POST") return testPush(env, account, await sessionHash(request));
   if (path === "/api/mail/folders" && method === "GET") return folderCounts(env, account);
   const emptied = param(/^\/api\/mail\/folders\/([^/]+)\/empty$/);
   if (emptied !== null && method === "POST") return emptyFolder(env, account, emptied);
