@@ -39,6 +39,8 @@
       state.domain = data.domain;
       state.loaded = true;
       els.domainNote.textContent = `@${state.domain}`;
+      const signIn = $('mailboxSignInLink');
+      if (signIn) { signIn.href = `https://mail.${state.domain}/`; signIn.textContent = `mail.${state.domain}`; }
       document.querySelectorAll('[data-mailbox-domain]').forEach((element) => { element.textContent = `@${state.domain}`; });
       render();
     }).catch((error) => {
