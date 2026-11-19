@@ -100,7 +100,7 @@ TREEZ-AFRICA-Systems/
 │   ├── auth.ts             # Admin passwords, sessions and sign-in limits
 │   ├── http.ts             # JSON, validation and rate limiting helpers
 │   ├── receipts.ts         # Invoices, receipts and the receipt email (sent through Resend)
-│   └── mail/               # Mailboxes at /mail/: sign-in, messages, Resend client and webhook
+│   └── mail/               # Mailboxes at mail.treez.tech: sign-in, messages, Resend client and webhook
 ├── migrations/             # D1 (database) schema
 ├── scripts/                # create-admin.mjs, create-mailbox.mjs, backup.mjs, backup-schedule.sh, mail-catcher.mjs
 ├── tests/                  # End-to-end API tests
@@ -116,7 +116,7 @@ TREEZ-AFRICA-Systems/
     ├── blog-post/index.html    # Blog Article Template — served at /blog-post/?id=…
     ├── contact/index.html      # Contact Us + FAQ — served at /contact/
     ├── admin/index.html        # Private admin workspace — served at /admin/
-    ├── mail/index.html         # treez.tech mailboxes — served at /mail/
+    ├── mail/index.html         # treez.tech mailboxes — served at the root of mail.treez.tech
     ├── about.html, services.html, …   # Redirect stubs -> their /slug/ equivalent
     ├── 404.html                # Custom not-found page (stays at root)
     ├── favicon.png             # Brand favicon (amber circuit-tree mark)
@@ -211,11 +211,11 @@ Conversation status and notes are shared by all admins. Read/unread is remembere
 The **Receipts** tab issues eReceipts in the TAH template and emails them to clients from `receipts@treez.tech`.
 
 - **Each receipt is one payment against an invoice.** For a first payment, choose *New invoice*. For a later payment, open the last receipt and choose **Record next payment**, or pick the invoice from the list. The invoice details, items and balance are filled in for you, and each receipt's payment history lists every payment up to it.
-- **Preview before sending.** The PDF on the right is redrawn as you type, and it is exactly what gets attached. **Send to client** asks for confirmation, then emails the client and files a copy, PDF included, in `receipts@treez.tech`'s Sent folder at `/mail/`. **Save without sending** keeps it to send later.
+- **Preview before sending.** The PDF on the right is redrawn as you type, and it is exactly what gets attached. **Send to client** asks for confirmation, then emails the client and files a copy, PDF included, in `receipts@treez.tech`'s Sent folder at `mail.treez.tech`. **Save without sending** keeps it to send later.
 - **Safeguards.** A payment can't be more than the balance, or dated before the invoice's last payment. Receipt and invoice numbers must be unique. Sent receipts can't be deleted.
 - **Numbers** are suggested in the house formats (`TAH-YYYYMMDD-NNN` for invoices, `TAH 8989 NNNN` for receipts), and both can be edited.
 
-Receipts are sent through Resend, like the rest of the site's mail (see [Mail](#-mail-mail) below), using the same `RESEND_API_KEY`. Until it is set, receipts still save, and sending reports that email isn't set up yet. Clients who reply to a receipt reach the `receipts@treez.tech` mailbox.
+Receipts are sent through Resend, like the rest of the site's mail (see [Mail](#-mail-mailtreeztech) below), using the same `RESEND_API_KEY`. Until it is set, receipts still save, and sending reports that email isn't set up yet. Clients who reply to a receipt reach the `receipts@treez.tech` mailbox.
 
 To try the whole flow without emailing anyone, run the Resend stand-in and the site in mail-test mode in two terminals. Every email, receipts included, is saved to `mail-catcher/` as a `-sent.json` file:
 
@@ -226,9 +226,11 @@ npm run dev:mail-test
 
 Plain `npm run dev` has no Resend API key, so it can never send real email.
 
-## 📬 Mail (`/mail/`)
+## 📬 Mail (`mail.treez.tech`)
 
-`treez.tech/mail/` is a webmail client for `@treez.tech` addresses. Each address is a **mailbox** with its own password, separate from admin accounts: a mailbox password never opens the admin workspace, and an admin can't read anyone's mail. Mail is sent and received through [Resend](https://resend.com).
+[`mail.treez.tech`](https://mail.treez.tech/) is a webmail client for `@treez.tech` addresses. Each address is a **mailbox** with its own password, separate from admin accounts: a mailbox password never opens the admin workspace, and an admin can't read anyone's mail. Mail is sent and received through [Resend](https://resend.com).
+
+**Where it lives:** `mail.treez.tech` is a second custom domain on the same Worker (see `domains` in `cloudflare.config.ts`). The Worker runs first for `/` and `/mail/*` so it can serve `public/mail/index.html` at the subdomain's root, and old links to `treez.tech/mail/` redirect there. Styles, scripts and the API (`/api/mail/*`) are shared with the main site. Locally, open `http://mail.localhost:5173/` to see the subdomain, or keep using `localhost:5173/mail/`.
 
 **What people can do:** read mail in Inbox, Starred, Sent, Drafts, Archive, Junk and Bin; write, reply, reply all and forward, with attachments up to 15 MB each (25 MB per email); search everything; star, archive, mark read or unread, and select several emails at once; change their name, signature and password under Settings. Drafts save as you type. Keyboard shortcuts are listed under <kbd>?</kbd>.
 
