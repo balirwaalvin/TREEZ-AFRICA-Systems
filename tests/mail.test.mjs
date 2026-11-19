@@ -6,7 +6,7 @@
 //   MAIL_TEST=1 BASE_URL=http://localhost:4173 ADMIN_EMAIL=... ADMIN_PASSWORD=... npm test
 // Without MAIL_TEST, they check that sending and receiving refuse to run with no Resend keys.
 import assert from 'node:assert/strict';
-import { createHmac } from 'node:crypto';
+import { createECDH, createHmac, createPublicKey, createDecipheriv, hkdfSync, randomBytes, verify } from 'node:crypto';
 import { request as httpRequest } from 'node:http';
 import { test } from 'node:test';
 
@@ -101,6 +101,16 @@ test('the mail subdomain shows only the mailbox, at its root, locked down like /
   for (const path of ['/api/posts', '/api/admin/session', '/api/admin/messages']) {
     assert.equal((await page(path, 'mail.localhost')).status, 404, path);
   }
+  // The installable app's files sit at the root too, where the service worker can look after the whole app.
+  const worker = await page('/sw.js', 'mail.localhost');
+  assert.equal(worker.status, 200);
+  assert.match(worker.headers['content-type'], /javascript/);
+  assert.match(worker.body, /addEventListener\('push'/);
+  const manifest = await page('/manifest.webmanifest', 'mail.localhost');
+  assert.equal(manifest.status, 200);
+  assert.match(manifest.headers['content-type'], /^application\/manifest\+json/);
+  assert.equal(JSON.parse(manifest.body).start_url, './');
+  for (const icon of JSON.parse(manifest.body).icons) assert.equal((await page(icon.src, 'mail.localhost')).status, 200, icon.src);
   // The site itself is unchanged, and locally /mail/ still opens the mailbox.
   assert.doesNotMatch((await page('/', 'localhost')).body, /<title>TREEZ Mail<\/title>/);
   assert.match((await page('/mail/', 'localhost')).body, /<title>TREEZ Mail<\/title>/);
@@ -119,7 +129,8 @@ test('every mail route refuses a request with no mailbox session', async () => {
     ['PATCH', '/api/mail/messages', { ids: ['x'], read: true }], ['POST', '/api/mail/messages/delete', { ids: ['x'] }],
     ['POST', '/api/mail/folders/trash/empty', {}], ['POST', '/api/mail/drafts', {}], ['PUT', '/api/mail/drafts/x', {}],
     ['POST', '/api/mail/send', {}], ['DELETE', '/api/mail/uploads/x'], ['PUT', '/api/mail/account', {}],
-    ['POST', '/api/mail/account/password', {}], ['GET', '/api/mail/anything-else']
+    ['POST', '/api/mail/account/password', {}], ['GET', '/api/mail/push'], ['POST', '/api/mail/push', {}],
+    ['POST', '/api/mail/push/delete', {}], ['POST', '/api/mail/push/test', {}], ['GET', '/api/mail/anything-else']
   ];
   for (const [method, path, body] of routes) assert.equal((await call(path, { method, body })).status, 401, `${method} ${path}`);
   // An admin session is not a mailbox session.
@@ -390,6 +401,138 @@ test('receipts are sent through Resend and filed in receipts@\'s Sent folder', {
   const full = (await call(`/api/mail/messages/${copy.id}`, { headers: { Cookie: cookie } })).data;
   assert.equal((await call(`/api/mail/attachments/${full.attachments[0].id}`, { headers: { Cookie: cookie } })).text, '%PDF-1.7\n%receipt\n');
   await call('/api/mail/logout', { method: 'POST', body: {}, headers: { Cookie: cookie } });
+});
+
+// ---- Notifications (Web Push). In mail-test mode the Resend stand-in plays the push service. ----
+
+const TEST_VAPID_KEY = 'BLZIkNUICcGV-ANxBFazFqlJJv5g5Ob_uNQlNWZw36OK07g10i8GukapQ3iK-qLQZXdwswAt0UI0ysDtzdmk0k8'; // public mail-test key
+
+/** A pretend browser: its own keys, and a device name at the stand-in's push service. */
+function device(name) {
+  const ecdh = createECDH('prime256v1');
+  ecdh.generateKeys();
+  const auth = randomBytes(16);
+  return {
+    name, ecdh, auth,
+    subscription: { endpoint: `${RESEND}/push/${name}`, keys: { p256dh: ecdh.getPublicKey().toString('base64url'), auth: auth.toString('base64url') } }
+  };
+}
+
+async function pushesTo(target) {
+  return (await fetch(`${RESEND}/pushes/${target.name}`)).json();
+}
+
+async function waitForPushes(target, count) {
+  for (let i = 0; i < 50; i++) {
+    const list = await pushesTo(target);
+    if (list.length >= count) return list;
+    await wait(100);
+  }
+  return pushesTo(target);
+}
+
+/** What a browser does with a push: check who signed it, then decrypt it (RFC 8291 / RFC 8188). */
+function openPush(target, push) {
+  const [, token, key] = push.headers.authorization.match(/^vapid t=([^,]+), k=(.+)$/);
+  assert.equal(key, TEST_VAPID_KEY);
+  const [header, claims, signature] = token.split('.');
+  const point = Buffer.from(key, 'base64url');
+  const publicKey = createPublicKey({ key: { kty: 'EC', crv: 'P-256', x: point.subarray(1, 33).toString('base64url'), y: point.subarray(33).toString('base64url') }, format: 'jwk' });
+  assert.ok(verify('sha256', Buffer.from(`${header}.${claims}`), { key: publicKey, dsaEncoding: 'ieee-p1363' }, Buffer.from(signature, 'base64url')), 'VAPID signature');
+  const claimed = JSON.parse(Buffer.from(claims, 'base64url'));
+  assert.equal(claimed.aud, new URL(RESEND).origin);
+  assert.ok(claimed.exp > Date.now() / 1000);
+  assert.equal(push.headers['content-encoding'], 'aes128gcm');
+
+  const body = Buffer.from(push.body, 'base64');
+  const salt = body.subarray(0, 16);
+  const idLength = body[20];
+  const serverKey = body.subarray(21, 21 + idLength);
+  const sealed = body.subarray(21 + idLength);
+  const devicePublic = target.ecdh.getPublicKey();
+  const shared = target.ecdh.computeSecret(serverKey);
+  const ikm = Buffer.from(hkdfSync('sha256', shared, target.auth, Buffer.concat([Buffer.from('WebPush: info\0'), devicePublic, serverKey]), 32));
+  const cek = Buffer.from(hkdfSync('sha256', ikm, salt, Buffer.from('Content-Encoding: aes128gcm\0'), 16));
+  const nonce = Buffer.from(hkdfSync('sha256', ikm, salt, Buffer.from('Content-Encoding: nonce\0'), 12));
+  const decipher = createDecipheriv('aes-128-gcm', cek, nonce);
+  decipher.setAuthTag(sealed.subarray(-16));
+  const plain = Buffer.concat([decipher.update(sealed.subarray(0, -16)), decipher.final()]);
+  assert.equal(plain[plain.length - 1], 2, 'last-record delimiter');
+  return JSON.parse(plain.subarray(0, -1).toString('utf8'));
+}
+
+test('notifications are off until the server has push keys', { skip: MAIL_TEST }, async () => {
+  assert.deepEqual((await call('/api/mail/push', { as: 'alice' })).data, { publicKey: null });
+  const result = await call('/api/mail/push', { method: 'POST', body: device('off').subscription, as: 'alice' });
+  assert.equal(result.status, 503);
+});
+
+test('devices only subscribe through a real push service, with valid keys', { skip: !MAIL_TEST }, async () => {
+  assert.equal((await call('/api/mail/push', { as: 'alice' })).data.publicKey, TEST_VAPID_KEY);
+  const good = device(`check-${runId}`).subscription;
+  for (const endpoint of ['https://evil.example/push', 'http://fcm.googleapis.com/x', 'https://fcm.googleapis.com.evil.example/x', 'https://fcm.googleapis.com:8443/x', 'not a url']) {
+    assert.equal((await call('/api/mail/push', { method: 'POST', body: { ...good, endpoint }, as: 'alice' })).status, 400, endpoint);
+  }
+  for (const keys of [{ p256dh: 'short', auth: good.keys.auth }, { p256dh: good.keys.p256dh, auth: 'not base64url!' }, {}]) {
+    assert.equal((await call('/api/mail/push', { method: 'POST', body: { ...good, keys }, as: 'alice' })).status, 400);
+  }
+  assert.equal((await call('/api/mail/push', { method: 'POST', body: good, as: 'alice', origin: 'https://evil.example' })).status, 403);
+});
+
+test('new mail in the inbox notifies the mailbox\'s devices, encrypted for each one', { skip: !MAIL_TEST }, async () => {
+  const phone = device(`alice-phone-${runId}`);
+  const laptop = device(`bob-laptop-${runId}`);
+  assert.equal((await call('/api/mail/push', { method: 'POST', body: phone.subscription, as: 'alice' })).status, 201);
+  assert.equal((await call('/api/mail/push', { method: 'POST', body: laptop.subscription, as: 'bob' })).status, 201);
+
+  await inject({ from: 'Fake Bank <alerts@bank.example>', to: [alice], subject: `Junk ${runId}`, text: 'Click here', dmarc: 'fail' });
+  await inject({ from: 'Grace Hopper <grace@example.com>', to: [alice], subject: `Ship it ${runId}`, text: 'The release is ready for review.' });
+  const [push] = await waitForPushes(phone, 1);
+  await wait(500);
+  assert.equal((await pushesTo(phone)).length, 1, 'junk mail stays quiet');
+  assert.equal((await pushesTo(laptop)).length, 0, "other mailboxes aren't told");
+
+  const message = openPush(phone, push);
+  assert.equal(message.title, 'Grace Hopper');
+  assert.match(message.body, new RegExp(`^Ship it ${runId}\\nThe release is ready for review\\.`));
+  const [filed] = (await inbox('alice')).filter((email) => email.subject === `Ship it ${runId}`);
+  assert.equal(message.url, `#inbox/${filed.id}`);
+  assert.equal(message.tag, filed.id);
+  assert.ok(message.unread >= 1);
+  assert.equal(push.headers.urgency, 'high');
+  assert.equal(push.headers.ttl, '86400');
+
+  // The test button reaches this device only.
+  assert.equal((await call('/api/mail/push/test', { method: 'POST', body: {}, as: 'alice' })).status, 200);
+  const pushes = await waitForPushes(phone, 2);
+  assert.equal(openPush(phone, pushes[1]).title, 'Notifications are on');
+
+  // Nobody can switch off someone else's device; its owner can.
+  assert.equal((await call('/api/mail/push/delete', { method: 'POST', body: { endpoint: phone.subscription.endpoint }, as: 'bob' })).data.removed, 0);
+  assert.equal((await call('/api/mail/push/delete', { method: 'POST', body: { endpoint: phone.subscription.endpoint }, as: 'alice' })).data.removed, 1);
+  assert.equal((await call('/api/mail/push/test', { method: 'POST', body: {}, as: 'alice' })).status, 404);
+  await inject({ from: 'Grace Hopper <grace@example.com>', to: [alice], subject: `After ${runId}`, text: 'Quiet now' });
+  await wait(500);
+  assert.equal((await pushesTo(phone)).length, 2);
+  await call('/api/mail/push/delete', { method: 'POST', body: { endpoint: laptop.subscription.endpoint }, as: 'bob' });
+});
+
+test('signing out, or a device the browser dropped, ends its notifications', { skip: !MAIL_TEST }, async () => {
+  // A second sign-in on another device, which then signs out.
+  const tablet = device(`alice-tablet-${runId}`);
+  const other = cookieOf(await call('/api/mail/login', { method: 'POST', body: { address: alice, password: MAILBOX_PASSWORD } }));
+  jars.tablet = other;
+  assert.equal((await call('/api/mail/push', { method: 'POST', body: tablet.subscription, as: 'tablet' })).status, 201);
+  await call('/api/mail/logout', { method: 'POST', body: {}, as: 'tablet' });
+  await inject({ from: 'Grace Hopper <grace@example.com>', to: [alice], subject: `Signed out ${runId}`, text: 'x' });
+  await wait(500);
+  assert.equal((await pushesTo(tablet)).length, 0);
+
+  // A push service answering 410 means the device is gone; it's forgotten straight away.
+  const gone = device(`gone-${runId}`);
+  assert.equal((await call('/api/mail/push', { method: 'POST', body: gone.subscription, as: 'alice' })).status, 201);
+  assert.equal((await call('/api/mail/push/test', { method: 'POST', body: {}, as: 'alice' })).status, 410);
+  assert.equal((await call('/api/mail/push/test', { method: 'POST', body: {}, as: 'alice' })).status, 404);
 });
 
 test('folders only allow moves that make sense, and only the bin deletes for good', async () => {

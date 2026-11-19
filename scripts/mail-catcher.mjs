@@ -9,6 +9,9 @@
 //     curl -X POST http://127.0.0.1:2526/inject -H 'Content-Type: application/json' \
 //       -d '{"from":"Jane <jane@example.com>","to":["care@treez.tech"],"subject":"Hello","text":"Hi there"}'
 //   The webhook goes to SITE_URL (default http://localhost:5173), or to "site" in the request.
+// It also plays the browsers' push service for new-mail notifications: the site posts each one to
+//   /push/<device> (still encrypted), and GET /pushes/<device> lists what arrived there.
+//   A device whose name starts with "gone-" answers 410, as a push service does for a dropped device.
 import { createHmac, randomUUID } from 'node:crypto';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { createServer as createHttpServer } from 'node:http';
@@ -27,6 +30,7 @@ const stamp = () => new Date().toISOString().replace(/[:.]/g, '-');
 // ---- Resend API ----
 
 const received = new Map(); // email id → { email, files: Map(attachment id → { meta, content }), raw }
+const pushes = new Map(); // device → [{ headers, body (base64) }]
 const base = `http://127.0.0.1:${RESEND_PORT}`;
 
 function sign(id, timestamp, body) {
@@ -101,6 +105,15 @@ async function receive(input, site = SITE_URL) {
   return { id, webhook: result };
 }
 
+function readBytes(request) {
+  return new Promise((resolve, reject) => {
+    const chunks = [];
+    request.on('data', (chunk) => chunks.push(chunk));
+    request.on('end', () => resolve(Buffer.concat(chunks)));
+    request.on('error', reject);
+  });
+}
+
 function readJson(request) {
   return new Promise((resolve, reject) => {
     const chunks = [];
@@ -129,6 +142,15 @@ createHttpServer(async (request, response) => {
       const { site = SITE_URL, ...event } = await readJson(request);
       return send(200, await webhook(site, event));
     }
+    if (request.method === 'POST' && parts[0] === 'push' && parts[1]) {
+      const body = await readBytes(request);
+      const { authorization, 'content-encoding': encoding, ttl, urgency } = request.headers;
+      if (!pushes.has(parts[1])) pushes.set(parts[1], []);
+      pushes.get(parts[1]).push({ headers: { authorization, 'content-encoding': encoding, ttl, urgency }, body: body.toString('base64') });
+      console.log(`push to ${parts[1]} (${body.length} bytes)`);
+      return send(parts[1].startsWith('gone-') ? 410 : 201, {});
+    }
+    if (request.method === 'GET' && parts[0] === 'pushes' && parts[1]) return send(200, pushes.get(parts[1]) ?? []);
     if (request.method === 'GET' && parts[0] === 'raw') {
       const stored = received.get(parts[1]);
       return stored ? send(200, stored.raw, 'message/rfc822') : send(404, { message: 'Not found' });
