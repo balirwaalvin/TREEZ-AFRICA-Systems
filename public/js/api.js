@@ -141,7 +141,11 @@ window.TREEZ_API = (() => {
       upload: (file, onProgress) => upload('/mail/uploads', file, onProgress),
       removeUpload: (uploadId) => request(`/mail/uploads/${id(uploadId)}`, { method: 'DELETE' }),
       saveDraft: (draftId, mail) => request(draftId ? `/mail/drafts/${id(draftId)}` : '/mail/drafts', { method: draftId ? 'PUT' : 'POST', body: mail }),
-      send: (mail) => request('/mail/send', { method: 'POST', body: mail })
+      send: (mail) => request('/mail/send', { method: 'POST', body: mail }),
+      pushSettings: () => request('/mail/push'),
+      pushSubscribe: (subscription) => request('/mail/push', { method: 'POST', body: subscription }),
+      pushUnsubscribe: (endpoint) => request('/mail/push/delete', { method: 'POST', body: { endpoint } }),
+      pushTest: () => request('/mail/push/test', { method: 'POST', body: {} })
     },
     sendMessage: (fields) => request('/messages', { method: 'POST', body: fields }),
     recordView: (fields) => request('/views', { method: 'POST', body: fields }),

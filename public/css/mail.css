@@ -336,6 +336,22 @@
 .mail-check input:focus-visible + span { outline: 2px solid var(--color-primary); outline-offset: 2px; }
 
 .mail-list { flex: 1; min-height: 0; overflow-y: auto; }
+
+/* Offer to turn on notifications, above the list */
+.mail-push-prompt {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 10px 10px 0;
+  padding: 10px 8px 10px 12px;
+  border: 1px solid color-mix(in srgb, var(--color-primary) 35%, transparent);
+  border-radius: var(--mail-radius);
+  background: color-mix(in srgb, var(--color-primary) 8%, var(--bg-1));
+}
+.mail-push-prompt > svg { flex: none; width: 18px; height: 18px; color: var(--color-primary); }
+.mail-push-prompt p { flex: 1; min-width: 0; margin: 0; color: var(--text-1); font-size: 0.85rem; line-height: 1.4; }
+.mail-push-prompt .mail-button { flex: none; }
+.mail-push-actions { display: flex; flex-wrap: wrap; gap: 8px; }
 .mail-row {
   position: relative;
   display: grid;

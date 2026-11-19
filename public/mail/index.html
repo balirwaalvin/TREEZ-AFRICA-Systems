@@ -6,8 +6,17 @@
   <meta name="robots" content="noindex, nofollow">
   <title>TREEZ Mail</title>
   <link rel="icon" type="image/png" href="/favicon.png">
+  <!-- Installable app (relative links, so it works at mail.treez.tech/ and at /mail/ locally) -->
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#0A0D11">
+  <meta name="application-name" content="TREEZ Mail">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="TREEZ Mail">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <link rel="apple-touch-icon" href="/assets/images/mail/apple-touch-icon.png">
   <link rel="stylesheet" href="/css/global.css?v=20261024">
-  <link rel="stylesheet" href="/css/mail.css?v=20261118">
+  <link rel="stylesheet" href="/css/mail.css?v=20261119">
 </head>
 <body class="mail-page">
   <!-- Sign in -->
@@ -47,6 +56,7 @@
           <i data-lucide="chevron-down"></i>
         </button>
         <div id="accountMenu" class="mail-menu" role="menu" hidden>
+          <button role="menuitem" data-action="install" type="button" hidden><i data-lucide="download"></i> Install app</button>
           <button role="menuitem" data-action="settings" type="button"><i data-lucide="settings"></i> Settings</button>
           <button role="menuitem" data-action="logout" type="button"><i data-lucide="log-out"></i> Sign out</button>
         </div>
@@ -85,6 +95,12 @@
             <button class="mail-button mail-button-quiet mail-button-small" id="emptyFolder" type="button" hidden></button>
             <button class="mail-icon-button" data-action="refresh" type="button" title="Refresh" aria-label="Refresh"><i data-lucide="refresh-cw"></i></button>
           </div>
+        </div>
+        <div id="pushPrompt" class="mail-push-prompt" hidden>
+          <i data-lucide="bell-ring"></i>
+          <p>Get a notification when new email arrives, even when this tab is closed.</p>
+          <button class="mail-button mail-button-primary mail-button-small" data-action="push-on" type="button">Turn on</button>
+          <button class="mail-icon-button" data-action="push-dismiss" type="button" title="Not now" aria-label="Not now"><i data-lucide="x"></i></button>
         </div>
         <div id="messageList" class="mail-list" role="list"></div>
         <button id="loadMore" class="mail-button mail-button-quiet mail-load-more" type="button" hidden>Load older emails</button>
@@ -138,6 +154,16 @@
       <button class="mail-button mail-button-primary" value="save" type="submit"><i data-lucide="save"></i> Save</button>
       <p id="settingsMessage" class="mail-message" role="status"></p>
     </form>
+    <section class="mail-form" aria-labelledby="pushHeading">
+      <h3 id="pushHeading">Notifications</h3>
+      <p id="pushStatus" class="mail-muted"></p>
+      <div class="mail-push-actions">
+        <button class="mail-button mail-button-primary" data-action="push-on" type="button" hidden><i data-lucide="bell"></i> Turn on for this device</button>
+        <button class="mail-button" data-action="push-test" type="button" hidden><i data-lucide="send"></i> Send a test</button>
+        <button class="mail-button mail-button-quiet" data-action="push-off" type="button" hidden><i data-lucide="bell-off"></i> Turn off</button>
+      </div>
+      <p id="pushMessage" class="mail-message" role="status"></p>
+    </section>
     <form id="passwordForm" class="mail-form" novalidate>
       <h3>Change password</h3>
       <label>Current password<input name="current" type="password" autocomplete="current-password" required></label>
@@ -180,8 +206,8 @@
 
   <div id="toast" class="mail-toast" role="status" aria-live="polite" hidden><span data-toast-text></span><button type="button" data-toast-undo hidden>Undo</button></div>
 
-  <script src="/js/api.js?v=20261118"></script>
+  <script src="/js/api.js?v=20261119"></script>
   <script src="https://cdn.jsdelivr.net/npm/lucide@1.46.0/dist/umd/lucide.js"></script>
-  <script src="/js/mail.js?v=20261118"></script>
+  <script src="/js/mail.js?v=20261119"></script>
 </body>
 </html>

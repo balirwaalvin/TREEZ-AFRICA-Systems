@@ -206,6 +206,9 @@
 
   async function logout() {
     await saveDraftNow().catch(() => {});
+    // Signed-out devices get no notifications. Signing in again turns them back on.
+    await dropSubscription();
+    setAppBadge(0);
     await api.logout().catch(() => {});
     state.account = null;
     state.messages = [];
@@ -220,6 +223,7 @@
     renderAccount();
     applyHash();
     refreshCounts();
+    syncPush();
     clearInterval(state.poll);
     state.poll = setInterval(() => { if (document.visibilityState === 'visible') checkForNewMail(); }, POLL_MS);
     icons();
@@ -237,6 +241,11 @@
   // ---- Folders and the URL ----
 
   function applyHash() {
+    // The app's "Compose" shortcut (manifest.webmanifest).
+    if (window.location.hash === '#compose') {
+      history.replaceState(null, '', '#inbox');
+      openCompose();
+    }
     const [folder, id] = window.location.hash.slice(1).split('/');
     const next = FOLDERS[folder] ? folder : 'inbox';
     // Opening an email (even a search result) keeps the list as it is; only a new folder reloads it.
@@ -278,6 +287,7 @@
   function updateTitle() {
     if (!state.account) return;
     const unread = state.counts.inbox?.unread ?? 0;
+    setAppBadge(unread);
     document.title = `${unread ? `(${unread}) ` : ''}${FOLDERS[state.folder]} · ${state.account.address}`;
   }
 
@@ -1156,6 +1166,192 @@
     }
   });
 
+  // ---- Installing the app, and notifications ----
+
+  const PUSH_CHOICE = 'treez-mail-push';           // 'off' once someone turns notifications off here
+  const PROMPT_DISMISSED = 'treez-mail-push-prompt'; // '1' once the inbox prompt is closed
+  const storage = {
+    get(key) { try { return localStorage.getItem(key); } catch { return null; } },
+    set(key, value) { try { localStorage.setItem(key, value); } catch { /* private mode */ } }
+  };
+  const push = {
+    supported: 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window,
+    key: null, // the server's public key; '' when notifications aren't set up there
+    subscribed: false
+  };
+  const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const isInstalled = () => window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+  // Relative, so it's /sw.js at mail.treez.tech and /mail/sw.js locally.
+  const serviceWorker = 'serviceWorker' in navigator ? navigator.serviceWorker.register('sw.js').catch(() => null) : Promise.resolve(null);
+
+  function keyBytes(base64url) {
+    const base64 = base64url.replace(/-/g, '+').replace(/_/g, '/');
+    return Uint8Array.from(atob(base64 + '='.repeat((4 - (base64.length % 4)) % 4)), (char) => char.charCodeAt(0));
+  }
+  function sameKey(buffer, key) {
+    if (!buffer) return true;
+    const a = new Uint8Array(buffer);
+    const b = keyBytes(key);
+    return a.length === b.length && a.every((value, index) => value === b[index]);
+  }
+
+  async function loadPushKey() {
+    if (push.key !== null) return push.key;
+    try {
+      push.key = (await api.pushSettings()).publicKey || '';
+    } catch {
+      return '';
+    }
+    return push.key;
+  }
+
+  async function currentSubscription() {
+    const registration = await serviceWorker;
+    return registration ? registration.pushManager.getSubscription() : null;
+  }
+
+  /** On every sign-in: if this device has notifications on, link it to this mailbox again. */
+  async function syncPush() {
+    if (!push.supported) return renderPush();
+    const key = await loadPushKey();
+    if (key && Notification.permission === 'granted' && storage.get(PUSH_CHOICE) !== 'off') {
+      try {
+        const registration = await serviceWorker;
+        let subscription = await registration?.pushManager.getSubscription();
+        // A subscription made with an older server key can't be used any more.
+        if (subscription && !sameKey(subscription.options?.applicationServerKey, key)) {
+          await subscription.unsubscribe();
+          subscription = null;
+        }
+        if (!subscription && registration) subscription = await registration.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: keyBytes(key) });
+        if (subscription) {
+          await api.pushSubscribe(subscription.toJSON());
+          push.subscribed = true;
+        }
+      } catch {
+        push.subscribed = false;
+      }
+    } else {
+      push.subscribed = false;
+    }
+    renderPush();
+  }
+
+  async function turnOnPush() {
+    const message = $('pushMessage');
+    // Asked first, while the click still counts as the person's own action (Safari insists).
+    const permission = await Notification.requestPermission();
+    if (permission !== 'granted') {
+      if (permission === 'denied') showMessage(message, 'Notifications are blocked for this site. Allow them in your browser settings, then try again.', 'error');
+      renderPush();
+      return;
+    }
+    if (!(await loadPushKey())) { showMessage(message, "Notifications aren't set up on the server yet.", 'error'); renderPush(); return; }
+    storage.set(PUSH_CHOICE, 'on');
+    await syncPush();
+    if (push.subscribed) {
+      showMessage(message, 'Notifications are on for this device.', 'success');
+      toast('Notifications are on. New email will show up in your notifications.');
+    } else {
+      showMessage(message, "Notifications couldn't be turned on. Please try again.", 'error');
+    }
+  }
+
+  /** Stops this device's notifications, on the server and in the browser. */
+  async function dropSubscription() {
+    try {
+      const subscription = await currentSubscription();
+      if (subscription) {
+        await api.pushUnsubscribe(subscription.endpoint).catch(() => {});
+        await subscription.unsubscribe();
+      }
+    } catch {
+      // Nothing more to do; the server forgets it when the browser says it's gone.
+    }
+    push.subscribed = false;
+  }
+
+  async function turnOffPush() {
+    storage.set(PUSH_CHOICE, 'off');
+    await dropSubscription();
+    showMessage($('pushMessage'), 'Notifications are off for this device.', 'success');
+    renderPush();
+  }
+
+  async function testPush() {
+    const message = $('pushMessage');
+    showMessage(message, 'Sending…');
+    try {
+      await api.pushTest();
+      showMessage(message, 'Sent. It should appear in a few seconds.', 'success');
+    } catch (error) {
+      showMessage(message, error.message, 'error');
+      if (error.status === 410) { push.subscribed = false; renderPush(); }
+    }
+  }
+
+  function renderPush() {
+    let text;
+    const show = { 'push-on': false, 'push-test': false, 'push-off': false };
+    if (!push.supported) {
+      text = isIos && !isInstalled()
+        ? 'On iPhone and iPad, first add TREEZ Mail to your Home Screen: tap Share, then “Add to Home Screen”. Open it from there and turn notifications on here.'
+        : "This browser can't show notifications.";
+    } else if (push.key === '') {
+      text = "Notifications aren't set up on the server yet.";
+    } else if (Notification.permission === 'denied') {
+      text = 'Notifications are blocked for this site. Allow them in your browser’s site settings to turn them on.';
+    } else if (push.subscribed) {
+      text = 'On for this device. New email in your inbox shows up in your notifications, even when TREEZ Mail is closed.';
+      show['push-test'] = show['push-off'] = true;
+    } else {
+      text = 'Off for this device.';
+      show['push-on'] = true;
+    }
+    $('pushStatus').textContent = text;
+    for (const [action, visible] of Object.entries(show)) {
+      document.querySelector(`.mail-push-actions [data-action="${action}"]`).hidden = !visible;
+    }
+    $('pushPrompt').hidden = !(push.supported && push.key && !push.subscribed && Notification.permission === 'default'
+      && storage.get(PROMPT_DISMISSED) !== '1' && storage.get(PUSH_CHOICE) !== 'off');
+  }
+
+  function setAppBadge(unread) {
+    if (!('setAppBadge' in navigator)) return;
+    (unread ? navigator.setAppBadge(unread) : navigator.clearAppBadge()).catch(() => {});
+  }
+
+  // The browser's own "Install" offer, shown as a menu item instead of a pop-up.
+  let installPrompt = null;
+  const installButton = document.querySelector('[data-action="install"]');
+  window.addEventListener('beforeinstallprompt', (event) => {
+    event.preventDefault();
+    installPrompt = event;
+    installButton.hidden = false;
+  });
+  window.addEventListener('appinstalled', () => {
+    installPrompt = null;
+    installButton.hidden = true;
+    toast('TREEZ Mail is installed.');
+  });
+  async function install() {
+    if (!installPrompt) return;
+    installPrompt.prompt();
+    await installPrompt.userChoice.catch(() => {});
+    installPrompt = null;
+    installButton.hidden = true;
+  }
+
+  // Messages from the service worker: new mail arrived, or a notification was tapped.
+  navigator.serviceWorker?.addEventListener('message', (event) => {
+    if (!state.account) return;
+    if (event.data?.type === 'new-mail') checkForNewMail();
+    else if (event.data?.type === 'open') {
+      const { hash } = new URL(event.data.url, window.location.href);
+      if (hash) window.location.hash = hash;
+    }
+  });
+
   // ---- Page-wide controls ----
 
   function toggleSidebar(open = !els.layout.classList.contains('is-sidebar-open')) {
@@ -1180,6 +1376,11 @@
       Promise.all([loadList(), refreshCounts()]).finally(() => button.classList.remove('is-spinning'));
     } else if (action === 'settings') { toggleAccountMenu(false); openSettings(); }
     else if (action === 'logout') logout();
+    else if (action === 'install') { toggleAccountMenu(false); install(); }
+    else if (action === 'push-on') turnOnPush();
+    else if (action === 'push-off') turnOffPush();
+    else if (action === 'push-test') testPush();
+    else if (action === 'push-dismiss') { storage.set(PROMPT_DISMISSED, '1'); renderPush(); }
     else if (action === 'close-dialog') button.closest('dialog').close();
   });
   els.accountButton.addEventListener('click', () => toggleAccountMenu());
