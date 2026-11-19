@@ -39,6 +39,14 @@ export default defineConfig(({ mode }) => {
         RESEND_WEBHOOK_SECRET: mailTest ? bindings.text("whsec_bWFpbC10ZXN0LXdlYmhvb2stc2VjcmV0") : bindings.secret(),
         // Email HTML bodies and attachments.
         MAIL_FILES: bindings.r2({ name: "treez-mail" }),
+        // Signs new-mail notifications (Web Push). Set both with `npm run push:keys`; until then
+        // notifications stay off. The mail-test pair is public on purpose, and in mail-test mode
+        // the Resend stand-in also plays the browsers' push service.
+        VAPID_PUBLIC_KEY: mailTest
+          ? bindings.text("BLZIkNUICcGV-ANxBFazFqlJJv5g5Ob_uNQlNWZw36OK07g10i8GukapQ3iK-qLQZXdwswAt0UI0ysDtzdmk0k8")
+          : bindings.secret(),
+        VAPID_PRIVATE_KEY: mailTest ? bindings.text("pX9X3QWeNsEV1oZW0FvXtqOCNzbusZx0uSJCoduVFgc") : bindings.secret(),
+        ...(mailTest ? { PUSH_TEST_ENDPOINT: bindings.text("http://127.0.0.1:2526/push/") } : {}),
       },
       observability: { enabled: true },
     },

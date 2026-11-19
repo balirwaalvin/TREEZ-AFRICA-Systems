@@ -14,6 +14,7 @@
     "admin:create": "node scripts/create-admin.mjs",
     "mail:create": "node scripts/create-mailbox.mjs",
     "mail-catcher": "node scripts/mail-catcher.mjs",
+    "push:keys": "node scripts/push-keys.mjs",
     "backup": "node scripts/backup.mjs",
     "backup:schedule": "bash scripts/backup-schedule.sh install",
     "backup:unschedule": "bash scripts/backup-schedule.sh remove",
