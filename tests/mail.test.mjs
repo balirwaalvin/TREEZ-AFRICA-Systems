@@ -74,7 +74,7 @@ function page(path, host) {
   });
 }
 
-test('the mail subdomain serves the mailbox at its root, locked down like /mail/', async () => {
+test('the mail subdomain shows only the mailbox, at its root, locked down like /mail/', async () => {
   const root = await page('/', 'mail.localhost');
   assert.equal(root.status, 200);
   assert.match(root.body, /<title>TREEZ Mail<\/title>/);
@@ -85,6 +85,21 @@ test('the mail subdomain serves the mailbox at its root, locked down like /mail/
     const moved = await page(path, 'mail.localhost');
     assert.equal(moved.status, 301, path);
     assert.equal(new URL(moved.headers.location).pathname, '/', path);
+  }
+  // Nothing else lives on the subdomain: pages go to the same place on the site, other APIs are gone.
+  for (const path of ['/about/?from=mail', '/contact', '/robots.txt', '/no-such-page']) {
+    const moved = await page(path, 'mail.localhost');
+    assert.equal(moved.status, 301, path);
+    const target = new URL(moved.headers.location);
+    assert.equal(target.host, `localhost:${new URL(BASE).port}`, path);
+    assert.equal(target.pathname + target.search, path, path);
+  }
+  for (const path of ['/css/mail.css', '/js/mail.js', '/js/api.js', '/assets/images/logo-mark.png', '/favicon.png']) {
+    assert.equal((await page(path, 'mail.localhost')).status, 200, path);
+  }
+  assert.equal((await page('/api/mail/session', 'mail.localhost')).status, 401);
+  for (const path of ['/api/posts', '/api/admin/session', '/api/admin/messages']) {
+    assert.equal((await page(path, 'mail.localhost')).status, 404, path);
   }
   // The site itself is unchanged, and locally /mail/ still opens the mailbox.
   assert.doesNotMatch((await page('/', 'localhost')).body, /<title>TREEZ Mail<\/title>/);
