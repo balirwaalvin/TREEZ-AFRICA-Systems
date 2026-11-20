@@ -29,7 +29,8 @@ document.addEventListener('DOMContentLoaded', () => {
     { label: 'TREEZ Streaming Platform', hint: 'tv.treez.tech', href: '/projects/#live', group: 'Projects' },
     { label: 'CDSU Official Portal', hint: 'cdsu.online', href: '/projects/#live', group: 'Projects' },
     { label: 'TUNDA Business Assistant', hint: 'tunda.store', href: '/projects/#live', group: 'Projects' },
-    { label: 'Roomio Hostel Booking', hint: 'roomiohostels.com', href: '/projects/#live', group: 'Projects' }
+    { label: 'Roomio Hostel Booking', hint: 'roomiohostels.com', href: '/projects/#live', group: 'Projects' },
+    { label: 'Kumbuka Coursework Tracker', hint: 'kumbuka.treez.tech', href: '/projects/#live', group: 'Projects' }
   ];
 
   let activeIndex = 0;
