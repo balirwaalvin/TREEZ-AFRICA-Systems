@@ -136,6 +136,15 @@
   margin-top: 4px;
 }
 
+/* An odd card out on the last row sits centred at one column's width */
+@media (min-width: 901px) {
+  .product-grid > .product-card:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+    justify-self: center;
+    width: calc(50% - 12px);
+  }
+}
+
 /* ---- Responsive ---- */
 @media (max-width: 900px) {
   .product-grid {
